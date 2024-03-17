@@ -13,21 +13,17 @@ public class Player {
 	int height; //height of the player
 	BufferedImage image; // image of the player
 	
-	public Player(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+	public Player() {
+		this.width = x * 32;
+		this.height = y * 32;
 		try {
-			this.image = ImageIO.read(new File("images/characters/character-1.png"));
+			this.image = ImageIO.read(new File("images/characters/New Piskel.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	public void draw(Graphics g) {
-		g.drawImage(image, x, y, width, height, null);
-		
+		g.drawImage(image, 132, 132, 132, 132, null);
 	}
 	// getter and setter methods
 }

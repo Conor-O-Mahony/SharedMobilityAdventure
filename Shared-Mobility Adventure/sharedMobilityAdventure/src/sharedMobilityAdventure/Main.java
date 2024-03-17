@@ -1,8 +1,5 @@
 package sharedMobilityAdventure;
-
-import java.io.*;
 import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,8 +8,8 @@ public class Main {
       menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
-      // instansiate player object
-      Player player = new Player(100, 100, 50, 50);
+      // Instantiate player object
+      Player player = new Player();
       
       MenuPanel menuPanel = new MenuPanel(menuFrame, player);
       menuFrame.add(menuPanel);
