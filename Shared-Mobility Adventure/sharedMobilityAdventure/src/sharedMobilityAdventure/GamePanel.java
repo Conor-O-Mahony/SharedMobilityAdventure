@@ -27,7 +27,7 @@ public class GamePanel extends JPanel {
     
     public GamePanel() {
         setPreferredSize(new Dimension(totalWidth, totalHeight));
-        // initalise username filed
+        // initalize username filed
         usernameField = new JTextField();
         /// Add the username field to the panel
         add(usernameField);
