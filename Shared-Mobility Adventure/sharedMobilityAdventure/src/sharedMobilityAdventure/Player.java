@@ -27,6 +27,7 @@ public class Player {
 	}
 	public void draw(Graphics g) {
 		g.drawImage(image, x, y, width, height, null);
+		
 	}
 	// getter and setter methods
 }

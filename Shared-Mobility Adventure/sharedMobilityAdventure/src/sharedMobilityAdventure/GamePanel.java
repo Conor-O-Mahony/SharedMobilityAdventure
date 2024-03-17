@@ -24,7 +24,7 @@ public class GamePanel extends JPanel {
     
     BufferedImage[] imageArray = new BufferedImage[arraySize];   
     JTextField usernameField; // Username field
-    
+     
     public GamePanel() {
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         // initalize username filed
@@ -83,4 +83,10 @@ public class GamePanel extends JPanel {
             }
         }
     }
+    // Method to retrieve username from the username field
+    public String getUsername() {
+    	return usernameField.getText();
+    }
 }
+
+
