@@ -23,9 +23,15 @@ public class GamePanel extends JPanel {
     int[][] mapTileNum = new int[columns][rows];
     
     BufferedImage[] imageArray = new BufferedImage[arraySize];   
-     
+    JTextField usernameField; // Username field
+    
     public GamePanel() {
         setPreferredSize(new Dimension(totalWidth, totalHeight));
+        // initalise username filed
+        usernameField = new JTextField();
+        /// Add the username field to the panel
+        add(usernameField);
+        
         try {
         	imageArray[0] = ImageIO.read(new File("images/tiles/dark_grass.png"));
         	imageArray[1] = ImageIO.read(new File("images/tiles/brick_wall.png"));
