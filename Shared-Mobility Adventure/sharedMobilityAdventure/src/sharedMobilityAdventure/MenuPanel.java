@@ -20,7 +20,7 @@ public class MenuPanel extends JPanel {
     	
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null); // Set layout to null for absolute positioning
-        
+        // Add username field
         usernameField = new JTextField();
         usernameField.setBounds(100, 50, 200, 30);
         add(usernameField);
