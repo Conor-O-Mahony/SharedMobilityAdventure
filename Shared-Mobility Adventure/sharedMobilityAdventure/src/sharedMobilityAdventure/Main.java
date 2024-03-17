@@ -11,7 +11,7 @@ public class Main {
       menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
-      
+      // instansiate player object
       Player player = new Player(100, 100, 50, 50);
       
       MenuPanel menuPanel = new MenuPanel(menuFrame, player);
