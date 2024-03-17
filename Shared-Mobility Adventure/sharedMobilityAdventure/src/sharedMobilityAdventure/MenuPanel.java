@@ -1,7 +1,7 @@
 package sharedMobilityAdventure;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
@@ -10,11 +10,22 @@ public class MenuPanel extends JPanel {
     int rows = 18;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
-
-    public MenuPanel(JFrame menuFrame) {
+    
+    Player player; // Player object
+    JTextField usernameField; //Username field
+    
+    public MenuPanel(JFrame menuFrame, Player player) {
+    	this.player = player;
+    	
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null); // Set layout to null for absolute positioning
+        // Add username field
+        usernameField = new JTextField();
+        usernameField.setBounds(100, 50, 200, 30);
+        add(usernameField);
+        
         add(createButton(menuFrame));
+
     }
     
     private JButton createButton(JFrame menuFrame) {
@@ -26,7 +37,9 @@ public class MenuPanel extends JPanel {
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
         
         button.addActionListener(e -> {
-            Main.openGameWindow(this, menuFrame); // Open the game window
+        	// Retrieve the username from the text field
+        	String username = usernameField.getText();
+            Main.openGameWindow(this, menuFrame, username); // Open the game window
         });
 
         return button;
@@ -35,6 +48,12 @@ public class MenuPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
+        // Draw player
+        if (player != null) {
+        	player.draw(g);
+        	
+        }
         
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
