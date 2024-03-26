@@ -31,8 +31,14 @@ public class Tile {
 	}
 	
 	public boolean RouteAddable() {
-		int no_of_routes = tileRoutes.length;
-		if (no_of_routes < max_stops_per_tile) {
+		int counter = 0;
+		for (int i = 0; i < tileRoutes.length; i ++) {
+		    if (tileRoutes[i] != null) {
+		        counter ++;
+		    }
+		}
+
+		if (counter < max_stops_per_tile) {
 			return true;
 		} else {
 			return false;
@@ -40,8 +46,27 @@ public class Tile {
 	}
 	
 	public void asignRouteToTile(Route stop) { //Assume the logic is correct so that no more than max_stops_per_tile can be added. Can add test for this
-		int index = tileRoutes.length;
-		tileRoutes[index+1] = stop;
+		int counter = getNumberOfRoutes();
+		
+		if (counter < max_stops_per_tile) {
+			tileRoutes[counter] = stop;
+		} else {
+			System.out.println("Error: too many stops on this tile.");
+		}
+	}
+	
+	public int getNumberOfRoutes() {
+		int counter = 0;
+		for (int i = 0; i < tileRoutes.length; i ++) {
+		    if (tileRoutes[i] != null) {
+		    	counter++;
+		    }
+		}
+		return counter;
+	}
+	
+	public Route[] getRoutes() {
+		return tileRoutes;
 	}
 
 	public static void main(String[] args) {

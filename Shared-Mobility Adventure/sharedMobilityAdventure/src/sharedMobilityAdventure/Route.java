@@ -6,6 +6,7 @@ public class Route {
 	
 	int finalRow;
 	int finalCol;
+	TransportTypes type;
 	
 	public Route(TransportTypes T, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
 		routeTiles = new Tile[routeSize];
@@ -43,6 +44,7 @@ public class Route {
 		} else {
 			finalRow = y;
 			finalCol = x;
+			type = T;
 		}
 	}
 	
@@ -64,6 +66,10 @@ public class Route {
 	
 	public int getFinalCol() {
 		return finalCol;
+	}
+	
+	public TransportTypes getTransportType() {
+		return type;
 	}
 	
 	public static void main(String[] args) {
