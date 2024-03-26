@@ -22,14 +22,14 @@ public class GamePanel extends JPanel {
     int arraySize = 10;
     int[][] mapTileNum = new int[columns][rows];
     
-    BufferedImage[] imageArray = new BufferedImage[arraySize];   
-    JTextField usernameField; // Username field
+    BufferedImage[] imageArray = new BufferedImage[100];   //increased size for more tile types
+    String username;
     Player player = new Player();
          
-    public GamePanel() {
+    public GamePanel(String username) { //now inheriting username
         setPreferredSize(new Dimension(totalWidth, totalHeight));
-        // initalize username filed
-        usernameField = new JTextField();
+
+        this.username = username;
         
         try {
         	imageArray[0] = ImageIO.read(new File("images/tiles/dark_grass.png"));
@@ -37,7 +37,17 @@ public class GamePanel extends JPanel {
         	imageArray[2] = ImageIO.read(new File("images/tiles/concrete_road.png"));
         	imageArray[3] = ImageIO.read(new File("images/tiles/sidewalk.png"));
         	imageArray[4] = ImageIO.read(new File("images/tiles/water.png"));
-        	imageArray[5] = ImageIO.read(new File("images/tiles/panel.png")); 
+        	imageArray[5] = ImageIO.read(new File("images/tiles/panel.png"));
+        	//Dialogue box tiles
+        	imageArray[6] = ImageIO.read(new File("images/tiles/dialogueTopL.png"));
+        	imageArray[7] = ImageIO.read(new File("images/tiles/dialogueTop.png"));
+        	imageArray[8] = ImageIO.read(new File("images/tiles/dialogueTopR.png"));
+        	imageArray[9] = ImageIO.read(new File("images/tiles/dialogueLeft.png"));
+        	imageArray[10] = ImageIO.read(new File("images/tiles/dialogueRight.png"));
+        	imageArray[11] = ImageIO.read(new File("images/tiles/dialogueBottomL.png"));
+        	imageArray[12] = ImageIO.read(new File("images/tiles/dialogueBottom.png"));
+        	imageArray[13] = ImageIO.read(new File("images/tiles/dialogueBottomR.png"));
+        	imageArray[14] = ImageIO.read(new File("images/tiles/dialogueCentre.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }        
@@ -68,7 +78,12 @@ public class GamePanel extends JPanel {
             e.printStackTrace();
         }
     }
-    	
+    
+    // Method to retrieve username from the username field
+    	public String getUsername() {
+    	return username;
+    	}
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -82,11 +97,25 @@ public class GamePanel extends JPanel {
             }
         }
         player.draw(g);
+        
+        // Draw the username
+        String username = getUsername();
+        g.setColor(Color.RED); // Set color to black
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Player: " + username, 805, 20);
+        
+        //Draw the timer (NEEDS FUNCTIONALITY)
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Time: " , 805, 120);
+        
+        //Draw the coin count (NEEDS FUNCTIONALITY)
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Carbon Coins: ", 805, 220);
     }
-    // Method to retrieve username from the username field
-    public String getUsername() {
-    	return usernameField.getText();
-    }
+
+    
 }
 
 
