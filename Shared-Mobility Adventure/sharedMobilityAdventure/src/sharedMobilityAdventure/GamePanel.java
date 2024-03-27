@@ -29,7 +29,8 @@ public class GamePanel extends JPanel implements KeyListener {
     BufferedImage[] imageArray = new BufferedImage[100];   //increased size for more tile types
     String username;
     Player player = new Player(this);
-         
+    Gem gem;
+       
     public GamePanel(String username) { //now inheriting username
         setPreferredSize(new Dimension(totalWidth, totalHeight));
 
@@ -54,9 +55,12 @@ public class GamePanel extends JPanel implements KeyListener {
         	imageArray[14] = ImageIO.read(new File("images/tiles/dialogueCentre.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
-        }        
-        loadMap();      
-    
+        }      
+        // Initialize gem and call setRandomPosition()
+        gem = new Gem(this);
+        gem.setRandomPosition();
+        
+        loadMap();
         this.setFocusable(true);
         this.requestFocus(); // Ensure the panel has focus to receive key events
         this.addKeyListener(this);
@@ -109,6 +113,9 @@ public class GamePanel extends JPanel implements KeyListener {
             }
         }
         player.draw(g);
+        
+        // Draw gem
+        gem.draw(g);
         
         // Draw the username
         String username = getUsername();
