@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16*2; // initial tile length / width (16 * 16 pixels)
-    int columns = 32;
-    int rows = 18;
+    int tile = 16; // initial tile length / width (16 * 16 pixels)
+    int columns = 64;
+    int rows = 36;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
     
@@ -37,9 +37,9 @@ public class MenuPanel extends JPanel {
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
         
         button.addActionListener(e -> {
-        	// Retrieve the username from the text field
-        	String username = usernameField.getText();
-            Main.openGameWindow(this, menuFrame, username); // Open the game window
+            // Retrieve the username from the text field
+            String username = usernameField.getText();
+            Main.openGameWindow(this, menuFrame, username); //window will be opened with username
         });
 
         return button;

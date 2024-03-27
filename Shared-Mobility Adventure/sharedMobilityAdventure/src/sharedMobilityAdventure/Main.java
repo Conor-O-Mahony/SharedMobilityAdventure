@@ -9,7 +9,7 @@ public class Main {
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
       // Instantiate player object
-      Player player = new Player();
+      Player player = new Player(null);
       
       MenuPanel menuPanel = new MenuPanel(menuFrame, player);
       menuFrame.add(menuPanel);
@@ -27,7 +27,7 @@ public class Main {
       gameFrame.setResizable(false);
       gameFrame.setTitle("Shared-Mobility Adventure");
 
-      GamePanel gamePanel = new GamePanel();
+      GamePanel gamePanel = new GamePanel(username); //passing username
       gameFrame.add(gamePanel);
 
       gameFrame.pack();
