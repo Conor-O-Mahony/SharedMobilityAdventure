@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16*2; // initial tile length / width (16 * 16 pixels)
-    int columns = 32;
-    int rows = 18;
+    int tile = 16; // initial tile length / width (16 * 16 pixels)
+    int columns = 64;
+    int rows = 36;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
     
