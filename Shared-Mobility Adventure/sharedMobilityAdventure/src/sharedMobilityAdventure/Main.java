@@ -37,4 +37,20 @@ public class Main {
       menuFrame.dispose();
       
   }
+  
+  public static void openBonusWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {
+	  JFrame gameFrame = new JFrame();
+      gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      gameFrame.setResizable(false);
+      gameFrame.setTitle("Shared-Mobility Adventure");
+
+      BonusPanel gamePanel = new BonusPanel(username);
+      gameFrame.add(gamePanel);
+
+      gameFrame.pack();
+      gameFrame.setLocationRelativeTo(null);
+      gameFrame.setVisible(true);
+    	
+      menuFrame.dispose();
+  }
 }

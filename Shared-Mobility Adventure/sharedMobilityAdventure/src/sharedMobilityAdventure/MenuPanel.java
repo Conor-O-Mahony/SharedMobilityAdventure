@@ -24,22 +24,34 @@ public class MenuPanel extends JPanel {
         usernameField.setBounds(100, 50, 200, 30);
         add(usernameField);
         
-        add(createButton(menuFrame));
+        add(createButton(menuFrame, 10, "classic"));
+        add(createButton(menuFrame, 18, "random"));
 
     }
     
-    private JButton createButton(JFrame menuFrame) {
-        int buttonX = 32*14; // X-coordinate of the button
+    private JButton createButton(JFrame menuFrame, int X, String type) {
+    	int buttonX = 32*X; // X-coordinate of the button    14 and 18
         int buttonY = 32*8; // Y-coordinate of the button
         int buttonWidth = 32 * 4; // Button width
         int buttonHeight = 32 * 2; // Button height
-        JButton button = new JButton("Start Game");
+        
+        JButton button;
+        if (type == "classic") {
+        	button = new JButton("Classic");
+        } else {
+        	button = new JButton("Bonus Game");
+        }
+    
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
         
         button.addActionListener(e -> {
             // Retrieve the username from the text field
             String username = usernameField.getText();
-            Main.openGameWindow(this, menuFrame, username); //window will be opened with username
+            if (type == "classic") {
+            	Main.openGameWindow(this, menuFrame, username);
+            	} else {
+            	Main.openBonusWindow(this, menuFrame, username);
+            }
         });
 
         return button;
