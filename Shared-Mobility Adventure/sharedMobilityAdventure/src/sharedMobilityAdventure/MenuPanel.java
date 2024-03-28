@@ -37,9 +37,9 @@ public class MenuPanel extends JPanel {
         
         JButton button;
         if (type == "classic") {
-        	button = new JButton("Classic");
+        	button = new JButton("Classic Game");
         } else {
-        	button = new JButton("Bonus Game");
+        	button = new JButton("Random Game");
         }
     
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
