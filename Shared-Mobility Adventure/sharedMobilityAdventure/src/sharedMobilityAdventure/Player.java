@@ -1,6 +1,7 @@
 package sharedMobilityAdventure;
 
 import java.awt.Graphics;
+import sharedMobilityAdventure.Gem;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;

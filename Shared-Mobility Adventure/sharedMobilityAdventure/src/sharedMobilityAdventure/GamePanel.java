@@ -25,10 +25,10 @@ public class GamePanel extends JPanel implements KeyListener {
     int[][] mapTileNum = new int[columns][rows];
     public boolean[][] collisionMap = new boolean[columns][rows]; // If true, then tile is a collision tile.
     Gem gem;
+    Player player = new Player(this);
     
     BufferedImage[] imageArray = new BufferedImage[100];   //increased size for more tile types
     String username;
-    Player player = new Player(this);
        
     public GamePanel(String username) { //now inheriting username
         setPreferredSize(new Dimension(totalWidth, totalHeight));
@@ -55,14 +55,13 @@ public class GamePanel extends JPanel implements KeyListener {
         } catch (IOException ex) {
             ex.printStackTrace();
         }      
-        // Initialize gem and call setRandomPosition()
+        // Initialise gem 
         loadMap();
         gem = new Gem(this);
         this.setFocusable(true);
         this.requestFocus(); // Ensure the panel has focus to receive key events
         this.addKeyListener(this);
     }
-
     public void loadMap() {
     	
         File file = new File("maps/map1.txt");

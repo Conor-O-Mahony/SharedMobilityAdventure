@@ -58,9 +58,9 @@ public class Gem {
     if (image != null) {
         g.drawImage(image, x, y, width, height, null); 
     }
-
 }
 }
+// generate some sound for gem
 // Getter and setter methods for x, y, width, height
 
 // collecting score
