@@ -65,7 +65,6 @@ public class Player {
                 } catch (IOException e3) {
                     e3.printStackTrace();
                 }
-                checkScoreIncrease();
             }
         }
         if (key == KeyEvent.VK_LEFT) {

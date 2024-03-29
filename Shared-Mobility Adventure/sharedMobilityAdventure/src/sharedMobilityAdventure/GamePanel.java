@@ -88,6 +88,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println();
         }
     }
     
