@@ -16,14 +16,16 @@ public class Player {
     BufferedImage image; // image of the player
     int speed = 16; // speed of the player
     GamePanel gamePanel; // Reference to the GamePanel
+    Gem gem;
     private int score;
     
-    public Player(GamePanel gamePanel) {
+    public Player(GamePanel gamePanel, Gem gem) {
         x = 0;
         y = 0;        
         width = 16;
         height = 16;
         this.gamePanel = gamePanel; // Store the reference to the GamePanel
+        this.gem = gem;
         try {
             image = ImageIO.read(new File("images/characters/up.png"));
         } catch (IOException e) {
@@ -65,6 +67,7 @@ public class Player {
                 } catch (IOException e3) {
                     e3.printStackTrace();
                 }
+                checkScoreIncrease();
             }
         }
         if (key == KeyEvent.VK_LEFT) {
@@ -93,7 +96,7 @@ public class Player {
     
     
     private void checkScoreIncrease() {
-        if (x == 16 && y == 0) {
+        if (x == gem.x && y == gem.y) {
             score++; // Increase the score
             System.out.println(score);
         }
