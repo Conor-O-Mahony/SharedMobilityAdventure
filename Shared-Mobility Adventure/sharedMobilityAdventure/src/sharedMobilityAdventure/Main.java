@@ -9,7 +9,7 @@ public class Main {
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
       // Instantiate player object
-      Player player = new Player(null,null);
+      Player player = new Player(null);
       
       MenuPanel menuPanel = new MenuPanel(menuFrame, player);
       menuFrame.add(menuPanel);

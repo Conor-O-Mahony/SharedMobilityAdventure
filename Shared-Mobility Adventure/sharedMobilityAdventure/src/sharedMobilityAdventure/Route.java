@@ -11,7 +11,8 @@ public class Route {
 	public Route(TransportTypes T, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
 		routeTiles = new Tile[routeSize];
 		routeTiles[0] = boardTiles[startingRow][startingCol]; //Add starting Tile to Route
-		int boardSize = boardTiles[0].length;
+		int maxX = boardTiles[0].length;
+		int maxY = boardTiles.length;
 		
 		int x = startingCol;
 		int y = startingRow;
@@ -20,13 +21,13 @@ public class Route {
 			boolean chosen = false;
 			while (chosen!=true) {
 				int n = Board.getRandomNumber(0,4);
-				if (n==0 && x<boardSize-1) {
+				if (n==0 && x<maxX-1) {
 					x+=1;
 					chosen=true;
 				} else if (n==1 && x>1) {
 					x-=1;
 					chosen=true;
-				} else if (n==2 && y<boardSize-1) {
+				} else if (n==2 && y<maxY-1) {
 					y+=1;
 					chosen=true;
 				} else if (n==3 && y>1) {
@@ -72,6 +73,14 @@ public class Route {
 		return type;
 	}
 	
+	public int getRouteDistance() {
+		//if routeTiles exists return the length (distance) of the route
+		if (routeTiles != null) {
+			return routeTiles.length;
+		} else {
+			return 0; // If routeTiles is null, return 0 as the distance
+		}
+	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

@@ -25,10 +25,10 @@ public class GamePanel extends JPanel implements KeyListener {
     int[][] mapTileNum = new int[columns][rows];
     public boolean[][] collisionMap = new boolean[columns][rows]; // If true, then tile is a collision tile.
     Gem gem;
-    Player player;
-    
+    Player player = new Player(this);
     
     BufferedImage[] imageArray = new BufferedImage[100];   //increased size for more tile types
+    BufferedImage sidebarImage;
     String username;
        
     public GamePanel(String username) { //now inheriting username
@@ -53,13 +53,14 @@ public class GamePanel extends JPanel implements KeyListener {
         	imageArray[12] = ImageIO.read(new File("images/tiles/dialogueBottom.png"));
         	imageArray[13] = ImageIO.read(new File("images/tiles/dialogueBottomR.png"));
         	imageArray[14] = ImageIO.read(new File("images/tiles/dialogueCentre.png"));
+        	
+        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }      
         // Initialise gem 
         loadMap();
         gem = new Gem(this);
-        player = new Player(this, gem);
         this.setFocusable(true);
         this.requestFocus(); // Ensure the panel has focus to receive key events
         this.addKeyListener(this);
@@ -89,7 +90,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println();
         }
     }
     
@@ -113,21 +113,28 @@ public class GamePanel extends JPanel implements KeyListener {
         gem.draw(g);
         player.draw(g);
         
+        g.drawImage(sidebarImage, 800, 0, 224, totalHeight, null);
+        
         // Draw the username
         String username = getUsername();
-        g.setColor(Color.RED); // Set color to black
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        g.drawString("Player: " + username, 805, 20);
+        g.setColor(Color.BLACK); // Set color to black
+        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        g.drawString(username, 950, 50);
         
         //Draw the timer (NEEDS FUNCTIONALITY)
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        g.drawString("Time: " , 805, 120);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        g.drawString("0000000000" , 900, 130);
+        
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        g.drawString("10:00" , 950, 205);
+        
         
         //Draw the coin count (NEEDS FUNCTIONALITY)
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        g.drawString("Carbon Coins: ", 805, 220);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        g.drawString("1,000", 950, 275);
     }
 
     

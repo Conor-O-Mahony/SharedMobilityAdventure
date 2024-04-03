@@ -7,18 +7,18 @@ public class Board { //Holds the Tile's
 	Tile[][] tiles;
 	
 	private int route_probability = 20; //i.e. 1 in 5 chance of a Route being create at any Tile
-	private static int min_route_size = 2;
-	private static int max_route_size = 5;
+	private static int min_route_size = 5;
+	private static int max_route_size = 10;
 	
-	public Board(int size) { //Creates a blank Board
-		tiles = new Tile[size][size];
-		for (int row = 0; row < size; row++) {
-			tiles[row] = new Tile[size];
-			for (int col = 0; col < size; col++) {
+	public Board(int rows, int cols) { //Creates a blank Board
+		tiles = new Tile[rows][cols];
+		for (int row = 0; row < rows; row++) {
+			tiles[row] = new Tile[cols];
+			for (int col = 0; col < cols; col++) {
 				tiles[row][col] = new Tile(col, row);
 			}
 		}
-		assignRoutes(size); //Assign Routes to the blank Board
+		assignRoutes(rows, cols); //Assign Routes to the blank Board
 	}
 	
 	public Tile[][] getTiles() {
@@ -38,9 +38,9 @@ public class Board { //Holds the Tile's
 		return chosen_transport_type;
 	}
 	
-	private void assignRoutes(int size) {
-		for (int row = 0; row<size; row++) {
-			for (int col = 0; col<size; col++) { //Iterate through Tile by Tile.
+	private void assignRoutes(int rows, int cols) {
+		for (int row = 0; row<rows; row++) {
+			for (int col = 0; col<cols; col++) { //Iterate through Tile by Tile.
 				//Calculate a random number
 				int random = Board.getRandomNumber(1,route_probability+1);
 				if (random == 5) { //Assign a route, starting at this Tile.
@@ -66,14 +66,15 @@ public class Board { //Holds the Tile's
 
 	public static void main(String[] args) {
 		//Test board creation
-		int test_size = 10;
-		Board test_board = new Board(test_size);
+		int test_rows = 10;
+		int test_cols = 20;
+		Board test_board = new Board(test_rows,test_cols);
 		int no_of_stops = 0;
 		int no_bikes = 0;
 		int no_buses = 0;
 		int no_trains = 0;
-		for (int row = 0; row<test_size; row++) {
-			for (int col = 0; col<test_size; col++) {
+		for (int row = 0; row<test_rows; row++) {
+			for (int col = 0; col<test_cols; col++) {
 				System.out.println("("+test_board.tiles[row][col].getX()+","+test_board.tiles[row][col].getY()+")");
 				Route[] routes = test_board.tiles[row][col].getRoutes();
 				int no_of_routes = test_board.tiles[row][col].getNumberOfRoutes();
@@ -91,8 +92,8 @@ public class Board { //Holds the Tile's
 				}
 			}
 		}
-		System.out.println("Stats: Boardsize=10*10, Total No. of Stops="+no_of_stops+" => "+(no_of_stops/2)+" transport routes.");
-		System.out.println("Number of bike stands: "+no_bikes+", bus stops: "+no_buses+" and train stations: "+no_trains);
+		System.out.println("Stats: Boardsize="+test_rows+"*"+test_cols+", Total No. of Stops="+no_of_stops+" => "+(no_of_stops/2)+" transport routes.");
+		System.out.println("Number of bike routes: "+no_bikes/2+", bus routes: "+no_buses/2+" and train routes: "+no_trains/2);
 	}
 
 }
