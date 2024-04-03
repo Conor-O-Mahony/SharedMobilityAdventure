@@ -1,6 +1,8 @@
 package sharedMobilityAdventure;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,20 +14,22 @@ import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements KeyListener {
 
-    int tile = 16*2; // initial tile length / width (16 * 16 pixels)
-    int columns = 32;
-    int rows = 18;
+    int tile = 16; // initial tile length / width (16 * 16 pixels)
+    int columns = 64;
+    int rows = 36;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
     int arraySize = 10;
     int[][] mapTileNum = new int[columns][rows];
+    public boolean[][] collisionMap = new boolean[columns][rows]; // If true, then tile is a collision tile.
+    Gem gem;
+    Player player = new Player(this);
     
     BufferedImage[] imageArray = new BufferedImage[100];   //increased size for more tile types
     String username;
-    Player player = new Player();
-         
+       
     public GamePanel(String username) { //now inheriting username
         setPreferredSize(new Dimension(totalWidth, totalHeight));
 
@@ -50,10 +54,14 @@ public class GamePanel extends JPanel {
         	imageArray[14] = ImageIO.read(new File("images/tiles/dialogueCentre.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
-        }        
-        loadMap();      
+        }      
+        // Initialise gem 
+        loadMap();
+        gem = new Gem(this);
+        this.setFocusable(true);
+        this.requestFocus(); // Ensure the panel has focus to receive key events
+        this.addKeyListener(this);
     }
-
     public void loadMap() {
     	
         File file = new File("maps/map1.txt");
@@ -70,6 +78,9 @@ public class GamePanel extends JPanel {
                 for (int col = 0; col < columns && col < numbers.length; col++) {
                     int num = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = num;
+                    if (num == 1) {
+                    	collisionMap[col][row] = true;
+                    }
                 }
                 row++;
             }
@@ -96,6 +107,7 @@ public class GamePanel extends JPanel {
             	g.drawImage(imageArray[num], x, y, tile, tile, null);
             }
         }
+        gem.draw(g);
         player.draw(g);
         
         // Draw the username
@@ -116,6 +128,25 @@ public class GamePanel extends JPanel {
     }
 
     
-}
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Not needed for this implementation
+    }
 
+    @Override
+    public void keyPressed(KeyEvent e) {
+        player.keyPressed(e); // Call the keyPressed method in the Player class
+        repaint(); // Redraw the panel after key press
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Not needed for this implementation
+    }
+    
+    
+    
+    
+    
+}
 
