@@ -32,6 +32,7 @@ public class Player {
             e.printStackTrace();
         }
         score = 0;
+        System.out.println("hello");
     }
 
     public void keyPressed(KeyEvent e) {
