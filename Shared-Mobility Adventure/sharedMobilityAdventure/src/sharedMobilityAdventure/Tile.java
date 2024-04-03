@@ -7,15 +7,12 @@ public class Tile {
 	private Point coords;
 	
 	private Route[] tileRoutes;
-	private TransportTypes[] routeTypes;
 	private int max_stops_per_tile = 2;
-	//private int[] popups; // Change to popup class once created
 	private boolean hasGem = false; //Change to Gem class once Gem class created;
 	
 	public Tile(int x, int y) {
 		coords = new Point(x,y);
 		tileRoutes = new Route[max_stops_per_tile]; //Say the max amount of stops on a tile is 2 for now
-		routeTypes = new TransportTypes[max_stops_per_tile];
 	}
 	
 	public int getX() {
@@ -53,8 +50,6 @@ public class Tile {
 		
 		if (counter < max_stops_per_tile) {
 			tileRoutes[counter] = stop;
-			TransportTypes stoptype = stop.getTransportType();
-			routeTypes[counter] = stoptype;
 		} else {
 			System.out.println("Error: too many stops on this tile.");
 		}
@@ -72,10 +67,6 @@ public class Tile {
 	
 	public Route[] getRoutes() {
 		return tileRoutes;
-	}
-	
-	public TransportTypes[] getRouteTypes() {
-		return routeTypes;
 	}
 
 	public static void main(String[] args) {
