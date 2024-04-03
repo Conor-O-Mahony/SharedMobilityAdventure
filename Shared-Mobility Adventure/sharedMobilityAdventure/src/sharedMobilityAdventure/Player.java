@@ -24,6 +24,7 @@ public class Player {
         y = 0;        
         width = 16;
         height = 16;
+        speed = 16;
         this.gamePanel = gamePanel; // Store the reference to the GamePanel
         this.gem = gem;
         try {

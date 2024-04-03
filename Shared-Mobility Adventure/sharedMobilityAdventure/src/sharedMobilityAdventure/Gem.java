@@ -8,8 +8,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Gem {
-    int x; // x-coordinate
-    int y; // y-coordinate
+    public int x; // x-coordinate
+    public int y; // y-coordinate
     final int width; // width of the gem
     final int height; // height of the gem
     BufferedImage image; // image of the gem
