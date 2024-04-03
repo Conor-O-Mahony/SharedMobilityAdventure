@@ -16,7 +16,8 @@ public class Main {
  
       menuFrame.pack();
       menuFrame.setLocationRelativeTo(null);
-      menuFrame.setVisible(true); 
+      menuFrame.setVisible(true);
+      System.out.println("hello");
       
   }
 
