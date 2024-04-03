@@ -73,14 +73,6 @@ public class Route {
 		return type;
 	}
 	
-	public int getRouteDistance() {
-		//if routeTiles exists return the length (distance) of the route
-		if (routeTiles != null) {
-			return routeTiles.length;
-		} else {
-			return 0; // If routeTiles is null, return 0 as the distance
-		}
-	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

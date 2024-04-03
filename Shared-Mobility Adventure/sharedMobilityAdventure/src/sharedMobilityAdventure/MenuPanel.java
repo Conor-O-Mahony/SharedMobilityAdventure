@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16; // initial tile length / width (16 * 16 pixels)
-    int columns = 64;
-    int rows = 36;
+    int tile = 16*2; // initial tile length / width (16 * 16 pixels)
+    int columns = 32;
+    int rows = 18;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
     
@@ -24,22 +24,34 @@ public class MenuPanel extends JPanel {
         usernameField.setBounds(100, 50, 200, 30);
         add(usernameField);
         
-        add(createButton(menuFrame));
+        add(createButton(menuFrame, 10, "classic"));
+        add(createButton(menuFrame, 18, "random"));
 
     }
     
-    private JButton createButton(JFrame menuFrame) {
-        int buttonX = 32*14; // X-coordinate of the button
+    private JButton createButton(JFrame menuFrame, int X, String type) {
+    	int buttonX = 32*X; // X-coordinate of the button    14 and 18
         int buttonY = 32*8; // Y-coordinate of the button
         int buttonWidth = 32 * 4; // Button width
         int buttonHeight = 32 * 2; // Button height
-        JButton button = new JButton("Start Game");
+        
+        JButton button;
+        if (type == "classic") {
+        	button = new JButton("Classic Game");
+        } else {
+        	button = new JButton("Random Game");
+        }
+    
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
         
         button.addActionListener(e -> {
             // Retrieve the username from the text field
             String username = usernameField.getText();
-            Main.openGameWindow(this, menuFrame, username); //window will be opened with username
+            if (type == "classic") {
+            	Main.openGameWindow(this, menuFrame, username);
+            	} else {
+            	Main.openBonusWindow(this, menuFrame, username);
+            }
         });
 
         return button;
