@@ -6,6 +6,7 @@ public class Route {
 	private TransportTypes transport;
 	private Point start, end;
 	private int manhattan;
+	TransportTypes type;
 	
 	public Route(TransportTypes T, int startX, int startY, int endX, int endY) {
 		if (CheckUniqueness(startX,startY)==0 || CheckUniqueness(endX,endY)==0) {
@@ -28,6 +29,19 @@ public class Route {
 	private void GenerateRoute() {
 		
 	}
+
+	public TransportTypes getTransportType() {
+		return type;
+	}
+	public int getRouteDistance() {
+		//if routeTiles exists return the length (distance) of the route
+		if (routeTiles != null) {
+			return routeTiles.length;
+		} else {
+			return 0; // If routeTiles is null, return 0 as the distance
+		}
+	}
+
 	
 	private void CalculateManhattan() {
 		manhattan = Math.abs(start.x - end.x) + Math.abs(start.y - end.y);
