@@ -9,11 +9,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.Arrays;
 
-public class MainGamePanel extends JPanel implements KeyListener {
+public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
     private Gem gem;
 	private Player player;
+	private PopUp popup;
 	
     int scale = 4;
     int tile = 16 * scale;
@@ -31,7 +32,7 @@ public class MainGamePanel extends JPanel implements KeyListener {
 	
 	BufferedImage sidebarImage;
 		
-	public MainGamePanel(String username){
+	public GamePanel(String username){
 		
 		board = new Board(rows, columns);
 		
@@ -48,13 +49,14 @@ public class MainGamePanel extends JPanel implements KeyListener {
         user = username;
         
         gem = new Gem();
-        player = new Player(gem);
+        popup = new PopUp();
+        player = new Player(gem, popup);
 
+        
         this.setFocusable(true);
         requestFocus();
         addKeyListener(this);
-        
-    
+            
     }
 	
 	private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
@@ -101,6 +103,7 @@ public class MainGamePanel extends JPanel implements KeyListener {
         }
         
         gem.draw(g);
+        popup.draw(g);
         player.draw(g);
         
         try {        	
@@ -125,8 +128,7 @@ public class MainGamePanel extends JPanel implements KeyListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
         g.drawString("10:00" , 950, 205);
-        
-        
+                
         //Draw the coin count (NEEDS FUNCTIONALITY)
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));

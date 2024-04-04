@@ -14,20 +14,19 @@ public class Player {
     int height; // height of the player
     int speed = 16; // speed of the player
     BufferedImage image; // image of the player
-//    MainGamePanel mainGamePanel; // Reference to the MainGamePanel
     Gem gem; // Reference to the Gem
+    PopUp popup;
     int score;
     public boolean scoreUpdated = false;
-
-//    public Player(MainGamePanel mainGamePanel, Gem gem) {    
-    public Player(Gem gem) {
+ 
+    public Player(Gem gem, PopUp popup) {
         x = 8*4;
         y = 8*4;        
         width = 16;
         height = 16;
         speed = 16*4;
-//        this.mainGamePanel = mainGamePanel; // Store the reference to the GamePanel
         this.gem = gem;
+        this.popup = popup;
         try {
             image = ImageIO.read(new File("images/characters/up.png"));
         } catch (IOException e) {
@@ -47,6 +46,7 @@ public class Player {
                 e1.printStackTrace();
             }
             checkScoreIncrease();
+            checkPopUp();
         }
         
         if (key == KeyEvent.VK_RIGHT) {
@@ -57,6 +57,7 @@ public class Player {
                 e2.printStackTrace();
             }
             checkScoreIncrease();
+            checkPopUp();
         }
         
         if (key == KeyEvent.VK_DOWN) {
@@ -67,6 +68,7 @@ public class Player {
                 e3.printStackTrace();
             }
             checkScoreIncrease();
+            checkPopUp();
 
         }
         if (key == KeyEvent.VK_LEFT) {
@@ -77,6 +79,7 @@ public class Player {
                     e4.printStackTrace();
                 }
                 checkScoreIncrease();
+                checkPopUp();
         }
     }   
     
@@ -94,5 +97,12 @@ public class Player {
             System.out.println(score);
         }
         return score;
-    }    
+    }  
+    
+    public void checkPopUp() {
+        if (x == popup.popUpX && y == popup.popUpY) {
+            System.out.println("Pop Up");
+        }
+    } 
+      
 }
