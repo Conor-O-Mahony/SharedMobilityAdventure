@@ -30,7 +30,6 @@ public class BonusPanel extends JPanel {
 	private Board bonus_board;
 	
 	private BufferedImage[] roadtileArray;
-	private BufferedImage[] dialogTileArray;
 	
 	public BonusPanel(String username){
 		
@@ -39,10 +38,6 @@ public class BonusPanel extends JPanel {
 		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
 		loadTiles(roadTileNames,roadtileArray);
-		
-		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
-		dialogTileArray = new BufferedImage[dialogTileNames.length];
-		loadTiles(dialogTileNames,dialogTileArray);
 		
 		setPreferredSize(new Dimension(gameWidth,gameHeight));
 
@@ -68,7 +63,7 @@ public class BonusPanel extends JPanel {
         
         for (int row = 0; row<default_board_size; row++) {
 			for (int col = 0; col<default_board_size; col++) {		
-				TransportTypes[] routeTypes = bonus_board.tiles[row][col].getRouteTypes();
+				TransportTypes[] routeTypes = bonus_board.tiles[row][col].getRouteTypes(); //PROBLEM, WHAT IF 2 BUS STOPS ON 1 TILE??
 				
 				boolean bus=Arrays.stream(routeTypes).anyMatch(TransportTypes.BUS::equals);
 				boolean train=Arrays.stream(routeTypes).anyMatch(TransportTypes.TRAIN::equals);
@@ -77,13 +72,15 @@ public class BonusPanel extends JPanel {
 				g.drawImage(roadtileArray[0], col*gameTiles, row*gameTiles, gameTiles, gameTiles, null);
 				
 				if (bike==true) {
-					g.drawImage(roadtileArray[1], col*gameTiles, row*gameTiles, gameTiles, gameTiles, null);
+					g.drawImage(roadtileArray[1], col*gameTiles, row*gameTiles, gameTiles*2/3, gameTiles*2/3, null);
 				}
 				if (bus==true) {
-					g.drawImage(roadtileArray[2], col*gameTiles, row*gameTiles, gameTiles, gameTiles, null);
+					int extra = (int) Math.round(0.3*gameTiles);
+					g.drawImage(roadtileArray[2], col*gameTiles + extra, row*gameTiles, gameTiles*2/3, gameTiles*2/3, null);
 				}
 				if (train==true) {
-					g.drawImage(roadtileArray[3], col*gameTiles, row*gameTiles, gameTiles, gameTiles, null);
+					int extra = (int) Math.round(0.3*gameTiles);
+					g.drawImage(roadtileArray[3], col*gameTiles + extra , row*gameTiles - extra, gameTiles*2/3, gameTiles*2/3, null);
 				}
 			}
         }

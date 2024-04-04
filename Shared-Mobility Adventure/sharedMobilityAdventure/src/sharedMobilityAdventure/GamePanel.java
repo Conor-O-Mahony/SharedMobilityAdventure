@@ -4,17 +4,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+//import java.io.InputStream;
+//import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
 public class GamePanel extends JPanel {
 
-    int tile = 16*2; // initial tile length / width (16 * 16 pixels)
+	private static final long serialVersionUID = 1L;
+	int tile = 16*2; // initial tile length / width (16 * 16 pixels)
     int columns = 32;
     int rows = 18;
     int totalWidth = columns * tile; // 640 pixels in length
