@@ -14,14 +14,11 @@ public class Gem {
     final int width; // width of gem
     final int height; // height of gem
     BufferedImage image; // image of gem
-//    MainGamePanel maingamePanel; // Reference to the MainGamePanel
     int score; // Score to keep track of gem
 
-//    public Gem(MainGamePanel mainGamePanel) {    
     public Gem() {
         width = 16;
         height = 16;
-//        this.maingamePanel = mainGamePanel; // Store the reference to the MainGamePanel
         try {
             image = ImageIO.read(new File("images/gems/gem.png"));
         } catch (IOException e) {
