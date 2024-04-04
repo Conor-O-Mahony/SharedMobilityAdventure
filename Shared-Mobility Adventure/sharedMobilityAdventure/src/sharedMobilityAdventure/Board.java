@@ -6,9 +6,12 @@ public class Board { //Holds the Tile's
 	
 	Tile[][] tiles;
 	
-	private int route_probability = 20; //i.e. 1 in 5 chance of a Route being create at any Tile
+	//private int route_probability = 20; //i.e. 1 in 5 chance of a Route being create at any Tile
 	private static int min_route_size = 5;
 	private static int max_route_size = 10;
+	private int max_bus = 3;
+	private int max_train = 3;
+	private int max_bike = 3;
 	
 	public Board(int rows, int cols) { // Creates a blank Board
 		tiles = new Tile[rows][cols];
@@ -18,7 +21,7 @@ public class Board { //Holds the Tile's
 				tiles[row][col] = new Tile(col, row);
 			}
 		}
-		assignRoutes(rows, cols); // Assign Routes to the blank Board
+		assignRoutesv2(rows, cols); // Assign Routes to the blank Board
 	}
 	
 	public Tile[][] getTiles() {
@@ -29,6 +32,7 @@ public class Board { //Holds the Tile's
 	    return (int) ((Math.random() * (max - min)) + min);
 	}
 	
+	/*
 	private static TransportTypes randomTransportType() {
 		//First choose a TransportType to add.
 		//For now, say we have an equal chance of choosing any transport type.
@@ -54,6 +58,30 @@ public class Board { //Holds the Tile's
 							int finalCol = new_route.getFinalCol();
 							tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
 						}
+					}
+				}
+			}
+		}
+	}
+	*/
+	
+	private void assignRoutesv2(int rows, int cols) {
+		int[] no_stations = {0,0,0};
+		int[] max_stations = {max_bus,max_train,max_bike};
+		TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};
+		for (int i=0; i<no_stations.length; i++) {
+			while (no_stations[i]<max_stations[i]) {
+				int random_col = Board.getRandomNumber(0, cols);
+				int random_row = Board.getRandomNumber(0, rows);
+				if (tiles[random_row][random_col].RouteAddable()) {
+					int route_size = Board.getRandomNumber(Board.min_route_size,Board.max_route_size);
+					Route new_route = new Route(transport_types[i],tiles,random_row,random_col,route_size);
+					if (new_route.getTiles() != null) {
+						tiles[random_row][random_col].asignRouteToTile(new_route); //Assign Route to starting Tile
+						int finalRow = new_route.getFinalRow();
+						int finalCol = new_route.getFinalCol();
+						tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
+						no_stations[i]+=1;
 					}
 				}
 			}

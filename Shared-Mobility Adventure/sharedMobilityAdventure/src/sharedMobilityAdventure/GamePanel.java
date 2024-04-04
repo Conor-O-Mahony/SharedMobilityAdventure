@@ -16,13 +16,13 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Player player;
 	private PopUp popup;
 	
-    int scale = 4;
-    int tile = 16 * scale;
-    int columns = 64 / scale;
-    int rows = 36 / scale;
-    int totalWidth = columns * tile;
-    int totalHeight = rows * tile;
-    int sidepanelColumns = 3;
+    private int scale = 4;
+    private int tile = 16 * scale;
+    private int columns = 64 / scale;
+    private int rows = 36 / scale;
+    private int totalWidth = columns * tile;
+    private int totalHeight = rows * tile;
+    private int sidepanelColumns = 3;
 		
 	private String user;
 	private Board board;
@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	private BufferedImage[] roadtileArray;
 	private BufferedImage[] dialogTileArray;
 	
-	BufferedImage sidebarImage;
+	private BufferedImage sidebarImage;
 		
 	public GamePanel(String username){
 		
@@ -52,15 +52,12 @@ public class GamePanel extends JPanel implements KeyListener {
         popup = new PopUp();
         player = new Player(gem, popup);
 
-        
         this.setFocusable(true);
         requestFocus();
-        addKeyListener(this);
-            
+        addKeyListener(this);            
     }
 	
 	private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
-		
 		for (int i=0; i<imageNames.length; i++) {
 			String source = String.format("images/tiles/%s.png", imageNames[i]);
 		
@@ -83,7 +80,7 @@ public class GamePanel extends JPanel implements KeyListener {
 				
 				boolean bus=Arrays.stream(routeTypes).anyMatch(TransportTypes.BUS::equals);
 				boolean train=Arrays.stream(routeTypes).anyMatch(TransportTypes.TRAIN::equals);
-				boolean bike=Arrays.stream(routeTypes).anyMatch(TransportTypes.BIKE::equals);
+				boolean bike=Arrays.stream(routeTypes).anyMatch(TransportTypes.BICYCLE::equals);
 				
 				g.drawImage(roadtileArray[0], col*tile, row*tile, tile, tile, null);
 				
@@ -91,13 +88,15 @@ public class GamePanel extends JPanel implements KeyListener {
 	            g.drawRect(col * tile, row * tile, tile, tile);
 				
 				if (bike==true) {
-					g.drawImage(roadtileArray[1], col*tile, row*tile, tile, tile, null);
+					g.drawImage(roadtileArray[1], col*tile, row*tile, tile*2/3, tile*2/3, null);
 				}
 				if (bus==true) {
-					g.drawImage(roadtileArray[2], col*tile, row*tile, tile, tile, null);
+					int extra = (int) Math.round(0.3*tile);
+					g.drawImage(roadtileArray[2], col*tile + extra, row*tile, tile*2/3, tile*2/3, null);
 				}
 				if (train==true) {
-					g.drawImage(roadtileArray[3], col*tile, row*tile, tile, tile, null);
+					int extra = (int) Math.round(0.3*tile);
+					g.drawImage(roadtileArray[3], col*tile + extra, row*tile - extra, tile*2/3, tile*2/3, null);
 				}
 			}
         }
