@@ -24,7 +24,7 @@ public class Main {
       gameFrame.setResizable(false);
       gameFrame.setTitle("Shared-Mobility Adventure");
 
-      MainGamePanel gamePanel = new MainGamePanel(username);
+      GamePanel gamePanel = new GamePanel(username);
       gameFrame.add(gamePanel);
 
       gameFrame.pack();
@@ -33,24 +33,5 @@ public class Main {
     	
       menuFrame.dispose();
   }
-  
-
-//  public static void openGameWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {  	
-//	  	
-//	  JFrame gameFrame = new JFrame();
-//      gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      gameFrame.setResizable(false);
-//      gameFrame.setTitle("Shared-Mobility Adventure");
-//
-//      GamePanel gamePanel = new GamePanel(username);
-//      gameFrame.add(gamePanel);
-//
-//      gameFrame.pack();
-//      gameFrame.setLocationRelativeTo(null);
-//      gameFrame.setVisible(true);
-//    	
-//      menuFrame.dispose();
-//      
-//  }
   
 }
