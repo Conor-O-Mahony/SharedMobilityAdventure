@@ -32,6 +32,7 @@ public class Main {
       gameFrame.setVisible(true);
     	
       menuFrame.dispose();
+      
   }
   
 }
