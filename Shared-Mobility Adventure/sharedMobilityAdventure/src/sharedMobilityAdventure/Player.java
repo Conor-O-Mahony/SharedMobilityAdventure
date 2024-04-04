@@ -14,18 +14,19 @@ public class Player {
     int height; // height of the player
     int speed = 16; // speed of the player
     BufferedImage image; // image of the player
-    MainGamePanel mainGamePanel; // Reference to the MainGamePanel
+//    MainGamePanel mainGamePanel; // Reference to the MainGamePanel
     Gem gem; // Reference to the Gem
     int score;
     public boolean scoreUpdated = false;
-    
-    public Player(MainGamePanel mainGamePanel, Gem gem) {
+
+//    public Player(MainGamePanel mainGamePanel, Gem gem) {    
+    public Player(Gem gem) {
         x = 8*4;
         y = 8*4;        
         width = 16;
         height = 16;
         speed = 16*4;
-        this.mainGamePanel = mainGamePanel; // Store the reference to the GamePanel
+//        this.mainGamePanel = mainGamePanel; // Store the reference to the GamePanel
         this.gem = gem;
         try {
             image = ImageIO.read(new File("images/characters/up.png"));

@@ -47,8 +47,8 @@ public class MainGamePanel extends JPanel implements KeyListener {
 
         user = username;
         
-        gem = new Gem(this);
-        player = new Player(this, gem);
+        gem = new Gem();
+        player = new Player(gem);
 
         this.setFocusable(true);
         requestFocus();
