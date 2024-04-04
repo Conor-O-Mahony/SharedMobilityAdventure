@@ -10,7 +10,7 @@ public class Board { //Holds the Tile's
 	private static int min_route_size = 5;
 	private static int max_route_size = 10;
 	
-	public Board(int rows, int cols) { //Creates a blank Board
+	public Board(int rows, int cols) { // Creates a blank Board
 		tiles = new Tile[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			tiles[row] = new Tile[cols];
@@ -18,7 +18,7 @@ public class Board { //Holds the Tile's
 				tiles[row][col] = new Tile(col, row);
 			}
 		}
-		assignRoutes(rows, cols); //Assign Routes to the blank Board
+		assignRoutes(rows, cols); // Assign Routes to the blank Board
 	}
 	
 	public Tile[][] getTiles() {

@@ -8,44 +8,23 @@ public class Main {
       menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
-      // Instantiate player object
-      Player player = new Player(null, null);
       
-      MenuPanel menuPanel = new MenuPanel(menuFrame, player);
+      MenuPanel menuPanel = new MenuPanel(menuFrame);
       menuFrame.add(menuPanel);
  
       menuFrame.pack();
       menuFrame.setLocationRelativeTo(null);
       menuFrame.setVisible(true);
-      System.out.println("hello");
-      
-  }
-
-  public static void openGameWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {  	
-  	
-	  JFrame gameFrame = new JFrame();
-      gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      gameFrame.setResizable(false);
-      gameFrame.setTitle("Shared-Mobility Adventure");
-
-      GamePanel gamePanel = new GamePanel(username); //passing username
-      gameFrame.add(gamePanel);
-
-      gameFrame.pack();
-      gameFrame.setLocationRelativeTo(null);
-      gameFrame.setVisible(true);
-    	
-      menuFrame.dispose();
       
   }
   
-  public static void openBonusWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {
+  public static void openGameWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {
 	  JFrame gameFrame = new JFrame();
       gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       gameFrame.setResizable(false);
       gameFrame.setTitle("Shared-Mobility Adventure");
 
-      BonusPanel gamePanel = new BonusPanel(username);
+      MainGamePanel gamePanel = new MainGamePanel(username);
       gameFrame.add(gamePanel);
 
       gameFrame.pack();
@@ -54,4 +33,24 @@ public class Main {
     	
       menuFrame.dispose();
   }
+  
+
+//  public static void openGameWindow(MenuPanel menuPanel, JFrame menuFrame, String username) {  	
+//	  	
+//	  JFrame gameFrame = new JFrame();
+//      gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      gameFrame.setResizable(false);
+//      gameFrame.setTitle("Shared-Mobility Adventure");
+//
+//      GamePanel gamePanel = new GamePanel(username);
+//      gameFrame.add(gamePanel);
+//
+//      gameFrame.pack();
+//      gameFrame.setLocationRelativeTo(null);
+//      gameFrame.setVisible(true);
+//    	
+//      menuFrame.dispose();
+//      
+//  }
+  
 }
