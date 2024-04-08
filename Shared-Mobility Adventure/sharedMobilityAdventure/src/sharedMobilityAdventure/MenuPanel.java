@@ -23,8 +23,6 @@ public class MenuPanel extends JPanel {
         add(userName);
         
         add(createButton(menuFrame));
-        
-        System.out.println("hello");
 
     }
     
