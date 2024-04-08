@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 public class EndPanel extends JPanel {
 
@@ -48,6 +49,15 @@ public class EndPanel extends JPanel {
         JButton button = new JButton("Back to Main Panel");
         Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         button.setBounds(bounds);
+
+        button.addActionListener(e -> {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
+            currentFrame.dispose(); // Dispose the current EndPanel frame
+            
+            Main.Game();
+
+
+        });
 
         return button;
     }

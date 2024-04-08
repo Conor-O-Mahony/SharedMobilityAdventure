@@ -15,6 +15,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private Gem gem;
 	private Player player;
 	private PopUp popup;
+	private Board board;
 	
     private int scale = 4;
     private int tile = 16 * scale;
@@ -23,18 +24,35 @@ public class GamePanel extends JPanel implements KeyListener {
     private int totalWidth = columns * tile;
     private int totalHeight = rows * tile;
     private int sidepanelColumns = 3;
-		
-	private String user;
-	private Board board;
-	
+
+    private String username; // Store the username
+    private JFrame gameFrame; // Store the game frame  
+    
+    
 	private BufferedImage[] roadtileArray;
 	private BufferedImage[] dialogTileArray;
 	
 	private BufferedImage sidebarImage;
 		
-	public GamePanel(String username){
+	public GamePanel(JFrame gameFrame, String username){
 		
+        this.gameFrame = gameFrame; // Store the game frame
+        this.username = username; // Store the username
+			
+		setPreferredSize(new Dimension(totalWidth,totalHeight));
+
+        initGame();
+
+        this.setFocusable(true);
+        requestFocus();
+        addKeyListener(this);            
+    }
+	
+    public void initGame() {
 		board = new Board(rows, columns);
+        gem = new Gem();
+        popup = new PopUp();
+        player = new Player(this, gameFrame, username, gem, popup);
 		
 		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
@@ -43,18 +61,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
 		dialogTileArray = new BufferedImage[dialogTileNames.length];
 		loadTiles(dialogTileNames,dialogTileArray);
-		
-		setPreferredSize(new Dimension(totalWidth,totalHeight));
-
-        user = username;
-        
-        gem = new Gem();
-        popup = new PopUp();
-        player = new Player(gem, popup);
-
-        this.setFocusable(true);
-        requestFocus();
-        addKeyListener(this);            
+                
     }
 	
 	private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
@@ -116,7 +123,7 @@ public class GamePanel extends JPanel implements KeyListener {
         // Draw the username
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(user, 950, 50);
+        g.drawString(username, 950, 50);
         
         //Draw the timer (NEEDS FUNCTIONALITY)
         g.setColor(Color.BLACK);
@@ -134,6 +141,13 @@ public class GamePanel extends JPanel implements KeyListener {
         g.drawString("1,000", 950, 275);             
     }
   
+    
+    public void restartGame() {
+        initGame();
+        repaint();
+    }
+    
+ 
     @Override
     public void keyTyped(KeyEvent e) {
         // Not needed
@@ -149,5 +163,9 @@ public class GamePanel extends JPanel implements KeyListener {
     public void keyReleased(KeyEvent e) {
         // Not needed
     }
-        
+    
+    public static void endGame(JFrame gameFrame, String username) {
+        Main.openEndWindow(gameFrame, username);
+    }
+       
 }
