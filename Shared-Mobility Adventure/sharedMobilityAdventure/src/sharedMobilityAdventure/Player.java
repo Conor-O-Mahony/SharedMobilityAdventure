@@ -17,26 +17,33 @@ public class Player {
     BufferedImage image; // image of the player
     Gem gem; // Reference to the Gem
     PopUp popup;
-    EndPanel endPanel;
     int score;
     int playerTime;
     public boolean scoreUpdated = false;
- 
-    public Player(Gem gem, PopUp popup) {
-        x = 8*4;
-        y = 8*4;        
-        width = 16;
-        height = 16;
-        speed = 16*4;
-        this.gem = gem;
+    private JFrame gameFrame; // Reference to the game frame
+    private String username; // Username associated with the game session
+    private GamePanel gamePanel;
+    
+    public Player(GamePanel gamePanel, JFrame gameFrame, String username, Gem gem, PopUp popup) {
+    	this.gamePanel = gamePanel;
+    	this.gameFrame = gameFrame;
+        this.username = username;    	
+    	this.gem = gem;
         this.popup = popup;
-        this.endPanel = endPanel;
+        this.x = 8 * 4;
+        this.y = 8 * 4;
+        this.width = 16;
+        this.height = 16;
+        this.speed = 16 * 4;
+        this.score = 0;
+        this.playerTime = 1000;
+        this.scoreUpdated = false;
+        
         try {
             image = ImageIO.read(new File("images/characters/up.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        playerTime = 200;
     }
 
     public void keyPressed(KeyEvent e) {
@@ -109,24 +116,15 @@ public class Player {
     
     public void checkPopUp() {
         if (x == popup.popUpX && y == popup.popUpY) {
-            System.out.println("Pop Up");
-        }
+//            System.out.println("Pop Up");
+        	gamePanel.restartGame();
+        	}
     } 
 
     public void timer(int movement) {  	
-    	if (playerTime - movement < 0) {
-
-    	      JFrame endFrame = new JFrame();
-    	      endFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	      endFrame.setResizable(false);
-    	      endFrame.setTitle("Shared-Mobility Adventure"); 
-    	      
-    	      EndPanel endPanel = new EndPanel(endFrame);
-    	      endFrame.add(endPanel);
-    	 
-    	      endFrame.pack();
-    	      endFrame.setLocationRelativeTo(null);
-    	      endFrame.setVisible(true);
+    	if ((playerTime - movement) <= 0) {
+    		
+    		Main.openEndWindow(gameFrame, username);
 		
     	}
     	else {
