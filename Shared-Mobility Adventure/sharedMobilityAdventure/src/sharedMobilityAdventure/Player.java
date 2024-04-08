@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
 public class Player {
     int x; // x-coordinate of the player
@@ -16,7 +17,9 @@ public class Player {
     BufferedImage image; // image of the player
     Gem gem; // Reference to the Gem
     PopUp popup;
+    EndPanel endPanel;
     int score;
+    int playerTime;
     public boolean scoreUpdated = false;
  
     public Player(Gem gem, PopUp popup) {
@@ -27,12 +30,13 @@ public class Player {
         speed = 16*4;
         this.gem = gem;
         this.popup = popup;
+        this.endPanel = endPanel;
         try {
             image = ImageIO.read(new File("images/characters/up.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        score = 0;
+        playerTime = 200;
     }
 
     public void keyPressed(KeyEvent e) {
@@ -47,6 +51,7 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
+            timer(10);
         }
         
         if (key == KeyEvent.VK_RIGHT) {
@@ -58,6 +63,7 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
+            timer(10);
         }
         
         if (key == KeyEvent.VK_DOWN) {
@@ -69,17 +75,19 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
+            timer(10);
 
         }
         if (key == KeyEvent.VK_LEFT) {
-                x -= speed;
-                try {
-                    image = ImageIO.read(new File("images/characters/left.png"));
-                } catch (IOException e4) {
-                    e4.printStackTrace();
-                }
-                checkScoreIncrease();
-                checkPopUp();
+            x -= speed;
+            try {
+                image = ImageIO.read(new File("images/characters/left.png"));
+            } catch (IOException e4) {
+                e4.printStackTrace();
+            }
+            checkScoreIncrease();
+            checkPopUp();
+            timer(10);
         }
     }   
     
@@ -104,5 +112,32 @@ public class Player {
             System.out.println("Pop Up");
         }
     } 
-      
+
+    public void timer(int movement) {  	
+    	if (playerTime - movement < 0) {
+
+    	      JFrame endFrame = new JFrame();
+    	      endFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	      endFrame.setResizable(false);
+    	      endFrame.setTitle("Shared-Mobility Adventure"); 
+    	      
+    	      EndPanel endPanel = new EndPanel(endFrame);
+    	      endFrame.add(endPanel);
+    	 
+    	      endFrame.pack();
+    	      endFrame.setLocationRelativeTo(null);
+    	      endFrame.setVisible(true);
+		
+    	}
+    	else {
+    		playerTime -= movement;
+    	}
+    }
+
+    
+    public int getTimer() {  	
+    	return playerTime;
+    }
+    
+       
 }

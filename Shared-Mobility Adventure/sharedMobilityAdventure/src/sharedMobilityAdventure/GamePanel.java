@@ -126,13 +126,12 @@ public class GamePanel extends JPanel implements KeyListener {
         
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("10:00" , 950, 205);
+        g.drawString("" + player.getTimer(), 950, 205);
                 
         //Draw the coin count (NEEDS FUNCTIONALITY)
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1,000", 950, 275);
-             
+        g.drawString("1,000", 950, 275);             
     }
   
     @Override
