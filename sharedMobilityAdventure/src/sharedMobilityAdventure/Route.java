@@ -6,6 +6,8 @@ public class Route {
 	
 	Tile[] routeTiles;
 	
+	int startRow;
+	int startCol;
 	int finalRow;
 	int finalCol;
 	TransportTypes type;
@@ -18,6 +20,9 @@ public class Route {
 		
 		int x = startingCol;
 		int y = startingRow;
+		
+		startRow = y;
+		startCol = x;
 		
 		for (int i=1; i<routeSize; i++) {
 			boolean chosen = false;
@@ -78,6 +83,14 @@ public class Route {
 	
 	public int getFinalCol() {
 		return finalCol;
+	}
+	
+	public int getStartRow() {
+		return startRow;
+	}
+	
+	public int getStartCol() {
+		return startCol;
 	}
 	
 	public TransportTypes getTransportType() {

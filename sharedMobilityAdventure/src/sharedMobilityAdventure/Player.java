@@ -100,6 +100,14 @@ public class Player {
             checkPopUp();
             timer(10);
         }
+        if (key == KeyEvent.VK_1) {
+        	boolean taken = gamePanel.takeTransportRoute(1,x/speed,y/speed);
+        	if (taken) {
+        		checkScoreIncrease();
+                checkPopUp();
+                timer(10); //CHANGE
+        	}
+        }
     }
     
     public int getX() {
@@ -108,6 +116,14 @@ public class Player {
     
     public int getY() {
     	return y/speed;
+    }
+    
+    public void setX(int value) {
+    	x = value*speed;
+    }
+    
+    public void setY(int value) {
+    	y = value*speed;
     }
     
     public void draw(Graphics g) {
