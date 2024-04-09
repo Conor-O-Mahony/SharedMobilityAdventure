@@ -31,6 +31,7 @@ public class GamePanel extends JPanel implements KeyListener {
     
 	private BufferedImage[] roadtileArray;
 	private BufferedImage[] dialogTileArray;
+	private BufferedImage halo;
 	
 	private BufferedImage sidebarImage;
 		
@@ -52,7 +53,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		board = new Board(rows, columns);
         gem = new Gem();
         popup = new PopUp();
-        player = new Player(this, gameFrame, username, gem, popup);
+        player = new Player(this, gameFrame, username, gem, popup, board);
 		
 		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
@@ -61,6 +62,13 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
 		dialogTileArray = new BufferedImage[dialogTileNames.length];
 		loadTiles(dialogTileNames,dialogTileArray);
+		
+	
+		try {
+			halo = ImageIO.read(new File("images/tiles/halo.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
                 
     }
 	
@@ -108,6 +116,7 @@ public class GamePanel extends JPanel implements KeyListener {
 			}
         }
         
+        paintHalos(g);
         gem.draw(g);
         popup.draw(g);
         player.draw(g);
@@ -140,6 +149,28 @@ public class GamePanel extends JPanel implements KeyListener {
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
         g.drawString("1,000", 950, 275);             
     }
+    
+    public int getScale() {
+    	return scale;
+    }
+    
+    public void paintHalos(Graphics g) {
+    	int player_x = player.getX();
+    	int player_y = player.getY();
+    	Tile currentTile = board.tiles[player_y][player_x];
+    	Route[] tileRoutes = currentTile.getRoutes();
+    	for (int i=0; i<tileRoutes.length; i++) {
+    		if (tileRoutes[i]!=null) {
+    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
+    			for (int j=0; j<tilesInRoute.length; j++) {
+    				int tile_x = tilesInRoute[j].getX();
+    				int tile_y = tilesInRoute[j].getY();
+    				
+    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+    			}
+    		}
+    	}
+    }
   
     
     public void restartGame() {
@@ -167,5 +198,10 @@ public class GamePanel extends JPanel implements KeyListener {
     public static void endGame(JFrame gameFrame, String username) {
         Main.openEndWindow(gameFrame, username);
     }
+
+	public void paintHalos(Route route) {
+		// TODO Auto-generated method stub
+		
+	}
        
 }
