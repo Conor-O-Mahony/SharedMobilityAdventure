@@ -17,8 +17,8 @@ public class CarbonCoin extends Collectable {
     
     public CarbonCoin(String name) {
     	super(name);
-    	width = 16;
-    	height = 16;
+    	width = 30;
+    	height = 30;
     	try {
     		image = ImageIO.read(new File("images/coins/coin.png"));
     	} catch (IOException e) {
@@ -26,7 +26,7 @@ public class CarbonCoin extends Collectable {
     	}
     	score = 0;
     	super.dropRandomly(); // Call dropRandomly from super class
-    	// debugging statement
+        // debugging statement to confirm that random method wont drop gem and carboncoin to the same location on the gamepanel
         System.out.println("Gem coordinates after dropRandomly(): x=" + x + ", y=" + y);
     }
     public void draw(Graphics g) {
