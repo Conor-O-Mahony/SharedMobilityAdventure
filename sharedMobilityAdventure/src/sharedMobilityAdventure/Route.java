@@ -24,9 +24,12 @@ public class Route {
 		startRow = y;
 		startCol = x;
 		
+		int tries = 10;
+		
 		for (int i=1; i<routeSize; i++) {
 			boolean chosen = false;
-			while (chosen!=true) {
+			tries = 0;
+			while (chosen!=true && tries<3) {
 				int n = Board.getRandomNumber(0,4);
 				if (n==0 && x<maxX-2) {
 					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y][x+1]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
@@ -49,14 +52,14 @@ public class Route {
 						chosen=true;
 					}
 				}
-				
+				tries+=1;
 			}
 			routeTiles[i] = boardTiles[y][x];
 		}
 		//PROBLEM: THIS METHOD CAN RESULT IN MORE THAN MAX NUMBER OF STOPS AT THE LAST TILE.
 		//TEMPORARY SOLUTION: RETURN NULL => DISCARD THE ROUTE AND CONTINUE.
 		
-		if (!boardTiles[y][x].RouteAddable() ) {
+		if (!boardTiles[y][x].RouteAddable() || tries==10) {
 			routeTiles = null;
 		} else {
 			finalRow = y;
