@@ -31,6 +31,7 @@ public class GamePanel extends JPanel implements KeyListener {
     
 	private BufferedImage[] roadtileArray;
 	private BufferedImage[] dialogTileArray;
+	private BufferedImage halo;
 	
 	private BufferedImage sidebarImage;
 		
@@ -52,7 +53,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		board = new Board(rows, columns);
         gem = new Gem();
         popup = new PopUp();
-        player = new Player(this, gameFrame, username, gem, popup);
+        player = new Player(this, gameFrame, username, gem, popup, board);
 		
 		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
@@ -61,6 +62,13 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
 		dialogTileArray = new BufferedImage[dialogTileNames.length];
 		loadTiles(dialogTileNames,dialogTileArray);
+		
+	
+		try {
+			halo = ImageIO.read(new File("images/tiles/halo.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
                 
     }
 	
@@ -120,6 +128,8 @@ public class GamePanel extends JPanel implements KeyListener {
                
         g.drawImage(sidebarImage, 800, 0, 224, totalHeight, null);
         
+        paintHalos(g);
+        
         // Draw the username
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -138,7 +148,35 @@ public class GamePanel extends JPanel implements KeyListener {
         //Draw the coin count (NEEDS FUNCTIONALITY)
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1,000", 950, 275);             
+        g.drawString("1,000", 950, 275);     
+        
+    }
+    
+    public int getScale() {
+    	return scale;
+    }
+    
+    public void paintHalos(Graphics g) {
+    	int player_x = player.getX();
+    	int player_y = player.getY();
+    	Tile currentTile = board.tiles[player_y][player_x];
+    	Route[] tileRoutes = currentTile.getRoutes();
+    	for (int i=0; i<tileRoutes.length; i++) {
+    		if (tileRoutes[i]!=null) {
+    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
+    			for (int j=0; j<tilesInRoute.length; j++) {
+    				int tile_x = tilesInRoute[j].getX();
+    				int tile_y = tilesInRoute[j].getY();
+    				
+    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+    			}
+    			TransportTypes type = tileRoutes[i].getTransportType();
+    			String typeString = type.toString();
+    			g.setColor(Color.BLACK); // Set color to black
+    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+    	        g.drawString("Press "+(i+1)+" to take "+typeString, 815, 400 + i*25);
+    		}
+    	}
     }
   
     
@@ -167,5 +205,28 @@ public class GamePanel extends JPanel implements KeyListener {
     public static void endGame(JFrame gameFrame, String username) {
         Main.openEndWindow(gameFrame, username);
     }
+
+	public boolean takeTransportRoute(int mode, int player_x, int player_y) {
+		//TO DO: IMPLEMENT METHODS FOR SUBTRACTING TIME, CARBON COINS, ETC.
+		int numberOfRoutes = board.tiles[player_y][player_x].getNumberOfRoutes();
+		if (numberOfRoutes>=mode) {
+			Route routeToTake = board.tiles[player_y][player_x].getRoutes()[mode-1];
+			if (routeToTake.getFinalRow()==player_y && routeToTake.getFinalCol()==player_x) {
+				//Player is at the end of the route, move them to the start
+				int new_player_x = routeToTake.getStartCol();
+				int new_player_y = routeToTake.getStartRow();
+				player.setX(new_player_x);
+				player.setY(new_player_y);
+			} else {
+				int new_player_x = routeToTake.getFinalCol();
+				int new_player_y = routeToTake.getFinalRow();
+				player.setX(new_player_x);
+				player.setY(new_player_y);
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
        
 }

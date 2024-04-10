@@ -14,9 +14,11 @@ public class Player {
     int width; // width of the player
     int height; // height of the player
     int speed = 16; // speed of the player
+    int scale; //scale of board
     BufferedImage image; // image of the player
     Gem gem; // Reference to the Gem
     PopUp popup;
+    Board board;
     int score;
     int playerTime;
     public boolean scoreUpdated = false;
@@ -24,17 +26,19 @@ public class Player {
     private String username; // Username associated with the game session
     private GamePanel gamePanel;
     
-    public Player(GamePanel gamePanel, JFrame gameFrame, String username, Gem gem, PopUp popup) {
+    public Player(GamePanel gamePanel, JFrame gameFrame, String username, Gem gem, PopUp popup, Board board) {
     	this.gamePanel = gamePanel;
     	this.gameFrame = gameFrame;
         this.username = username;    	
     	this.gem = gem;
         this.popup = popup;
-        this.x = 8 * 4;
-        this.y = 8 * 4;
+        this.board = board;
+        this.scale = gamePanel.getScale();
+        this.x = 8 * scale;
+        this.y = 8 * scale;
         this.width = 16;
         this.height = 16;
-        this.speed = 16 * 4;
+        this.speed = 16 * scale;
         this.score = 0;
         this.playerTime = 1000;
         this.scoreUpdated = false;
@@ -96,7 +100,31 @@ public class Player {
             checkPopUp();
             timer(10);
         }
-    }   
+        if (key == KeyEvent.VK_1) {
+        	boolean taken = gamePanel.takeTransportRoute(1,x/speed,y/speed);
+        	if (taken) {
+        		checkScoreIncrease();
+                checkPopUp();
+                timer(10); //CHANGE
+        	}
+        }
+    }
+    
+    public int getX() {
+    	return x/speed;
+    }
+    
+    public int getY() {
+    	return y/speed;
+    }
+    
+    public void setX(int value) {
+    	x = value*speed;
+    }
+    
+    public void setY(int value) {
+    	y = value*speed;
+    }
     
     public void draw(Graphics g) {
         int adjustedX = x - (width / 2);

@@ -6,6 +6,8 @@ public class Route {
 	
 	Tile[] routeTiles;
 	
+	int startRow;
+	int startCol;
 	int finalRow;
 	int finalCol;
 	TransportTypes type;
@@ -19,26 +21,35 @@ public class Route {
 		int x = startingCol;
 		int y = startingRow;
 		
+		startRow = y;
+		startCol = x;
+		
 		for (int i=1; i<routeSize; i++) {
 			boolean chosen = false;
 			while (chosen!=true) {
 				int n = Board.getRandomNumber(0,4);
 				if (n==0 && x<maxX-2) {
-					x+=1;
-					chosen=true;
+					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y][x+1]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
+						x+=1;
+						chosen=true;
+					}
 				} else if (n==1 && x>1) {
-					x-=1;
-					chosen=true;
+					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y][x-1]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
+						x-=1;
+						chosen=true;
+					}
 				} else if (n==2 && y<maxY-2) {
-					y+=1;
-					chosen=true;
+					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y+1][x]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
+						y+=1;
+						chosen=true;
+					}
 				} else if (n==3 && y>1) {
-					y-=1;
-					chosen=true;
+					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y-1][x]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
+						y-=1;
+						chosen=true;
+					}
 				}
-				if (Arrays.stream(routeTiles).anyMatch(boardTiles[y][x]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
-					chosen=false;
-				}
+				
 			}
 			routeTiles[i] = boardTiles[y][x];
 		}
@@ -72,6 +83,14 @@ public class Route {
 	
 	public int getFinalCol() {
 		return finalCol;
+	}
+	
+	public int getStartRow() {
+		return startRow;
+	}
+	
+	public int getStartCol() {
+		return startCol;
 	}
 	
 	public TransportTypes getTransportType() {
