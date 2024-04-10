@@ -4,19 +4,20 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
+// import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class Gem {
-    public int x; // x-coordinate
+public class Gem extends Collectable {
+	public int x; // x-coordinate
     public int y; // y-coordinate
     final int width; // width of gem
     final int height; // height of gem
     BufferedImage image; // image of gem
     int score; // Score to keep track of gem
 
-    public Gem() {
+    public Gem(String name) {
+    	super(name);
         width = 16;
         height = 16;
         try {
@@ -25,21 +26,7 @@ public class Gem {
             e.printStackTrace();
         }
         score = 0;
-        dropGemRandomly();
-    }
-
-    public void dropGemRandomly() {
-            
-        Random random = new Random();
-        int randomNumberX = random.nextInt(16-1);
-        int randomNumberY = random.nextInt(8-1);
-    	
-        int oddNumberX = randomNumberX * 2 + 1;
-        int oddNumberY = randomNumberY * 2 + 1;
-        
-    	x = 8*4*oddNumberX;
-        y = 8*4*oddNumberY;
-             
+        super.dropRandomly(); // Call dropRandomly from super class
     }
    
     public void draw(Graphics g) {

@@ -13,6 +13,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
     private Gem gem;
+    private CarbonCoin carboncoin;
 	private Player player;
 	private PopUp popup;
 	private Board board;
@@ -24,7 +25,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private int totalWidth = columns * tile;
     private int totalHeight = rows * tile;
     private int sidepanelColumns = 3;
-
+    
     private String username; // Store the username
     private JFrame gameFrame; // Store the game frame  
     
@@ -51,7 +52,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	
     public void initGame() {
 		board = new Board(rows, columns);
-        gem = new Gem();
+		carboncoin = new CarbonCoin("Carbon Credit");
+        gem = new Gem("Diamond");
         popup = new PopUp();
         player = new Player(this, gameFrame, username, gem, popup, board);
 		
@@ -117,6 +119,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
         
         gem.draw(g);
+        carboncoin.draw(g);
         popup.draw(g);
         player.draw(g);
         
