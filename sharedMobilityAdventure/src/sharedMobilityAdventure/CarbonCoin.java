@@ -8,8 +8,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class CarbonCoin extends Collectable {
-	public int x; // x-coordinate
-    public int y; // y-coordinate
+	//public int x; // x-coordinate
+    //public int y; // y-coordinate
     final int width; // width of gem
     final int height; // height of gem
     BufferedImage image; // image of gem
@@ -26,6 +26,8 @@ public class CarbonCoin extends Collectable {
     	}
     	score = 0;
     	super.dropRandomly(); // Call dropRandomly from super class
+    	// debugging statement
+        System.out.println("Gem coordinates after dropRandomly(): x=" + x + ", y=" + y);
     }
     public void draw(Graphics g) {
     	int adjustedX = x - (width / 2);
