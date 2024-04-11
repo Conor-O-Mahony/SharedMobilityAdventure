@@ -130,7 +130,7 @@ public class GamePanel extends JPanel implements KeyListener {
             ex.printStackTrace();
         }  
                
-        g.drawImage(sidebarImage, 800, 0, 224, totalHeight, null);
+        g.drawImage(sidebarImage, 768, 0, 256, totalHeight, null);
         
         paintHalos(g);
         
