@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private int rows = 36 / scale;
     private int totalWidth = columns * tile;
     private int totalHeight = rows * tile;
-    private int sidepanelColumns = 3;
+    private int sidepanelColumns = 4;
     
     private String username; // Store the username
     private JFrame gameFrame; // Store the game frame  
@@ -102,8 +102,8 @@ public class GamePanel extends JPanel implements KeyListener {
 				
 				g.drawImage(roadtileArray[0], col*tile, row*tile, tile, tile, null);
 				
-	            g.setColor(Color.BLACK);
-	            g.drawRect(col * tile, row * tile, tile, tile);
+//	            g.setColor(Color.BLACK);
+//	            g.drawRect(col * tile, row * tile, tile, tile);
 				
 				if (bike==true) {
 					g.drawImage(roadtileArray[1], col*tile, row*tile, tile*2/3, tile*2/3, null);
