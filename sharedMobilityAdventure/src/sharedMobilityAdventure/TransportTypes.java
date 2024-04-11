@@ -8,24 +8,32 @@ interface CarbonFootprintCalculator {
 // Enum definition with additional properties and implementing an interface reference: https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html / https://www.baeldung.com/a-guide-to-java-enums
 // TransportType(CC factor, speed, max congestion factor))
 enum TransportTypes implements CarbonFootprintCalculator {
-    BUS(10.0, 15.0, 1.4) {
-        public double calculateCarbonFootprint(int distance) {
-            return getCarbonCoinFactor() * distance;
+    BUS(10.0, 5.0, 1.4) {
+    	public double calculateCarbonFootprint(int distance) {
+        	double carbonFootprint = getCarbonCoinFactor() * distance;
+        	System.out.println("Bus - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
+            return carbonFootprint;
         }
     },
-    TRAIN(6.0, 15.0, 1) {
-        public double calculateCarbonFootprint(int distance) {
-            return getCarbonCoinFactor() * distance;
+    TRAIN(6.0, 5.0, 1) {
+    	public double calculateCarbonFootprint(int distance) {
+        	double carbonFootprint = getCarbonCoinFactor() * distance;
+        	System.out.println("Train - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
+            return carbonFootprint;
         }
     },
-    BICYCLE(2.0, 4.0, 1) {
-        public double calculateCarbonFootprint(int distance) {
-            return getCarbonCoinFactor() * distance;
+    BICYCLE(2.0, 25.0, 1) {
+    	public double calculateCarbonFootprint(int distance) {
+        	double carbonFootprint = getCarbonCoinFactor() * distance;
+        	System.out.println("Bicycle - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
+            return carbonFootprint;
         }
     },
-    CAR(30.0, 15.0, 2) {
-        public double calculateCarbonFootprint(int distance) {
-            return getCarbonCoinFactor() * distance;
+    CAR(30.0, 5.0, 2) {
+    	public double calculateCarbonFootprint(int distance) {
+        	double carbonFootprint = getCarbonCoinFactor() * distance;
+        	System.out.println("Car - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
+            return carbonFootprint;
         }
     };
 
