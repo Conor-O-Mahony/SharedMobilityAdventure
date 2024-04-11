@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Player {
+	int offset;
     int x; // x-coordinate of the player
     int y; // y-coordinate of the player
     int width; // width of the player
@@ -34,8 +35,9 @@ public class Player {
         this.popup = popup;
         this.board = board;
         this.scale = gamePanel.getScale();
-        this.x = 8 * scale;
-        this.y = 8 * scale;
+        this.offset = 8 * scale;
+        this.x = offset;
+        this.y = offset;
         this.width = 16;
         this.height = 16;
         this.speed = 16 * scale;
@@ -100,6 +102,22 @@ public class Player {
             checkPopUp();
             timer(10);
         }
+        if (key == KeyEvent.VK_1) {
+        	boolean taken = gamePanel.takeTransportRoute(1,x/speed,y/speed);
+        	if (taken) {
+        		checkScoreIncrease();
+                checkPopUp();
+                timer(10); //CHANGE
+        	}
+        }
+        if (key == KeyEvent.VK_2) {
+        	boolean taken = gamePanel.takeTransportRoute(2,x/speed,y/speed);
+        	if (taken) {
+        		checkScoreIncrease();
+                checkPopUp();
+                timer(10); //CHANGE
+        	}
+        }
     }
     
     public int getX() {
@@ -108,6 +126,14 @@ public class Player {
     
     public int getY() {
     	return y/speed;
+    }
+    
+    public void setX(int value) {
+    	x = value*speed + offset;
+    }
+    
+    public void setY(int value) {
+    	y = value*speed + offset;
     }
     
     public void draw(Graphics g) {
