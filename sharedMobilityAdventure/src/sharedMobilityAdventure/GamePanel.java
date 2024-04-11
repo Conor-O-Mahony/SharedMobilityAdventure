@@ -152,7 +152,7 @@ public class GamePanel extends JPanel implements KeyListener {
         //Draw the coin count (NEEDS FUNCTIONALITY)
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1,000", 950, 275);     
+        g.drawString("" + player.getCoins(), 950, 275);     
         
     }
     
@@ -227,6 +227,7 @@ public class GamePanel extends JPanel implements KeyListener {
 				player.setX(new_player_x);
 				player.setY(new_player_y);
 			}
+			player.updateTravel(routeToTake);
 		} else {
 			return false;
 		}
