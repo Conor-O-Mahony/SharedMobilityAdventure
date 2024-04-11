@@ -31,8 +31,7 @@ public class GamePanel extends JPanel implements KeyListener {
     
     
 	private BufferedImage[] roadtileArray;
-	private BufferedImage[] dialogTileArray;
-	private BufferedImage halo;
+	private BufferedImage[] haloArray;
 	
 	private BufferedImage sidebarImage;
 		
@@ -62,17 +61,9 @@ public class GamePanel extends JPanel implements KeyListener {
 		roadtileArray = new BufferedImage[roadTileNames.length];
 		loadTiles(roadTileNames,roadtileArray);
 		
-		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
-		dialogTileArray = new BufferedImage[dialogTileNames.length];
-		loadTiles(dialogTileNames,dialogTileArray);
-		
-	
-		try {
-			halo = ImageIO.read(new File("images/tiles/halo.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-                
+		String[] haloNames = {"halo","halo2"};
+		haloArray = new BufferedImage[haloNames.length];
+		loadTiles(haloNames,haloArray);             
     }
 	
 	private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
@@ -172,7 +163,7 @@ public class GamePanel extends JPanel implements KeyListener {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+    				g.drawImage(haloArray[i], tile_x*tile, tile_y*tile, tile, tile, null);
     			}
     			TransportTypes type = tileRoutes[i].getTransportType();
     			String typeString = type.toString();
