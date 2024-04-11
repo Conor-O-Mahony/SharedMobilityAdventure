@@ -46,7 +46,7 @@ public class Player {
         this.scoreUpdated = false;
         
         try {
-            image = ImageIO.read(new File("images/characters/up.png"));
+            image = ImageIO.read(new File("images/characters/down.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
