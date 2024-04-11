@@ -25,7 +25,7 @@ public class CarbonCoin extends Collectable {
     		e.printStackTrace();
     	}
     	score = 0;
-    	super.dropRandomly(); // Call dropRandomly from super class
+    	super.dropRandomly(5); // Call dropRandomly from super class
         // debugging statement to confirm that random method wont drop gem and carboncoin to the same location on the gamepanel
         System.out.println("Gem coordinates after dropRandomly(): x=" + x + ", y=" + y);
     }

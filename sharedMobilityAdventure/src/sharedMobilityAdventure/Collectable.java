@@ -17,16 +17,25 @@ public class Collectable {
 		
 	}
     // Method shared by Gem and CarbonCoin
-    public void dropRandomly() {
+    public void dropRandomly(int maxNumToDrop) {
         Random random = new Random();
-        int randomNumberX = random.nextInt(16-1);
-        int randomNumberY = random.nextInt(8-1);
-    	
-        int oddNumberX = randomNumberX * 2 + 1;
-        int oddNumberY = randomNumberY * 2 + 1;
+        // Generate a random number of collectables to drop between 1 and maxNumToDrop
+        int numToDrop = random.nextInt(maxNumToDrop) + 1;
+        // debugging statements
+        System.out.println("Dropping " + numToDrop + " collectables.");
         
-        x = 8 * 4 * oddNumberX;
-        y = 8 * 4 * oddNumberY;
+        for (int i = 0; i < numToDrop; i++) {
+    		int randomNumberX = random.nextInt(16-1);
+            int randomNumberY = random.nextInt(8-1);
+            System.out.println("Random numbers: X=" + randomNumberX + ", Y=" + randomNumberY);
+            
+            int oddNumberX = randomNumberX * 2 + 1;
+            int oddNumberY = randomNumberY * 2 + 1;
+            
+            x = 8 * 4 * oddNumberX;
+            y = 8 * 4 * oddNumberY;
+            System.out.println("Dropped collectable at coordinates: X=" + x + ", Y=" + y);
+        }
     }
 	// Method to describe the collectable
 	public String getDescription() {

@@ -54,6 +54,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		board = new Board(rows, columns);
 		carboncoin = new CarbonCoin("Carbon Credit");
         gem = new Gem("Diamond");
+        // Colour the gem with custom RGB values
         popup = new PopUp();
         player = new Player(this, gameFrame, username, gem, popup, board);
 		
