@@ -18,10 +18,10 @@ public class GamePanel extends JPanel implements KeyListener {
 	private PopUp popup;
 	private Board board;
     
-    public static int DEFAULT_BOARD_SIZE = 8; //i.e 10*10
+    public static int DEFAULT_BOARD_SIZE = 8; // i.e., 10*10
     private static int SIDEBAR_WIDTH = 256;
-    public static int GAME_HEIGHT = 720;
     public static int GAME_WIDTH = 720;
+    public static int GAME_HEIGHT = 720;
     private static int WINDOW_WIDTH = GAME_HEIGHT + SIDEBAR_WIDTH;
     private static int WINDOW_HEIGHT = GAME_HEIGHT;
     public static int TILE_SIZE = GAME_HEIGHT / DEFAULT_BOARD_SIZE;
@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
+	int gameScore = 0;
     public boolean gemScoreUpdate = true;
     public boolean coinScoreUpdate = true;
 
@@ -56,9 +57,8 @@ public class GamePanel extends JPanel implements KeyListener {
         addKeyListener(this);            
     }
 	
-	
     public void initGame() {
-		    board = new Board(GamePanel.DEFAULT_BOARD_SIZE, GamePanel.DEFAULT_BOARD_SIZE);
+	    board = new Board(GamePanel.DEFAULT_BOARD_SIZE, GamePanel.DEFAULT_BOARD_SIZE);
         player = new Player(this);
 
         gem = new Gem("Diamond");
@@ -78,8 +78,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] haloNames = {"halo","halo2"};
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);             
-    }
-	
+    }	
 	
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 		for (int i=0; i<imageNames.length; i++) {
@@ -152,32 +151,32 @@ public class GamePanel extends JPanel implements KeyListener {
         
         paintHalos(g);
         
-        // Username
+        // Player
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(username, GamePanel.GAME_WIDTH+50, 70);
+        g.drawString(username, GamePanel.GAME_WIDTH + 90, 70);
         
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, GamePanel.GAME_WIDTH+50, 175);
+        g.drawString("" + playerTime, GamePanel.GAME_WIDTH + 90, 175);
         
         // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkGemScore(), GamePanel.GAME_WIDTH+20, 270);
+        g.drawString("" + checkGemScore(), GamePanel.GAME_WIDTH + 40, 270);
         gemScoreUpdate = true;
                      
-        // Coins
+        // Carbon Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkCoinScore(), GamePanel.GAME_WIDTH+120, 270);
+        g.drawString("" + checkCoinScore(), GamePanel.GAME_WIDTH + 160, 270);
         coinScoreUpdate = true;
         
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1000", GamePanel.GAME_WIDTH+50, 375);
+        g.drawString("" + gameScore, GamePanel.GAME_WIDTH + 90, 375);
        
     }
     
@@ -203,7 +202,6 @@ public class GamePanel extends JPanel implements KeyListener {
     		}
     	}
     }
-  
     
     public void restartGame() {
         initGame();
@@ -259,6 +257,7 @@ public class GamePanel extends JPanel implements KeyListener {
         	gemScore++; // Increase the score
             gemScoreUpdate = false;
             gem.setVisibility(false);
+            calculateGameScore();
             restartGame();
         }
         return gemScore;
@@ -276,6 +275,10 @@ public class GamePanel extends JPanel implements KeyListener {
         return coinScore;
     }
     
+    public void calculateGameScore() {        
+    	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
+    }
+       
     public void checkPopUp() {
         if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
             System.out.println("Pop Up");   	
