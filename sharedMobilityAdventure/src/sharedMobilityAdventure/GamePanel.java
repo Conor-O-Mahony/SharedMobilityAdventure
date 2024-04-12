@@ -25,7 +25,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private int rows = 9;
     private int totalWidth = columns * tile;
     private int totalHeight = rows * tile;
-    private int sidepanelColumns = 4;
+    private int sidepanelColumns = 3;
 		
 	private static final long serialVersionUID = 1L;
 
@@ -160,7 +160,7 @@ public class GamePanel extends JPanel implements KeyListener {
                
         g.drawImage(sidebarImage, 768, 0, 256, totalHeight, null);
         
-//        paintHalos(g);
+        paintHalos(g);
         
         // Username
         g.setColor(Color.BLACK); // Set color to black
@@ -195,28 +195,28 @@ public class GamePanel extends JPanel implements KeyListener {
     	return scale;
     }
     
-//    public void paintHalos(Graphics g) {
-//    	int player_x = player.getPlayerX();
-//    	int player_y = player.getPlayerY();
-//    	Tile currentTile = board.tiles[player_y][player_x];
-//    	Route[] tileRoutes = currentTile.getRoutes();
-//    	for (int i=0; i<tileRoutes.length; i++) {
-//    		if (tileRoutes[i]!=null) {
-//    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
-//    			for (int j=0; j<tilesInRoute.length; j++) {
-//    				int tile_x = tilesInRoute[j].getX();
-//    				int tile_y = tilesInRoute[j].getY();
-//    				
-//    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
-//    			}
-//    			TransportTypes type = tileRoutes[i].getTransportType();
-//    			String typeString = type.toString();
-//    			g.setColor(Color.BLACK); // Set color to black
-//    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-//    	        g.drawString("Press "+(i+1)+" to take "+typeString, 815, 400 + i*25);
-//    		}
-//    	}
-//    }
+    public void paintHalos(Graphics g) {
+    	int player_x = player.getPlayerXTile();
+    	int player_y = player.getPlayerYTile();
+    	Tile currentTile = board.tiles[player_y][player_x];
+    	Route[] tileRoutes = currentTile.getRoutes();
+    	for (int i=0; i<tileRoutes.length; i++) {
+    		if (tileRoutes[i]!=null) {
+    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
+    			for (int j=0; j<tilesInRoute.length; j++) {
+    				int tile_x = tilesInRoute[j].getX();
+    				int tile_y = tilesInRoute[j].getY();
+    				
+    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+    			}
+    			TransportTypes type = tileRoutes[i].getTransportType();
+    			String typeString = type.toString();
+    			g.setColor(Color.BLACK); // Set color to black
+    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+    	        g.drawString("Press "+(i+1)+" to take "+typeString, 815, 400 + i*25);
+    		}
+    	}
+    }
   
     
     public void restartGame() {

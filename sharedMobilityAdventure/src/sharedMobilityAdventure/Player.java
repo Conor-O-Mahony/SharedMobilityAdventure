@@ -14,6 +14,7 @@ public class Player {
     int width; // width of the player
     int height; // height of the player
     int speed; // speed of the player
+    int tile;
     BufferedImage image; // image of the player
     private GamePanel gamePanel;
     
@@ -25,6 +26,7 @@ public class Player {
         this.width = 16;
         this.height = 16;
         this.speed = 16 * gamePanel.getScale();
+        this.tile = 16 * gamePanel.getScale();
         
         try {
             image = ImageIO.read(new File("images/characters/down.png"));
@@ -116,7 +118,15 @@ public class Player {
     public int getPlayerY() {
     	return playerY;
     }
-      
+    
+    public int getPlayerXTile() {
+    	return playerX / tile;
+    }
+       
+    public int getPlayerYTile() {
+    	return playerY / tile;
+    }
+     
     public void setPlayerX(int value) {
     	playerX = value*speed + offset;
     }
