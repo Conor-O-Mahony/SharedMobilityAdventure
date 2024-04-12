@@ -11,32 +11,43 @@ import java.util.Arrays;
 
 public class GamePanel extends JPanel implements KeyListener {
 
-	private static final long serialVersionUID = 1L;
-    private Gem gem;
-    private CarbonCoin carboncoin;
-	private Player player;
-	private PopUp popup;
-	private Board board;
-	
-    private int scale = 4;
-    private int tile = 16 * scale;
-    private int columns = 64 / scale;
-    private int rows = 36 / scale;
-    private int totalWidth = columns * tile;
-    private int totalHeight = rows * tile;
-    private int sidepanelColumns = 4;
-    
     private String username; // Store the username
     private JFrame gameFrame; // Store the game frame  
-    
-    
+        
 	private BufferedImage[] roadtileArray;
 	private BufferedImage[] dialogTileArray;
 	private BufferedImage halo;
-	
 	private BufferedImage sidebarImage;
 		
-	public GamePanel(JFrame gameFrame, String username){
+	private int scale = 4;
+    private int tile = 16 * scale;
+    private int columns = 16;
+    private int rows = 9;
+    private int totalWidth = columns * tile;
+    private int totalHeight = rows * tile;
+    private int sidepanelColumns = 4;
+		
+	private static final long serialVersionUID = 1L;
+
+	private Player player;
+	private Board board;
+    private Gem gem;
+    
+    private CarbonCoin[] carbonCoins;
+    private int numCarbonCoins = 3;
+     
+	private PopUp popup;
+    
+	int playerTime = 1000;
+	int gemScore = 0;
+	int coinScore = 100;
+    public boolean gemScoreUpdate = true;
+    public boolean coinScoreUpdate = true;
+    
+		
+	
+    
+    public GamePanel(JFrame gameFrame, String username){
 		
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
@@ -50,13 +61,19 @@ public class GamePanel extends JPanel implements KeyListener {
         addKeyListener(this);            
     }
 	
+	
     public void initGame() {
-		board = new Board(rows, columns);
-		carboncoin = new CarbonCoin("Carbon Credit");
+        player = new Player(this);
+		board = new Board(rows, columns-sidepanelColumns);
         gem = new Gem("Diamond");
-        // Colour the gem with custom RGB values
+		
+        carbonCoins = new CarbonCoin[numCarbonCoins];
+
+        for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i] = new CarbonCoin("Carbon Credit");
+        }
+          
         popup = new PopUp();
-        player = new Player(this, gameFrame, username, gem, popup, board);
 		
 		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
@@ -65,17 +82,16 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
 		dialogTileArray = new BufferedImage[dialogTileNames.length];
 		loadTiles(dialogTileNames,dialogTileArray);
-		
-	
+			
 		try {
 			halo = ImageIO.read(new File("images/tiles/halo.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-                
+		}              
     }
 	
-	private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
+	
+    private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 		for (int i=0; i<imageNames.length; i++) {
 			String source = String.format("images/tiles/%s.png", imageNames[i]);
 		
@@ -87,6 +103,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		}
 	}
 	
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -118,11 +135,22 @@ public class GamePanel extends JPanel implements KeyListener {
 				}
 			}
         }
+
         
-        gem.draw(g);
-        carboncoin.draw(g);
-        popup.draw(g);
         player.draw(g);
+
+        if (gem.getVisibility()) {
+            gem.draw(g);
+        }
+        
+        for (int i = 0; i < carbonCoins.length; i++) {
+            CarbonCoin coin = carbonCoins[i];
+            if (coin.getVisibility()) {
+                coin.draw(g);
+            }
+        }
+              
+        popup.draw(g);
         
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
@@ -132,27 +160,34 @@ public class GamePanel extends JPanel implements KeyListener {
                
         g.drawImage(sidebarImage, 768, 0, 256, totalHeight, null);
         
-        paintHalos(g);
+//        paintHalos(g);
         
-        // Draw the username
+        // Username
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(username, 950, 50);
+        g.drawString(username, 865, 56);
         
-        //Draw the timer (NEEDS FUNCTIONALITY)
+        // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + player.checkScoreIncrease(), 900, 130);
-        player.scoreUpdated = false;
+        g.drawString("" + playerTime, 870, 143);
         
+        // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + player.getTimer(), 950, 205);
-                
-        //Draw the coin count (NEEDS FUNCTIONALITY)
+        g.drawString("" + checkGemScore(), 800, 221);
+        gemScoreUpdate = true;
+                     
+        // Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1,000", 950, 275);     
+        g.drawString("" + checkCoinScore(), 915, 221);
+        coinScoreUpdate = true;
+        
+        // Score
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        g.drawString("", 870, 303);
         
     }
     
@@ -160,35 +195,34 @@ public class GamePanel extends JPanel implements KeyListener {
     	return scale;
     }
     
-    public void paintHalos(Graphics g) {
-    	int player_x = player.getX();
-    	int player_y = player.getY();
-    	Tile currentTile = board.tiles[player_y][player_x];
-    	Route[] tileRoutes = currentTile.getRoutes();
-    	for (int i=0; i<tileRoutes.length; i++) {
-    		if (tileRoutes[i]!=null) {
-    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
-    			for (int j=0; j<tilesInRoute.length; j++) {
-    				int tile_x = tilesInRoute[j].getX();
-    				int tile_y = tilesInRoute[j].getY();
-    				
-    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
-    			}
-    			TransportTypes type = tileRoutes[i].getTransportType();
-    			String typeString = type.toString();
-    			g.setColor(Color.BLACK); // Set color to black
-    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-    	        g.drawString("Press "+(i+1)+" to take "+typeString, 815, 400 + i*25);
-    		}
-    	}
-    }
+//    public void paintHalos(Graphics g) {
+//    	int player_x = player.getPlayerX();
+//    	int player_y = player.getPlayerY();
+//    	Tile currentTile = board.tiles[player_y][player_x];
+//    	Route[] tileRoutes = currentTile.getRoutes();
+//    	for (int i=0; i<tileRoutes.length; i++) {
+//    		if (tileRoutes[i]!=null) {
+//    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
+//    			for (int j=0; j<tilesInRoute.length; j++) {
+//    				int tile_x = tilesInRoute[j].getX();
+//    				int tile_y = tilesInRoute[j].getY();
+//    				
+//    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+//    			}
+//    			TransportTypes type = tileRoutes[i].getTransportType();
+//    			String typeString = type.toString();
+//    			g.setColor(Color.BLACK); // Set color to black
+//    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
+//    	        g.drawString("Press "+(i+1)+" to take "+typeString, 815, 400 + i*25);
+//    		}
+//    	}
+//    }
   
     
     public void restartGame() {
         initGame();
         repaint();
-    }
-    
+    } 
  
     @Override
     public void keyTyped(KeyEvent e) {
@@ -219,18 +253,55 @@ public class GamePanel extends JPanel implements KeyListener {
 				//Player is at the end of the route, move them to the start
 				int new_player_x = routeToTake.getStartCol();
 				int new_player_y = routeToTake.getStartRow();
-				player.setX(new_player_x);
-				player.setY(new_player_y);
+				player.setPlayerX(new_player_x);
+				player.setPlayerY(new_player_y);
 			} else {
 				int new_player_x = routeToTake.getFinalCol();
 				int new_player_y = routeToTake.getFinalRow();
-				player.setX(new_player_x);
-				player.setY(new_player_y);
+				player.setPlayerX(new_player_x);
+				player.setPlayerY(new_player_y);
 			}
 		} else {
 			return false;
 		}
 		return true;
 	}
+ 
+    public int checkGemScore() {
+        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gemScoreUpdate) {
+        	gemScore++; // Increase the score
+            gemScoreUpdate = false;
+            gem.setVisibility(false);
+            restartGame();
+        }
+        return gemScore;
+    }  
+    
+    public int checkCoinScore() {        
+        for (int i = 0; i < carbonCoins.length; i++) {
+            CarbonCoin coin = carbonCoins[i];
+            if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coinScoreUpdate) {
+                coinScore++; // Increase the score
+                coinScoreUpdate = false;
+                coin.setVisibility(false);
+            }
+        }
+        return coinScore;
+    }
+    
+    public void checkPopUp() {
+        if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
+            System.out.println("Pop Up");   	
+    	}
+    } 
        
+    public void timer(int movement) {  	
+    	if ((playerTime - movement) <= 0) {   		
+    		Main.openEndWindow(gameFrame, username);
+    	}
+    	else {
+    		playerTime -= movement;
+    	}
+    }
+ 
 }

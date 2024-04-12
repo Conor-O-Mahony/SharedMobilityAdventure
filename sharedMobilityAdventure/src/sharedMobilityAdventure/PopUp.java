@@ -38,8 +38,8 @@ public class PopUp {
     public void dropPopUp() {
             
         Random random = new Random();
-        int randomNumberX = random.nextInt(16-1);
-        int randomNumberY = random.nextInt(8-1);
+        int randomNumberX = random.nextInt(12);
+        int randomNumberY = random.nextInt(9);
     	
         int oddNumberX = randomNumberX * 2 + 1;
         int oddNumberY = randomNumberY * 2 + 1;
