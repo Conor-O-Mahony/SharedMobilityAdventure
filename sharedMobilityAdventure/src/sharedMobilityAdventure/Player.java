@@ -16,6 +16,7 @@ public class Player {
     int speed; // speed of the player
     int tile;
     BufferedImage image; // image of the player
+
     private GamePanel gamePanel;
     
     public Player(GamePanel gamePanel) {
@@ -45,10 +46,12 @@ public class Player {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+          
             gamePanel.checkGemScore();
             gamePanel.checkCoinScore();
 //            gamePanel.checkPopUp();
             gamePanel.timer(10);
+
         }
         
         if (key == KeyEvent.VK_RIGHT) {
@@ -58,6 +61,7 @@ public class Player {
             } catch (IOException e2) {
                 e2.printStackTrace();
             }
+
             gamePanel.checkGemScore();
             gamePanel.checkCoinScore();
             gamePanel.checkPopUp();
@@ -113,6 +117,7 @@ public class Player {
         
     public int getPlayerX() {
     	return playerX;
+
     }
        
     public int getPlayerY() {
@@ -141,5 +146,66 @@ public class Player {
 
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
     }
+
+
+    public int checkScoreIncrease() {
+        if (x == gem.x && y == gem.y && !scoreUpdated) {
+            score++; // Increase the score
+            scoreUpdated = true; // Set the flag to indicate that the score has been updated
+            gem.dropRandomly(5);
+            System.out.println(score);
+        }
+        return score;
+    }  
     
+    public void checkPopUp() {
+        if (x == popup.popUpX && y == popup.popUpY) {
+//            System.out.println("Pop Up");
+        	gamePanel.restartGame();
+        	}
+    } 
+
+    public void timer(int movement) {  	
+    	if ((playerTime - movement) <= 0) {
+    		
+    		Main.openEndWindow(gameFrame, username);
+		
+    	}
+    	else {
+    		playerTime -= movement;
+    	}
+    }
+
+    
+    public int getTimer() {  	
+    	return playerTime;
+    }
+    
+    public void setTimer(int time) {
+    	playerTime = time;
+    	System.out.println("Time updated to: " + playerTime);
+    }
+    
+    public void adjustTimer(double adjustment) {
+        this.playerTime += adjustment;
+        System.out.println("Time updated to: " + playerTime);
+    }
+    
+    public void updateTravel(Route route) {
+        TransportTypes type = route.getTransportType();
+        int distance = route.getTiles().length; // Calculate the number of tiles in the route
+
+        // Carbon Cost
+        double carbonCost = type.calculateCarbonFootprint(distance);
+        adjustCoins(-carbonCost); // Adjust carbon coins based on the cost
+
+        // Time Cost
+        double timePerTile = type.getSpeed(); // Get adjusted speed considering congestion
+        int totalTravelTime = (int) (timePerTile * distance); // Total time taken on route
+        adjustTimer(-totalTravelTime); // Subtract this time from the game timer
+
+        System.out.println("Travel Costs - Distance: " + distance + ", Carbon Cost: " + carbonCost + ", Time Cost: " + totalTravelTime + " seconds");
+    }
+
+
 }

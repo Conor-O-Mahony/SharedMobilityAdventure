@@ -15,8 +15,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private JFrame gameFrame; // Store the game frame  
         
 	private BufferedImage[] roadtileArray;
-	private BufferedImage[] dialogTileArray;
-	private BufferedImage halo;
+	private BufferedImage[] haloArray;
 	private BufferedImage sidebarImage;
 		
 	private int scale = 4;
@@ -79,15 +78,9 @@ public class GamePanel extends JPanel implements KeyListener {
 		roadtileArray = new BufferedImage[roadTileNames.length];
 		loadTiles(roadTileNames,roadtileArray);
 		
-		String[] dialogTileNames = {"dialogueTopL","dialogueTop","dialogueTopR","dialogueLeft","dialogueRight","dialogueBottomL","dialogueBottom","dialogueBottomR","dialogueCentre"};
-		dialogTileArray = new BufferedImage[dialogTileNames.length];
-		loadTiles(dialogTileNames,dialogTileArray);
-			
-		try {
-			halo = ImageIO.read(new File("images/tiles/halo.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}              
+		String[] haloNames = {"halo","halo2"};
+		haloArray = new BufferedImage[haloNames.length];
+		loadTiles(haloNames,haloArray);             
     }
 	
 	
@@ -188,7 +181,7 @@ public class GamePanel extends JPanel implements KeyListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
         g.drawString("", 870, 303);
-        
+       
     }
     
     public int getScale() {
@@ -207,7 +200,7 @@ public class GamePanel extends JPanel implements KeyListener {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(halo, tile_x*tile, tile_y*tile, tile, tile, null);
+    				g.drawImage(haloArray[i], tile_x*tile, tile_y*tile, tile, tile, null);
     			}
     			TransportTypes type = tileRoutes[i].getTransportType();
     			String typeString = type.toString();
@@ -261,6 +254,7 @@ public class GamePanel extends JPanel implements KeyListener {
 				player.setPlayerX(new_player_x);
 				player.setPlayerY(new_player_y);
 			}
+			player.updateTravel(routeToTake);
 		} else {
 			return false;
 		}
