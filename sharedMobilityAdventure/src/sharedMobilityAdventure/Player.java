@@ -21,6 +21,7 @@ public class Player {
     PopUp popup;
     Board board;
     int score;
+    int coins;
     int playerTime;
     public boolean scoreUpdated = false;
     private JFrame gameFrame; // Reference to the game frame
@@ -42,7 +43,8 @@ public class Player {
         this.height = 16;
         this.speed = 16 * scale;
         this.score = 0;
-        this.playerTime = 1000;
+        this.coins = 1000;
+        this.playerTime = 5000;
         this.scoreUpdated = false;
         
         try {
@@ -64,7 +66,7 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
-            timer(10);
+            timer(50);
         }
         
         if (key == KeyEvent.VK_RIGHT) {
@@ -76,7 +78,7 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
-            timer(10);
+            timer(50);
         }
         
         if (key == KeyEvent.VK_DOWN) {
@@ -88,7 +90,7 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
-            timer(10);
+            timer(50);
 
         }
         if (key == KeyEvent.VK_LEFT) {
@@ -100,14 +102,14 @@ public class Player {
             }
             checkScoreIncrease();
             checkPopUp();
-            timer(10);
+            timer(50);
         }
         if (key == KeyEvent.VK_1) {
         	boolean taken = gamePanel.takeTransportRoute(1,x/speed,y/speed);
         	if (taken) {
         		checkScoreIncrease();
                 checkPopUp();
-                timer(10); //CHANGE
+                timer(50); //CHANGE
         	}
         }
         if (key == KeyEvent.VK_2) {
@@ -115,9 +117,23 @@ public class Player {
         	if (taken) {
         		checkScoreIncrease();
                 checkPopUp();
-                timer(10); //CHANGE
+                timer(50); //CHANGE
         	}
         }
+    }
+    
+    public int getCoins() {
+    	return coins;
+    }
+    
+    public void setCoins(int cCoins) {
+    	coins = cCoins;
+    	System.out.println("Carbon Coins updated to: " + coins);
+    }
+    
+    public void adjustCoins(double adjustment) {
+        this.coins += adjustment;
+        System.out.println("Carbon Coins updated to: " + coins);
     }
     
     public int getX() {
@@ -147,6 +163,7 @@ public class Player {
         if (x == gem.x && y == gem.y && !scoreUpdated) {
             score++; // Increase the score
             scoreUpdated = true; // Set the flag to indicate that the score has been updated
+            gem.dropRandomly(5);
             System.out.println(score);
         }
         return score;
@@ -175,5 +192,32 @@ public class Player {
     	return playerTime;
     }
     
-       
+    public void setTimer(int time) {
+    	playerTime = time;
+    	System.out.println("Time updated to: " + playerTime);
+    }
+    
+    public void adjustTimer(double adjustment) {
+        this.playerTime += adjustment;
+        System.out.println("Time updated to: " + playerTime);
+    }
+    
+    public void updateTravel(Route route) {
+        TransportTypes type = route.getTransportType();
+        int distance = route.getTiles().length; // Calculate the number of tiles in the route
+
+        // Carbon Cost
+        double carbonCost = type.calculateCarbonFootprint(distance);
+        adjustCoins(-carbonCost); // Adjust carbon coins based on the cost
+
+        // Time Cost
+        double timePerTile = type.getSpeed(); // Get adjusted speed considering congestion
+        int totalTravelTime = (int) (timePerTile * distance); // Total time taken on route
+        adjustTimer(-totalTravelTime); // Subtract this time from the game timer
+
+        System.out.println("Travel Costs - Distance: " + distance + ", Carbon Cost: " + carbonCost + ", Time Cost: " + totalTravelTime + " seconds");
+    }
+
+    
+    
 }
