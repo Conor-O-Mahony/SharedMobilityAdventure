@@ -5,17 +5,20 @@ import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16;
-    int columns = 64;
-    int rows = 36;
-    int totalWidth = columns * tile;
-    int totalHeight = rows * tile;
+    private int DEFAULT_BOARD_SIZE_X = 8;
+    private int DEFAULT_BOARD_SIZE_Y = 12;
+    private int SIDEBAR_WIDTH = 256;
+    private int GAME_WIDTH = 720;
+    private int GAME_HEIGHT = 720;
+    private int WINDOW_WIDTH = GAME_HEIGHT + SIDEBAR_WIDTH; // 976
+    private int WINDOW_HEIGHT = GAME_HEIGHT;
+    private int TILE_SIZE = GAME_HEIGHT / DEFAULT_BOARD_SIZE_X;
     
     JTextField userName; // Username field
     
     public MenuPanel(JFrame menuFrame) {
     	
-        setPreferredSize(new Dimension(totalWidth, totalHeight));
+        setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setLayout(null); // Set layout to null for absolute positioning
         // Add username field
         userName = new JTextField();
@@ -52,14 +55,14 @@ public class MenuPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
                 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                int x = col * tile;
-                int y = row * tile;
+        for (int row = 0; row < DEFAULT_BOARD_SIZE_X; row++) {
+            for (int col = 0; col < DEFAULT_BOARD_SIZE_Y ; col++) {
+                int x = col * TILE_SIZE;
+                int y = row * TILE_SIZE;
                 g.setColor(Color.BLACK);
-                g.fillRect(x, y, tile, tile);
+                g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
                 g.setColor(Color.BLACK);
-                g.drawRect(x, y, tile, tile);
+                g.drawRect(x, y, TILE_SIZE, TILE_SIZE);
             }
         }
     }
