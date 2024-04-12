@@ -15,6 +15,7 @@ public class Player {
     int height; // height of the player
     int speed; // speed of the player
     int tile;
+    int coins;
     BufferedImage image; // image of the player
 
     private GamePanel gamePanel;
@@ -26,8 +27,9 @@ public class Player {
         this.playerY = offset;
         this.width = 16;
         this.height = 16;
-        this.speed = GamePanel.TILE_SIZE/2;
-        this.tile = GamePanel.TILE_SIZE/2;
+        this.speed = GamePanel.TILE_SIZE;
+        this.tile = GamePanel.TILE_SIZE;
+        this.coins = 100;
         
         try {
             image = ImageIO.read(new File("images/characters/down.png"));
@@ -119,6 +121,20 @@ public class Player {
         	}
         }
     }
+    
+    public int getCoins() {
+    	return coins;
+    }
+
+    public void setCoins(int cCoins) {
+    	coins = cCoins;
+    	System.out.println("Carbon Coins updated to: " + coins);
+    }
+
+    public void adjustCoins(double adjustment) {
+        this.coins += adjustment;
+        System.out.println("Carbon Coins updated to: " + coins);
+    }
         
     public int getPlayerX() {
     	return playerX;
@@ -151,50 +167,20 @@ public class Player {
 
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
     }
-
-
-    public int checkScoreIncrease() {
-        if (x == gem.x && y == gem.y && !scoreUpdated) {
-            score++; // Increase the score
-            scoreUpdated = true; // Set the flag to indicate that the score has been updated
-            gem.dropRandomly(5);
-            System.out.println(score);
-        }
-        return score;
-    }  
-    
-    public void checkPopUp() {
-        if (x == popup.popUpX && y == popup.popUpY) {
-//            System.out.println("Pop Up");
-        	gamePanel.restartGame();
-        	}
-    } 
-
-    public void timer(int movement) {  	
-    	if ((playerTime - movement) <= 0) {
-    		
-    		Main.openEndWindow(gameFrame, username);
-		
-    	}
-    	else {
-    		playerTime -= movement;
-    	}
-    }
-
-    
-    public int getTimer() {  	
-    	return playerTime;
-    }
-    
-    public void setTimer(int time) {
-    	playerTime = time;
-    	System.out.println("Time updated to: " + playerTime);
-    }
-    
-    public void adjustTimer(double adjustment) {
-        this.playerTime += adjustment;
-        System.out.println("Time updated to: " + playerTime);
-    }
+  
+//    public int getTimer() {  	
+//    	return playerTime;
+//    }
+//    
+//    public void setTimer(int time) {
+//    	playerTime = time;
+//    	System.out.println("Time updated to: " + playerTime);
+//    }
+//    
+//    public void adjustTimer(double adjustment) {
+//        this.playerTime += adjustment;
+//        System.out.println("Time updated to: " + playerTime);
+//    }
     
     public void updateTravel(Route route) {
         TransportTypes type = route.getTransportType();
@@ -207,7 +193,7 @@ public class Player {
         // Time Cost
         double timePerTile = type.getSpeed(); // Get adjusted speed considering congestion
         int totalTravelTime = (int) (timePerTile * distance); // Total time taken on route
-        adjustTimer(-totalTravelTime); // Subtract this time from the game timer
+        //adjustTimer(-totalTravelTime); // Subtract this time from the game timer   ->>>> FIXXXX
 
         System.out.println("Travel Costs - Distance: " + distance + ", Carbon Cost: " + carbonCost + ", Time Cost: " + totalTravelTime + " seconds");
     }

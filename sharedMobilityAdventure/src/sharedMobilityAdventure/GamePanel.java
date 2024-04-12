@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	private PopUp popup;
 	private Board board;
     
-    private static int DEFAULT_BOARD_SIZE = 8; //i.e 10*10
+    public static int DEFAULT_BOARD_SIZE = 8; //i.e 10*10
     private static int SIDEBAR_WIDTH = 256;
     public static int GAME_HEIGHT = 720;
     public static int GAME_WIDTH = 720;
@@ -35,8 +35,6 @@ public class GamePanel extends JPanel implements KeyListener {
     
     private CarbonCoin[] carbonCoins;
     private int numCarbonCoins = 3;
-     
-	private PopUp popup;
     
 	int playerTime = 1000;
 	int gemScore = 0;
@@ -142,7 +140,7 @@ public class GamePanel extends JPanel implements KeyListener {
             }
         }
               
-        popup.draw(g);
+        //popup.draw(g);
         
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
@@ -162,24 +160,24 @@ public class GamePanel extends JPanel implements KeyListener {
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, GamePanel.GAME_WIDTH+50, 160);
+        g.drawString("" + playerTime, GamePanel.GAME_WIDTH+50, 175);
         
         // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkGemScore(), GamePanel.GAME_WIDTH+10, 221);
+        g.drawString("" + checkGemScore(), GamePanel.GAME_WIDTH+20, 270);
         gemScoreUpdate = true;
                      
         // Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkCoinScore(), GamePanel.GAME_WIDTH+50, 350);
+        g.drawString("" + checkCoinScore(), GamePanel.GAME_WIDTH+120, 270);
         coinScoreUpdate = true;
         
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("", GamePanel.GAME_WIDTH+10, 303);
+        g.drawString("1000", GamePanel.GAME_WIDTH+50, 375);
        
     }
     

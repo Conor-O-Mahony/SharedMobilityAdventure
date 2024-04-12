@@ -21,16 +21,15 @@ public class Collectable {
         // debugging statements
         System.out.println("Dropping collectable.");
         
-
-		int randomNumberX = random.nextInt(12);
-        int randomNumberY = random.nextInt(9);
+		int randomNumberX = random.nextInt(GamePanel.DEFAULT_BOARD_SIZE);
+        int randomNumberY = random.nextInt(GamePanel.DEFAULT_BOARD_SIZE);
         System.out.println("Random numbers: X=" + randomNumberX + ", Y=" + randomNumberY);
         
         int oddNumberX = randomNumberX * 2 + 1;
         int oddNumberY = randomNumberY * 2 + 1;
         
-        collectabelX = 8 * 4 * oddNumberX;
-        collectabelY = 8 * 4 * oddNumberY;
+        collectabelX = GamePanel.TILE_SIZE/2 * oddNumberX;
+        collectabelY = GamePanel.TILE_SIZE/2 * oddNumberY;
         System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
     
         return new int[]{collectabelX, collectabelY};
