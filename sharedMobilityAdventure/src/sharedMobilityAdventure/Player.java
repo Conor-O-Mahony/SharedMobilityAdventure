@@ -34,13 +34,12 @@ public class Player {
     	this.gem = gem;
         this.popup = popup;
         this.board = board;
-        this.scale = gamePanel.getScale();
-        this.offset = 8 * scale;
+        this.offset = GamePanel.TILE_SIZE/2; //* scale;
         this.x = offset;
         this.y = offset;
         this.width = 16;
         this.height = 16;
-        this.speed = 16 * scale;
+        this.speed = offset*2;
         this.score = 0;
         this.playerTime = 1000;
         this.scoreUpdated = false;
@@ -55,52 +54,59 @@ public class Player {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         
-        if (key == KeyEvent.VK_UP) {            
-            y -= speed;
-            try {
-                image = ImageIO.read(new File("images/characters/up.png"));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            checkScoreIncrease();
-            checkPopUp();
-            timer(10);
+        if (key == KeyEvent.VK_UP) { 
+        	if (y-speed > offset-1) {
+        		y -= speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/up.png"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                checkScoreIncrease();
+                checkPopUp();
+                timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_RIGHT) {
-            x += speed;
-            try {
-                image = ImageIO.read(new File("images/characters/right.png"));
-            } catch (IOException e2) {
-                e2.printStackTrace();
-            }
-            checkScoreIncrease();
-            checkPopUp();
-            timer(10);
+        	if (x+speed < GamePanel.GAME_WIDTH) {
+        		x += speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/right.png"));
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
+                checkScoreIncrease();
+                checkPopUp();
+                timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_DOWN) {
-            y += speed;
-            try {
-                image = ImageIO.read(new File("images/characters/down.png"));
-            } catch (IOException e3) {
-                e3.printStackTrace();
-            }
-            checkScoreIncrease();
-            checkPopUp();
-            timer(10);
-
+        	if (y+speed < GamePanel.GAME_HEIGHT) {
+        		y += speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/down.png"));
+                } catch (IOException e3) {
+                    e3.printStackTrace();
+                }
+                checkScoreIncrease();
+                checkPopUp();
+                timer(10);
+        	}
         }
         if (key == KeyEvent.VK_LEFT) {
-            x -= speed;
-            try {
-                image = ImageIO.read(new File("images/characters/left.png"));
-            } catch (IOException e4) {
-                e4.printStackTrace();
-            }
-            checkScoreIncrease();
-            checkPopUp();
-            timer(10);
+        	if (x-speed > offset-1) {
+        		x -= speed;
+        		try {
+                    image = ImageIO.read(new File("images/characters/left.png"));
+                } catch (IOException e4) {
+                    e4.printStackTrace();
+                }
+                checkScoreIncrease();
+                checkPopUp();
+                timer(10);
+        	}
         }
         if (key == KeyEvent.VK_1) {
         	boolean taken = gamePanel.takeTransportRoute(1,x/speed,y/speed);
