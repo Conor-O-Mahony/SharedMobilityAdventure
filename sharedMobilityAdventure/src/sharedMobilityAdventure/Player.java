@@ -21,13 +21,13 @@ public class Player {
     
     public Player(GamePanel gamePanel) {
     	this.gamePanel = gamePanel;
-        this.offset = 8 * gamePanel.getScale();
+        this.offset = GamePanel.TILE_SIZE/2;
         this.playerX = offset;
         this.playerY = offset;
         this.width = 16;
         this.height = 16;
-        this.speed = 16 * gamePanel.getScale();
-        this.tile = 16 * gamePanel.getScale();
+        this.speed = GamePanel.TILE_SIZE/2;
+        this.tile = GamePanel.TILE_SIZE/2;
         
         try {
             image = ImageIO.read(new File("images/characters/down.png"));
@@ -39,59 +39,64 @@ public class Player {
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         
-        if (key == KeyEvent.VK_UP) {            
-        	playerY -= speed;
-            try {
-                image = ImageIO.read(new File("images/characters/up.png"));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-          
-            gamePanel.checkGemScore();
-            gamePanel.checkCoinScore();
-//            gamePanel.checkPopUp();
-            gamePanel.timer(10);
-
+        if (key == KeyEvent.VK_UP) { 
+        	if (playerY-speed > offset-1) {
+        		playerY -= speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/up.png"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
+                gamePanel.checkPopUp();
+                gamePanel.timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_RIGHT) {
-        	playerX += speed;
-            try {
-                image = ImageIO.read(new File("images/characters/right.png"));
-            } catch (IOException e2) {
-                e2.printStackTrace();
-            }
-
-            gamePanel.checkGemScore();
-            gamePanel.checkCoinScore();
-            gamePanel.checkPopUp();
-            gamePanel.timer(10);
+        	if (playerX+speed < GamePanel.GAME_WIDTH) {
+        		playerX += speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/right.png"));
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
+                gamePanel.checkPopUp();
+                gamePanel.timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_DOWN) {
-        	playerY += speed;
-            try {
-                image = ImageIO.read(new File("images/characters/down.png"));
-            } catch (IOException e3) {
-                e3.printStackTrace();
-            }
-            gamePanel.checkGemScore();
-            gamePanel.checkCoinScore();
-            gamePanel.checkPopUp();
-            gamePanel.timer(10);
+        	if (playerY+speed < GamePanel.GAME_HEIGHT) {
+        		playerY += speed;
+                try {
+                    image = ImageIO.read(new File("images/characters/down.png"));
+                } catch (IOException e3) {
+                    e3.printStackTrace();
+                }
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
+                gamePanel.checkPopUp();
+                gamePanel.timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_LEFT) {
-        	playerX -= speed;
-            try {
-                image = ImageIO.read(new File("images/characters/left.png"));
-            } catch (IOException e4) {
-                e4.printStackTrace();
-            }
-            gamePanel.checkGemScore();
-            gamePanel.checkCoinScore();
-            gamePanel.checkPopUp();
-            gamePanel.timer(10);
+        	if (playerX-speed > offset-1) {
+        		playerX -= speed;
+        		try {
+                    image = ImageIO.read(new File("images/characters/left.png"));
+                } catch (IOException e4) {
+                    e4.printStackTrace();
+                }
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
+                gamePanel.checkPopUp();
+                gamePanel.timer(10);
+        	}
         }
         
         if (key == KeyEvent.VK_1) {

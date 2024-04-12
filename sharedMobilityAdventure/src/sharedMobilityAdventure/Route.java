@@ -29,7 +29,7 @@ public class Route {
 		for (int i=1; i<routeSize; i++) {
 			boolean chosen = false;
 			tries = 0;
-			while (chosen!=true && tries<3) {
+			while (chosen!=true && tries<10) {
 				int n = Board.getRandomNumber(0,4);
 				if (n==0 && x<maxX-2) {
 					if (!Arrays.stream(routeTiles).anyMatch(boardTiles[y][x+1]::equals)) { //THE ROUTE SHOULD NOT REVISIT TILES IT HAS ALREADY CROSSED
@@ -53,6 +53,9 @@ public class Route {
 					}
 				}
 				tries+=1;
+			}
+			if (tries==10) {
+				break;
 			}
 			routeTiles[i] = boardTiles[y][x];
 		}
