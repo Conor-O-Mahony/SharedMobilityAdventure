@@ -10,7 +10,6 @@ public class MenuPanel extends JPanel {
     
     public MenuPanel(JFrame menuFrame) {
     	
-        setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setLayout(null); // Set layout to null for absolute positioning
         // Add username field
         userName = new JTextField();
@@ -81,12 +80,12 @@ public class MenuPanel extends JPanel {
                 
         for (int row = 0; row < Main.WINDOW_HEIGHT/Main.DEFAULT_BOARD_SIZE; row++) {
             for (int col = 0; col < Main.WINDOW_WIDTH/Main.DEFAULT_BOARD_SIZE ; col++) {
-                int x = col * TILE_SIZE;
-                int y = row * TILE_SIZE;
+                int x = col * Main.TILE_SIZE;
+                int y = row * Main.TILE_SIZE;
                 g.setColor(Color.BLACK);
-                g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                g.fillRect(x, y, Main.TILE_SIZE, Main.TILE_SIZE);
                 g.setColor(Color.BLACK);
-                g.drawRect(x, y, TILE_SIZE, TILE_SIZE);
+                g.drawRect(x, y, Main.TILE_SIZE, Main.TILE_SIZE);
             }
         }
     }
