@@ -13,25 +13,16 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
     private Gem gem;
-    private CarbonCoin carboncoin;
 	private Player player;
 	private PopUp popup;
 	private Board board;
-    
-    public static int DEFAULT_BOARD_SIZE = 8; //i.e 10*10
-    private static int SIDEBAR_WIDTH = 256;
-    public static int GAME_HEIGHT = 720;
-    public static int GAME_WIDTH = 720;
-    private static int WINDOW_WIDTH = GAME_HEIGHT + SIDEBAR_WIDTH;
-    private static int WINDOW_HEIGHT = GAME_HEIGHT;
-    public static int TILE_SIZE = GAME_HEIGHT / DEFAULT_BOARD_SIZE;
 
     private String username; // Store the username
     private JFrame gameFrame; // Store the game frame  
         
-	private BufferedImage[] roadtileArray;
-	private BufferedImage[] haloArray;
-	private BufferedImage sidebarImage;
+	private transient BufferedImage[] roadtileArray;
+	private transient BufferedImage[] haloArray;
+	private transient BufferedImage sidebarImage;
     
     private CarbonCoin[] carbonCoins;
     private int numCarbonCoins = 3;
@@ -47,18 +38,19 @@ public class GamePanel extends JPanel implements KeyListener {
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
 			
-		setPreferredSize(new Dimension(GamePanel.WINDOW_WIDTH,GamePanel.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-
         initGame();
 
         this.setFocusable(true);
         requestFocus();
-        addKeyListener(this);            
+        addKeyListener(this);   
+        setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
+        
+        add(createButton(gameFrame, Main.GAME_WIDTH+60, Main.GAME_HEIGHT-80, "Save Game"));
     }
 	
 	
     public void initGame() {
-		    board = new Board(GamePanel.DEFAULT_BOARD_SIZE, GamePanel.DEFAULT_BOARD_SIZE);
+		board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
         player = new Player(this);
 
         gem = new Gem("Diamond");
@@ -70,14 +62,26 @@ public class GamePanel extends JPanel implements KeyListener {
         }
           
         popup = new PopUp();
-		
-		String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
+        
+        loadImages();
+    }
+    
+    void loadImages() {
+    	String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
 		loadTiles(roadTileNames,roadtileArray);
 		
 		String[] haloNames = {"halo","halo2"};
 		haloArray = new BufferedImage[haloNames.length];
-		loadTiles(haloNames,haloArray);             
+		loadTiles(haloNames,haloArray);
+		
+		gem.loadImage();
+		popup.loadImage();
+		player.loadImage();
+		
+		for (int i=0; i<carbonCoins.length; i++) {
+			carbonCoins[i].loadImage();
+		}
     }
 	
 	
@@ -92,14 +96,45 @@ public class GamePanel extends JPanel implements KeyListener {
 			}
 		}
 	}
+    
+    private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
+        JButton button = new JButton(text);
+        int buttonWidth = 16*9;
+        int buttonHeight = 16*4;
+        Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+        button.setBounds(bounds);
+
+        button.addActionListener(e -> {       	
+        	//Delete the current frame
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
+            currentFrame.dispose(); // Dispose the current EndPanel frame
+            
+            //Load the save/load frame, pass in the GamePanel as argument
+            JFrame saveloadFrame = new JFrame();
+            saveloadFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            saveloadFrame.setResizable(false);
+            saveloadFrame.setTitle("Save/Load Game"); 
+            
+            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,saveloadFrame,"save");
+            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
+            saveloadFrame.getContentPane().add(saveloadPanel);
+            //saveloadFrame.add(saveloadPanel);
+       
+            saveloadFrame.pack();
+            saveloadFrame.setLocationRelativeTo(null);
+            saveloadFrame.setVisible(true);
+            
+        });  
+        return button;     
+    }
 	
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        for (int row = 0; row < GamePanel.DEFAULT_BOARD_SIZE; row++) {
-			for (int col = 0; col < GamePanel.DEFAULT_BOARD_SIZE; col++) {		
+        for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
+			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
 				
 				TransportTypes[] routeTypes = board.tiles[row][col].getRouteTypes();
 				
@@ -107,21 +142,21 @@ public class GamePanel extends JPanel implements KeyListener {
 				boolean train=Arrays.stream(routeTypes).anyMatch(TransportTypes.TRAIN::equals);
 				boolean bike=Arrays.stream(routeTypes).anyMatch(TransportTypes.BICYCLE::equals);
 				
-				g.drawImage(roadtileArray[0], col*GamePanel.TILE_SIZE, row*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+				g.drawImage(roadtileArray[0], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
 				
 //	            g.setColor(Color.BLACK);
 //	            g.drawRect(col * tile, row * tile, tile, tile);
 				
 				if (bike==true) {
-					g.drawImage(roadtileArray[1], col*GamePanel.TILE_SIZE, row*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE*2/3, GamePanel.TILE_SIZE*2/3, null);
+					g.drawImage(roadtileArray[1], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				if (bus==true) {
-					int extra = (int) Math.round(0.3*GamePanel.TILE_SIZE);
-					g.drawImage(roadtileArray[2], col*GamePanel.TILE_SIZE + extra, row*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE*2/3, GamePanel.TILE_SIZE*2/3, null);
+					int extra = (int) Math.round(0.3*Main.TILE_SIZE);
+					g.drawImage(roadtileArray[2], col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				if (train==true) {
-					int extra = (int) Math.round(0.3*GamePanel.TILE_SIZE);
-					g.drawImage(roadtileArray[3], col*GamePanel.TILE_SIZE + extra, row*GamePanel.TILE_SIZE - extra, GamePanel.TILE_SIZE*2/3, GamePanel.TILE_SIZE*2/3, null);
+					int extra = (int) Math.round(0.3*Main.TILE_SIZE);
+					g.drawImage(roadtileArray[3], col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 			}
         }
@@ -148,36 +183,37 @@ public class GamePanel extends JPanel implements KeyListener {
             ex.printStackTrace();
         }  
                
-        g.drawImage(sidebarImage, GamePanel.GAME_WIDTH, 0, GamePanel.SIDEBAR_WIDTH, GamePanel.GAME_WIDTH, null);
+        //g.drawImage(sidebarImage, Main.GAME_WIDTH, 0, Main.SIDEBAR_WIDTH, Main.GAME_WIDTH, null);
+        g.drawImage(sidebarImage,Main.GAME_WIDTH,0,sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
         
         paintHalos(g);
         
         // Username
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(username, GamePanel.GAME_WIDTH+50, 70);
+        g.drawString(username, Main.GAME_WIDTH+50, 70);
         
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, GamePanel.GAME_WIDTH+50, 175);
+        g.drawString("" + playerTime, Main.GAME_WIDTH+50, 175);
         
         // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkGemScore(), GamePanel.GAME_WIDTH+20, 270);
+        g.drawString("" + checkGemScore(), Main.GAME_WIDTH+20, 270);
         gemScoreUpdate = true;
                      
         // Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkCoinScore(), GamePanel.GAME_WIDTH+120, 270);
+        g.drawString("" + checkCoinScore(), Main.GAME_WIDTH+120, 270);
         coinScoreUpdate = true;
         
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1000", GamePanel.GAME_WIDTH+50, 375);
+        g.drawString("1000", Main.GAME_WIDTH+50, 375);
        
     }
     
@@ -193,13 +229,13 @@ public class GamePanel extends JPanel implements KeyListener {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(haloArray[i], tile_x*GamePanel.TILE_SIZE, tile_y*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, null);
+    				g.drawImage(haloArray[i], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
     			TransportTypes type = tileRoutes[i].getTransportType();
     			String typeString = type.toString();
     			g.setColor(Color.BLACK); // Set color to black
     	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-    	        g.drawString("Press "+(i+1)+" to take "+typeString, GamePanel.GAME_WIDTH+35, 485 + i*25);
+    	        g.drawString("Press "+(i+1)+" to take "+typeString, Main.GAME_WIDTH+35, 485 + i*25);
     		}
     	}
     }

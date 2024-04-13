@@ -1,9 +1,12 @@
 package sharedMobilityAdventure;
 
+import java.io.Serializable;
 import java.lang.Math;
 
-public class Board { //Holds the Tile's
-	
+public class Board implements Serializable { //Holds the Tile's
+
+	private static final long serialVersionUID = -6394700480482096940L;
+
 	Tile[][] tiles;
 	
 	//private int route_probability = 20; //i.e. 1 in 5 chance of a Route being create at any Tile

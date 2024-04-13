@@ -5,9 +5,12 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-public class Player {
+public class Player implements Serializable{
+
+	private static final long serialVersionUID = 325187586807794891L;
 	int offset;
     private int playerX; // x-coordinate of the player
     private int playerY; // y-coordinate of the player
@@ -16,22 +19,26 @@ public class Player {
     int speed; // speed of the player
     int tile;
     int coins;
-    BufferedImage image; // image of the player
+    transient BufferedImage image; // image of the player
 
     private GamePanel gamePanel;
     
     public Player(GamePanel gamePanel) {
     	this.gamePanel = gamePanel;
-        this.offset = GamePanel.TILE_SIZE/2;
+        this.offset = Main.TILE_SIZE/2;
         this.playerX = offset;
         this.playerY = offset;
         this.width = 16;
         this.height = 16;
-        this.speed = GamePanel.TILE_SIZE;
-        this.tile = GamePanel.TILE_SIZE;
+        this.speed = Main.TILE_SIZE;
+        this.tile = Main.TILE_SIZE;
         this.coins = 100;
+        //loadImage();
         
-        try {
+    }
+    
+    public void loadImage() {
+    	try {
             image = ImageIO.read(new File("images/characters/down.png"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,7 +64,7 @@ public class Player {
         }
         
         if (key == KeyEvent.VK_RIGHT) {
-        	if (playerX+speed < GamePanel.GAME_WIDTH) {
+        	if (playerX+speed < Main.GAME_WIDTH) {
         		playerX += speed;
                 try {
                     image = ImageIO.read(new File("images/characters/right.png"));
@@ -72,7 +79,7 @@ public class Player {
         }
         
         if (key == KeyEvent.VK_DOWN) {
-        	if (playerY+speed < GamePanel.GAME_HEIGHT) {
+        	if (playerY+speed < Main.GAME_HEIGHT) {
         		playerY += speed;
                 try {
                     image = ImageIO.read(new File("images/characters/down.png"));

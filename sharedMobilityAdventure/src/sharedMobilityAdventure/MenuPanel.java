@@ -1,11 +1,11 @@
 package sharedMobilityAdventure;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16;
+	private static final long serialVersionUID = 329006769552291165L;
+	int tile = 16;
     int columns = 64;
     int rows = 36;
     int totalWidth = columns * tile;
@@ -23,6 +23,7 @@ public class MenuPanel extends JPanel {
         add(userName);
         
         add(createButton(menuFrame));
+        add(createLoadButton(440,400,"Load game"));
 
     }
     
@@ -46,6 +47,37 @@ public class MenuPanel extends JPanel {
         });
 
         return button;
+    }
+    
+    private JButton createLoadButton(int buttonX, int buttonY, String text) {
+        JButton button = new JButton(text);
+        int buttonWidth = 16*9;
+        int buttonHeight = 16*4;
+        Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+        button.setBounds(bounds);
+
+        button.addActionListener(e -> {       	
+        	//Delete the current frame
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
+            currentFrame.dispose(); // Dispose the current EndPanel frame
+            
+            //Load the save/load frame, pass in the GamePanel as argument
+            JFrame saveloadFrame = new JFrame();
+            saveloadFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            saveloadFrame.setResizable(false);
+            saveloadFrame.setTitle("Save/Load Game"); 
+            
+            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,saveloadFrame,"load");
+            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
+            saveloadFrame.getContentPane().add(saveloadPanel);
+            //saveloadFrame.add(saveloadPanel);
+       
+            saveloadFrame.pack();
+            saveloadFrame.setLocationRelativeTo(null);
+            saveloadFrame.setVisible(true);
+            
+        });  
+        return button;     
     }
 
     @Override
