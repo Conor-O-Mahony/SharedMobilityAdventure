@@ -15,7 +15,8 @@ import javax.swing.SwingUtilities;
 
 public class EndPanel extends JPanel {
 
-    int tile = 16;
+	private static final long serialVersionUID = -8788565932041161917L;
+	int tile = 16;
     int columns = 64;
     int rows = 36;
     int totalWidth = columns * tile;

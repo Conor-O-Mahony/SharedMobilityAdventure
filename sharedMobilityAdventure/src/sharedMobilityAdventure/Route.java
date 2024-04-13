@@ -1,9 +1,12 @@
 package sharedMobilityAdventure;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Route {
-	
+public class Route implements Serializable{
+
+	private static final long serialVersionUID = -2354648655745414L;
+
 	Tile[] routeTiles;
 	
 	int startRow;

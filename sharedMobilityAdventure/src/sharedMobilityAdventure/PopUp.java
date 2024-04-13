@@ -1,38 +1,44 @@
 package sharedMobilityAdventure;
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Random;
 
-public class PopUp {
-    
+public class PopUp implements Serializable{
+
+	private static final long serialVersionUID = -8421318084033730800L;
 	public int popUpX; // x-coordinate
 	public int popUpY; // y-coordinate
     final int width; // width of popUp
     final int height; // height of popUp
-    BufferedImage image; // image of popUp
+    transient BufferedImage image; // image of popUp
 	
     // List of dialogue strings
-    private static String[] dialogueOptions = {
-        "Random Fact Number 1",
-        "Random Fact Number 2",
-        "Random Fact Number 3",
-        "Random Fact Number 4"
-    };
-
+//    private static String[] dialogueOptions = {
+//        "Random Fact Number 1",
+//        "Random Fact Number 2",
+//        "Random Fact Number 3",
+//        "Random Fact Number 4"
+//    };
+    
     public PopUp () {
         width = 16;
         height = 16;
-        try {
+        //loadImage();
+        
+        dropPopUp();
+    }
+    
+    public void loadImage() {
+    	try {
             image = ImageIO.read(new File("images/tiles/water.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        dropPopUp();
     }
 
     public void dropPopUp() {
