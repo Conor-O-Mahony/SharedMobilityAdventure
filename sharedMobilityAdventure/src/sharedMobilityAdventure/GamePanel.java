@@ -12,26 +12,27 @@ import java.util.Arrays;
 public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
-    private Gem gem;
+  private Gem gem;
 	private Player player;
 	private PopUp popup;
 	private Board board;
 
-    private String username; // Store the username
-    private JFrame gameFrame; // Store the game frame  
+  private String username; // Store the username
+  private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
 	private transient BufferedImage sidebarImage;
     
-    private CarbonCoin[] carbonCoins;
-    private int numCarbonCoins = 3;
+  private CarbonCoin[] carbonCoins;
+  private int numCarbonCoins = 3;
     
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
-    public boolean gemScoreUpdate = true;
-    public boolean coinScoreUpdate = true;
+	int gameScore = 0;
+  public boolean gemScoreUpdate = true;
+  public boolean coinScoreUpdate = true;
 
     public GamePanel(JFrame gameFrame, String username){
 		
@@ -48,9 +49,8 @@ public class GamePanel extends JPanel implements KeyListener {
         add(createButton(gameFrame, Main.GAME_WIDTH+60, Main.GAME_HEIGHT-80, "Save Game"));
     }
 	
-	
     public void initGame() {
-		board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
+		    board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
         player = new Player(this);
 
         gem = new Gem("Diamond");
@@ -81,10 +81,9 @@ public class GamePanel extends JPanel implements KeyListener {
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
-		}
+		  } 
     }
-	
-	
+
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 		for (int i=0; i<imageNames.length; i++) {
 			String source = String.format("images/tiles/%s.png", imageNames[i]);
@@ -188,32 +187,32 @@ public class GamePanel extends JPanel implements KeyListener {
         
         paintHalos(g);
         
-        // Username
+        // Player
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(username, Main.GAME_WIDTH+50, 70);
+        g.drawString(username, Main.GAME_WIDTH+90, 70);
         
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, Main.GAME_WIDTH+50, 175);
+        g.drawString("" + playerTime, Main.GAME_WIDTH+90, 175);
         
         // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkGemScore(), Main.GAME_WIDTH+20, 270);
+        g.drawString("" + checkGemScore(), Main.GAME_WIDTH+40, 270);
         gemScoreUpdate = true;
                      
-        // Coins
+        // Carbon Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkCoinScore(), Main.GAME_WIDTH+120, 270);
+        g.drawString("" + checkCoinScore(), Main.GAME_WIDTH+160, 270);
         coinScoreUpdate = true;
         
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("1000", Main.GAME_WIDTH+50, 375);
+        g.drawString("" + gameScore, Main.GAME_WIDTH+90, 375);
        
     }
     
@@ -239,7 +238,6 @@ public class GamePanel extends JPanel implements KeyListener {
     		}
     	}
     }
-  
     
     public void restartGame() {
         initGame();
@@ -295,6 +293,7 @@ public class GamePanel extends JPanel implements KeyListener {
         	gemScore++; // Increase the score
             gemScoreUpdate = false;
             gem.setVisibility(false);
+            calculateGameScore();
             restartGame();
         }
         return gemScore;
@@ -312,6 +311,10 @@ public class GamePanel extends JPanel implements KeyListener {
         return coinScore;
     }
     
+    public void calculateGameScore() {        
+    	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
+    }
+       
     public void checkPopUp() {
         if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
             System.out.println("Pop Up");   	
