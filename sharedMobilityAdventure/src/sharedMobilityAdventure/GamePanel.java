@@ -308,9 +308,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	            gemScore++; // Increase the score
 	            gemScoreUpdate = false;
 	            gem.setVisibility(false);
-	            calculateGameScore();
-	            restartGame();
-	            break; // Exit the loop after finding and processing the gem
 	        }
 	    }
 	    return gemScore;
