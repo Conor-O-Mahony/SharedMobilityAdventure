@@ -35,7 +35,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	int gameScore = 0;
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
-
+  
     public GamePanel(JFrame gameFrame, String username){
 		
         this.gameFrame = gameFrame; // Store the game frame
@@ -68,7 +68,8 @@ public class GamePanel extends JPanel implements KeyListener {
         }
           
         popup = new PopUp();
-        
+        // updateCollectiblesLocation(player.getPlayerX(), player.getPlayerY()); // Update collectibles location
+
         loadImages();
     }
     
@@ -169,7 +170,6 @@ public class GamePanel extends JPanel implements KeyListener {
 				}
 			}
         }
-
         
         player.draw(g);
 
