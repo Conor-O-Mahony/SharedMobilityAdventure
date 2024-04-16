@@ -20,8 +20,8 @@ public class CarbonCoin extends Collectable implements Serializable {
 
     public CarbonCoin(String name) {
     	super(name);
-        width = 10;
-        height = 10;
+        width = 32;
+        height = 32;
         //loadImage();
 
         int[] coordinates = super.dropRandomly(); // Obtain random coordinates from superclass

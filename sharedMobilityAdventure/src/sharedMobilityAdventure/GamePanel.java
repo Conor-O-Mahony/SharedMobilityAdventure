@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
-  private Gem gem;
 	private Player player;
 	private PopUp popup;
 	private Board board;
@@ -26,6 +25,9 @@ public class GamePanel extends JPanel implements KeyListener {
     
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
+  
+  private Gem[] gems; //Array to store Gems
+  private int numGems = 3; // Number of gems to drop
     
 	int playerTime = 1000;
 	int gemScore = 0;
@@ -50,10 +52,14 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 	
     public void initGame() {
-		    board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
+		board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
         player = new Player(this);
 
-        gem = new Gem("Diamond");
+        gems = new Gem[numGems]; // Initialise array
+        
+        for (int i = 0; i < numGems; i++) {
+        	gems[i] = new Gem("Diamond"); // Initialise each Gem object
+        }
 		
         carbonCoins = new CarbonCoin[numCarbonCoins];
 
@@ -75,9 +81,13 @@ public class GamePanel extends JPanel implements KeyListener {
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
 		
-		gem.loadImage();
 		popup.loadImage();
 		player.loadImage();
+		
+		// load images for gem
+		for (int i = 0; i < gems.length; i++) {
+			gems[i].loadImage();
+		}
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
@@ -163,8 +173,11 @@ public class GamePanel extends JPanel implements KeyListener {
         
         player.draw(g);
 
-        if (gem.getVisibility()) {
-            gem.draw(g);
+        for (int i = 0; i < gems.length; i++) {
+            Gem gem = gems[i];
+            if (gem.getVisibility()) {
+                gem.draw(g);
+            }
         }
         
         for (int i = 0; i < carbonCoins.length; i++) {
@@ -288,16 +301,20 @@ public class GamePanel extends JPanel implements KeyListener {
 		return true;
 	}
  
-    public int checkGemScore() {
-        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gemScoreUpdate) {
-        	gemScore++; // Increase the score
-            gemScoreUpdate = false;
-            gem.setVisibility(false);
-            calculateGameScore();
-            restartGame();
-        }
-        return gemScore;
-    }  
+	public int checkGemScore() {
+	    for (int i = 0; i < gems.length; i++) {
+	        Gem gem = gems[i];
+	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gemScoreUpdate) {
+	            gemScore++; // Increase the score
+	            gemScoreUpdate = false;
+	            gem.setVisibility(false);
+	            calculateGameScore();
+	            restartGame();
+	            break; // Exit the loop after finding and processing the gem
+	        }
+	    }
+	    return gemScore;
+	}
     
     public int checkCoinScore() {        
         for (int i = 0; i < carbonCoins.length; i++) {
