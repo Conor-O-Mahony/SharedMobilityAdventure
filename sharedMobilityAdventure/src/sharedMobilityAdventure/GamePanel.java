@@ -304,9 +304,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	    boolean allGemsCollected = true; // Flag to check if all gems are collected
 	    for (int i = 0; i < gems.length; i++) {
 	        Gem gem = gems[i];
-	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gemScoreUpdate) {
+	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
 	            gemScore++; // Increase the score
-	            gemScoreUpdate = false;
 	            gem.setVisibility(false);
 	            calculateGameScore();
 	        }
@@ -314,11 +313,15 @@ public class GamePanel extends JPanel implements KeyListener {
 	        if (gem.getVisibility()) {
 	            allGemsCollected = false;
 	        }
+	        // Debugging statement
+	        System.out.println("Gem visibility after iteration " + i + ": " + gem.getVisibility());
 	    }
+	    
 	    // If all gems are collected, restart the game
 	    if (allGemsCollected) {
-	        restartGame();
+	        restartGame(); // Restart the game when all gems are collected
 	    }
+	    
 	    return gemScore;
 	}
 
@@ -326,9 +329,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	    boolean allCoinsCollected = true; // Flag to check if all coins are collected
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
-	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coinScoreUpdate) {
+	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
 	            coinScore++; // Increase the score
-	            coinScoreUpdate = false;
 	            coin.setVisibility(false);
 	            calculateGameScore();
 	        }
@@ -337,10 +339,12 @@ public class GamePanel extends JPanel implements KeyListener {
 	            allCoinsCollected = false;
 	        }
 	    }
+	    
 	    // If all coins are collected, restart the game
 	    if (allCoinsCollected) {
-	        restartGame();
+	        restartGame(); // Restart the game when all coins are collected
 	    }
+	    
 	    return coinScore;
 	}
     
