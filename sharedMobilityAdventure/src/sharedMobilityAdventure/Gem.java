@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 
 import java.awt.Graphics;
@@ -20,8 +21,8 @@ public class Gem extends Collectable implements Serializable {
 
     public Gem(String name) {
     	super(name);
-        width = 16;
-        height = 16;
+        width = 32;
+        height = 32;
         //loadImage();
 
         int[] coordinates = super.dropRandomly(); // Obtain random coordinates from superclass
