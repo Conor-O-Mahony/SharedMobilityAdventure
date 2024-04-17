@@ -301,7 +301,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	}
  
 	public int checkGemScore() {
-	    boolean allGemsCollected = true; // Flag to check if all gems are collected
+	    boolean allGemsCollected = true; // Flag to track if all gems are collected
+
 	    for (int i = 0; i < gems.length; i++) {
 	        Gem gem = gems[i];
 	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
@@ -309,24 +310,21 @@ public class GamePanel extends JPanel implements KeyListener {
 	            gem.setVisibility(false);
 	            calculateGameScore();
 	        }
-	        // If any gem is still visible, set the flag to false
 	        if (gem.getVisibility()) {
-	            allGemsCollected = false;
+	            allGemsCollected = false; // If any gem is still visible, set the flag to false
 	        }
-	        // Debugging statement
-	        System.out.println("Gem visibility after iteration " + i + ": " + gem.getVisibility());
 	    }
-	    
-	    // If all gems are collected, restart the game
-	    if (allGemsCollected) {
-	        restartGame(); // Restart the game when all gems are collected
+
+	    if (allGemsCollected && allCoinsCollected()) {
+	        restartGame(); // Restart the game when all gems and coins are collected
 	    }
-	    
+
 	    return gemScore;
 	}
 
 	public int checkCoinScore() {
-	    boolean allCoinsCollected = true; // Flag to check if all coins are collected
+	    boolean allCoinsCollected = true; // Flag to track if all coins are collected
+
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
@@ -334,19 +332,28 @@ public class GamePanel extends JPanel implements KeyListener {
 	            coin.setVisibility(false);
 	            calculateGameScore();
 	        }
-	        // If any coin is still visible, set the flag to false
 	        if (coin.getVisibility()) {
-	            allCoinsCollected = false;
+	            allCoinsCollected = false; // If any coin is still visible, set the flag to false
 	        }
 	    }
-	    
-	    // If all coins are collected, restart the game
-	    if (allCoinsCollected) {
-	        restartGame(); // Restart the game when all coins are collected
+
+	    if (allCoinsCollected() && allCoinsCollected()) {
+	        restartGame(); // Restart the game when all gems and coins are collected
 	    }
-	    
+
 	    return coinScore;
 	}
+
+	private boolean allCoinsCollected() {
+	    for (CarbonCoin coin : carbonCoins) {
+	        if (coin.getVisibility()) {
+	            return false; // If any coin is still visible, return false
+	        }
+	    }
+	    return true; // All coins are collected
+	}
+
+
     
     public void calculateGameScore() {        
     	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
