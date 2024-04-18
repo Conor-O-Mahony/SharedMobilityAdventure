@@ -1,10 +1,9 @@
 package sharedMobilityAdventure;
 
-
+import java.io.Serializable;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
@@ -31,7 +30,5 @@ public class Gem extends Collectable implements Serializable {
     @Override
     public void draw(Graphics g) {
         super.draw(g); // Call superclass draw method to draw the gem image and its outline
-    }
 }
-
-
+}
