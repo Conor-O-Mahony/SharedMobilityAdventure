@@ -15,12 +15,12 @@ public class CarbonCoin extends Collectable implements Serializable {
     transient BufferedImage image; // image of gem
     private transient GamePanel gamePanel; // GamePanel instance
 
-    public CarbonCoin(String name, GamePanel gamePanel) {
+    public CarbonCoin(String name, GamePanel gamePanel, int playerX, int playerY) {
         super(name);
         this.gamePanel = gamePanel; // Store the GamePanel instance
         width = 32;
         height = 32;
-        int[] coordinates = super.dropRandomly();
+        int[] coordinates = super.dropRandomly(playerX, playerY);
         this.collectabelX = coordinates[0];
         this.collectabelY = coordinates[1];
         // debugging statement to confirm that random method wont drop gem and carboncoin to the same location on the gamepanel

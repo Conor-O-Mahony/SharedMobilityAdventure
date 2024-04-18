@@ -23,18 +23,16 @@ public class Collectable implements Serializable {
         this.visible = true;
     }
 
-    // Method shared by Gem and CarbonCoin
-    public int[] dropRandomly() {
+    public int[] dropRandomly(int playerX, int playerY) {
         Random random = new Random();
-        // debugging statements
         System.out.println("Dropping collectable.");
-
         int panelWidth = Main.DEFAULT_BOARD_SIZE;
         int panelHeight = Main.DEFAULT_BOARD_SIZE;
-
-        // Calculate the number of attempts to drop a collectable
         int maxAttempts = 10;
         int attempts = 0;
+
+        // Define the minimum distance from the player
+        int MIN_DISTANCE_FROM_PLAYER = 3; 
 
         while (attempts < maxAttempts) {
             int randomNumberX = random.nextInt(panelWidth);
@@ -48,7 +46,16 @@ public class Collectable implements Serializable {
             collectabelY = Main.TILE_SIZE / 2 * oddNumberY;
             System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
 
-            // Check if the new coordinates overlap with previous dropped collectibles
+            // Check if the new coordinates are too close to the player
+            if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER ||
+                Math.abs(collectabelY - playerY) < MIN_DISTANCE_FROM_PLAYER) {
+                System.out.println("Too close to the player. Retrying...");
+                attempts++;
+                continue; // Retry dropping in a different location
+            }
+            
+            System.out.println("Collectable dropped further from the player.");
+
             int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
             if (droppedCoordinates.contains(combinedCoordinates)) {
                 System.out.println("Coordinates overlap with previous position. Retrying...");
@@ -56,14 +63,13 @@ public class Collectable implements Serializable {
                 continue; // Retry dropping in a different location
             }
 
-            // Update the set of dropped coordinates
             droppedCoordinates.add(combinedCoordinates);
-
-            break; // Exit the loop if dropped successfully
+            break;
         }
 
         return new int[]{collectabelX, collectabelY};
     }
+
 
     // Utility method to combine x and y coordinates into a single integer for set comparison
     private int combineCoordinates(int x, int y) {

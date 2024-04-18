@@ -15,13 +15,13 @@ public class Gem extends Collectable implements Serializable {
     transient BufferedImage image; // image of gem
     private transient GamePanel gamePanel; // GamePanel instance
 
-    public Gem(String name, GamePanel gamePanel) {
+    public Gem(String name, GamePanel gamePanel, int playerX, int playerY) {
         super(name);
         this.gamePanel = gamePanel; // Store the GamePanel instance
         width = 32;
         height = 32;
 
-        int[] coordinates = super.dropRandomly(); // Obtain random coordinates from superclass
+        int[] coordinates = super.dropRandomly(playerX, playerY); // Pass player's coordinates to dropRandomly
         this.collectabelX = coordinates[0]; // Set the x-coordinate obtained from dropRandomly
         this.collectabelY = coordinates[1]; // Set the y-coordinate obtained from dropRandomly
 
