@@ -1,9 +1,7 @@
 package sharedMobilityAdventure;
 
 import javax.sound.sampled.*;
-
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,26 +9,47 @@ import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Collectable implements Serializable {
 
-    protected static final int WIDTH = 32; // coin and gem width
-    protected static final int HEIGHT = 32; // coin and gem width
+    // Constants for width and height of collectables
+    protected static final int WIDTH = 32;
+    protected static final int HEIGHT = 32;
+
+    // Serializable ID
     private static final long serialVersionUID = 2905924766571606302L;
+
+    // Name of the collectable
     protected String name;
+
+    // Coordinates of the collectable
     protected int collectabelX;
     protected int collectabelY;
+
+    // Visibility status of the collectable
     protected boolean visible;
+
+    // Image of the collectable
     transient BufferedImage image;
 
+    // Set to store dropped coordinates
     private static final Set<Integer> droppedCoordinates = new HashSet<>();
+
+    // Minimum distance from player when dropping collectable
     private static final int MIN_DISTANCE_FROM_PLAYER = 3;
 
+    // Thread pool for sound playback
+    private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); // Adjust pool size as needed
+
+    // Constructor
     public Collectable(String name) {
         this.name = name;
         this.visible = true;
     }
 
+    // Method to drop collectable randomly
     public int[] dropRandomly(int playerX, int playerY) {
         Random random = new Random();
         int panelWidth = Main.DEFAULT_BOARD_SIZE;
@@ -68,15 +87,18 @@ public class Collectable implements Serializable {
 
         return new int[]{collectabelX, collectabelY};
     }
-    
+
+    // Method to combine coordinates into a single integer
     private int combineCoordinates(int x, int y) {
         return x * 1000 + y;
     }
 
+    // Method to get description of collectable
     public String getDescription() {
         return "Name: " + name;
     }
 
+    // Method to play sound of the collectable
     public void playSound() throws LineUnavailableException, IOException, UnsupportedAudioFileException {
         try {
             String soundFilePath;
@@ -92,7 +114,7 @@ public class Collectable implements Serializable {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
 
-            new Thread(() -> {
+            soundThreadPool.execute(() -> {
                 try {
                     clip.start();
                     float initialVolume = 1.0f;
@@ -103,18 +125,20 @@ public class Collectable implements Serializable {
                         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                         float dB = (float) (Math.log(initialVolume) / Math.log(10.0) * 20.0);
                         gainControl.setValue(dB);
-                        Thread.sleep(50); // Adjust the fade speed
+                        Thread.sleep(100); // Adjust the fade speed
                     }
                     clip.stop();
                     clip.close();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
         }
     }
+
+    // Method to draw the collectable
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);
         int adjustedY = collectabelY - (HEIGHT / 2);
@@ -184,15 +208,18 @@ public class Collectable implements Serializable {
         }
     }
 
+    // Getter for visibility
     public boolean getVisibility() {
-    	return this.visible;
-    	}
-    
-    public void setVisibility(boolean visibleUpdated) {
-    	this.visible = visibleUpdated;
-    	}
-
-	public void loadImage() {
-		
-	}
+        return this.visible;
     }
+
+    // Setter for visibility
+    public void setVisibility(boolean visibleUpdated) {
+        this.visible = visibleUpdated;
+    }
+
+    // Method to load the image of the collectable
+    public void loadImage() {
+        // Implementation specific to your requirements
+    }
+}

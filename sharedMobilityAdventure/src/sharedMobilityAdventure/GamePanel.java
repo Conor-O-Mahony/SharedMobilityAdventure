@@ -42,6 +42,9 @@ public class GamePanel extends JPanel implements KeyListener {
 		
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
+        
+        // enable doubleBuffering to reduce flickering
+        setDoubleBuffered(true);
 			
         initGame();
 
