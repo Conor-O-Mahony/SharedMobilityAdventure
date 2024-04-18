@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 
 import java.awt.*;
@@ -6,8 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.util.Arrays;
 
@@ -42,9 +41,6 @@ public class GamePanel extends JPanel implements KeyListener {
 		
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
-        
-        // enable doubleBuffering to reduce flickering
-        setDoubleBuffered(true);
 			
         initGame();
 
@@ -313,12 +309,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	            gemScore++; // Increase the score
 	            gem.setVisibility(false);
 	            calculateGameScore();
-	            try {
-	                gem.playSound();
-	            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-	                // Handle the exceptions here, such as logging the error or displaying an error message
-	                ((Throwable) e).printStackTrace();
-	            }
+	            gem.playSound();
 	        }
 	    }
 
@@ -336,12 +327,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	            coinScore++; // Increase the score
 	            coin.setVisibility(false);
 	            calculateGameScore();
-	            try {
-	                coin.playSound();
-	            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-	                // Handle the exceptions here, such as logging the error or displaying an error message
-	                ((Throwable) e).printStackTrace();
-	            }
+	            coin.playSound();
 	        }
 	    }
 

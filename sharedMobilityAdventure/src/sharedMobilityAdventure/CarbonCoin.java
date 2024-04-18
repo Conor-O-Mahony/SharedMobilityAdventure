@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 public class CarbonCoin extends Collectable implements Serializable {
 
     private static final long serialVersionUID = 1675131934479089420L;
+    
+    // private GamePanel gamePanel; // Declare a field to store the GamePanel object
 
     public CarbonCoin(String name, GamePanel gamePanel, int playerX, int playerY) {
         super(name);
