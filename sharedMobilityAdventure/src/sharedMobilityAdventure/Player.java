@@ -6,26 +6,25 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-
 import javax.imageio.ImageIO;
-public class Player implements Serializable{
 
-	private static final long serialVersionUID = 325187586807794891L;
-	int offset;
-    private int playerX; // x-coordinate of the player
-    private int playerY; // y-coordinate of the player
-    int width; // width of the player
-    int height; // height of the player
-    int speed; // speed of the player
-    int tile;
-    int coins;
-    transient BufferedImage image; // image of the player
+public class Player implements Serializable {
 
-    private GamePanel gamePanel;
-    
+    private static final long serialVersionUID = 325187586807794891L;
+    private int offset;
+    private int playerX;
+    private int playerY;
+    private int width;
+    private int height;
+    private int speed;
+    private int tile;
+    private int coins;
+    private transient BufferedImage image;
+    private transient GamePanel gamePanel; // Added member variable for GamePanel
+
     public Player(GamePanel gamePanel) {
-    	this.gamePanel = gamePanel;
-        this.offset = Main.TILE_SIZE/2;
+        this.gamePanel = gamePanel; // Store the GamePanel instance
+        this.offset = Main.TILE_SIZE / 2;
         this.playerX = offset;
         this.playerY = offset;
         this.width = 16;
@@ -33,8 +32,7 @@ public class Player implements Serializable{
         this.speed = Main.TILE_SIZE;
         this.tile = Main.TILE_SIZE;
         this.coins = 100;
-        //loadImage();
-        
+        loadImage();
     }
     
     public void loadImage() {
