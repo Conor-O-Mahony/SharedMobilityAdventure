@@ -297,8 +297,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	}
  
 	public int checkGemScore() {
-	    boolean allGemsCollected = true; // Flag to track if all gems are collected
-
 	    for (int i = 0; i < gems.length; i++) {
 	        Gem gem = gems[i];
 	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
@@ -306,12 +304,9 @@ public class GamePanel extends JPanel implements KeyListener {
 	            gem.setVisibility(false);
 	            calculateGameScore();
 	        }
-	        if (gem.getVisibility()) {
-	            allGemsCollected = false; // If any gem is still visible, set the flag to false
-	        }
 	    }
 
-	    if (allGemsCollected && allCoinsCollected()) {
+	    if (allGemsCollected() && allCoinsCollected()) {
 	        restartGame(); // Restart the game when all gems and coins are collected
 	    }
 
@@ -319,8 +314,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	}
 
 	public int checkCoinScore() {
-	    boolean allCoinsCollected = true; // Flag to track if all coins are collected
-
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
@@ -328,16 +321,22 @@ public class GamePanel extends JPanel implements KeyListener {
 	            coin.setVisibility(false);
 	            calculateGameScore();
 	        }
-	        if (coin.getVisibility()) {
-	            allCoinsCollected = false; // If any coin is still visible, set the flag to false
-	        }
 	    }
 
-	    if (allCoinsCollected() && allCoinsCollected()) {
+	    if (allGemsCollected() && allCoinsCollected()) {
 	        restartGame(); // Restart the game when all gems and coins are collected
 	    }
 
 	    return coinScore;
+	}
+
+	private boolean allGemsCollected() {
+	    for (Gem gem : gems) {
+	        if (gem.getVisibility()) {
+	            return false; // If any gem is still visible, return false
+	        }
+	    }
+	    return true; // All gems are collected
 	}
 
 	private boolean allCoinsCollected() {
@@ -348,7 +347,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	    }
 	    return true; // All coins are collected
 	}
-
 
     
     public void calculateGameScore() {        
