@@ -126,10 +126,10 @@ public class Collectable implements Serializable {
         Graphics gFilled = filledImage.getGraphics();
         gFilled.drawImage(image, 0, 0, null);
 
-        // Fill the image with the desired color (bright pink)
+        // Fill the image with the desired colour (bright pink)
         for (int y = 0; y < filledImage.getHeight(); y++) {
             for (int x = 0; x < filledImage.getWidth(); x++) {
-                // Get the pixel color at this position
+                // Get the pixel colour at this position
                 Color pixelColor = new Color(image.getRGB(x, y), true);
 
                 // If the pixel is not transparent, fill it with the desired color
