@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 
 public class Player implements Serializable {
@@ -21,6 +24,10 @@ public class Player implements Serializable {
     private int coins;
     private transient BufferedImage image;
     private transient GamePanel gamePanel; // Added member variable for GamePanel
+    
+    // Image cache for storing loaded images
+    @SuppressWarnings("unused")
+	private static Map<String, BufferedImage> imageCache = new HashMap<>();
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
