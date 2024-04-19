@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,7 +32,8 @@ public class Collectable implements Serializable {
 
     // Animation frames
     protected transient BufferedImage[] animationFrames;
-    protected static final int NUM_FRAMES = 12; // Number of animation frames
+    // Number of animation frames
+    protected static final int NUM_FRAMES = 12; 
     protected int currentFrameIndex = 0; // Index of the current frame
 
     // Animation speed
@@ -42,8 +45,12 @@ public class Collectable implements Serializable {
     // Minimum distance from player when dropping collectable
     private static final int MIN_DISTANCE_FROM_PLAYER = 3;
 
+    // Cache for storing loaded images
+    private static Map<String, BufferedImage> imageCache = new HashMap<>();
+    
     // Thread pool for sound playback
-    private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); // Adjust pool size as needed
+    @SuppressWarnings("unused")
+	private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); 
 
     // Constructor
     public Collectable(String name) {
@@ -99,47 +106,38 @@ public class Collectable implements Serializable {
     public String getDescription() {
         return "Name: " + name;
     }
-
-    // Method to play sound of the collectable
-    public void playSound() {
+ // Method to play sound of the collectable
+    public synchronized void playSound() {
         try {
-            String soundFilePath;
+            // Check if the collectable is a Gem
             if (this instanceof Gem) {
-                soundFilePath = "sounds/gem.wav";
-            } else if (this instanceof CarbonCoin) {
-                soundFilePath = "sounds/coin.wav";
-            } else {
-                soundFilePath = "sounds/default_sound.wav";
-            }
+                // Specify the sound file path for gems
+                String soundFilePath = "sounds/gem.wav";
 
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
+                System.out.println("Starting sound playback for " + name + "...");
 
-            soundThreadPool.execute(() -> {
-                try {
-                    clip.start();
-                    float initialVolume = 1.0f;
-                    float volumeStep = initialVolume / 20; // Adjust the volume fade speed
-                    while (initialVolume > 0) {
-                        initialVolume -= volumeStep;
-                        if (initialVolume < 0) initialVolume = 0;
-                        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                        float dB = (float) (Math.log(initialVolume) / Math.log(10.0) * 20.0);
-                        gainControl.setValue(dB);
-                        Thread.sleep(100); // Adjust the fade speed
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile());
+                Clip clip = AudioSystem.getClip();
+                
+                // Open and start audio playback for this gem
+                clip.open(audioInputStream);
+                clip.start();
+
+                // Wait for the sound to finish playing
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        clip.close();
+                        System.out.println("Sound playback for " + name + " completed.");
                     }
-                    clip.stop();
-                    clip.close();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
+                });
+            } else {
+                System.out.println("No sound playback for " + name + ".");
+            }
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
+            System.err.println("Error occurred during sound playback for " + name + ": " + e.getMessage());
         }
     }
-
     // Method to draw the collectable
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);
@@ -188,7 +186,7 @@ public class Collectable implements Serializable {
 
         // Draw white outline around the image edges
         g.setColor(Color.WHITE);
-        int outlineThickness = 2; // Adjust the outline thickness as desired
+        int outlineThickness = 1; 
         for (int y = minY - outlineThickness; y <= maxY + outlineThickness; y++) {
             for (int x = minX - outlineThickness; x <= maxX + outlineThickness; x++) {
                 if (x < 0 || x >= filledImage.getWidth() || y < 0 || y >= filledImage.getHeight() ||
@@ -222,6 +220,10 @@ public class Collectable implements Serializable {
 
     // Method to load the image of the collectable
     public void loadImage() {
-        // Implementation specific to your requirements
+    	// check if the image is already cached
+    	if (imageCache.containsKey(name)) {
+    		// Retrieve the image from the cache
+    		image = imageCache.get(name);
+    	}
     }
-}
+};
