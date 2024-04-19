@@ -12,6 +12,7 @@ public class CarbonCoin extends Collectable {
     private BufferedImage[] rotationImages; // Array to store rotation images
     private int currentRotationIndex = 0; // Index of the current rotation image
     private GamePanel gamePanel; // Reference to the GamePanel
+    private final int NUM_FRAMES = 8;
 
     public CarbonCoin(String name, GamePanel gamePanel, int playerX, int playerY) {
         super(name);
@@ -28,7 +29,7 @@ public class CarbonCoin extends Collectable {
         try {
             rotationImages = new BufferedImage[NUM_FRAMES];
             for (int i = 0; i < NUM_FRAMES; i++) {
-                rotationImages[i] = ImageIO.read(new File("images/coins/coin_" + String.format("%02d", i + 2) + ".png"));
+                rotationImages[i] = ImageIO.read(new File("images/coins/coin_" + String.format("%02d", i + 1) + ".png"));
             }
         } catch (IOException e) {
             e.printStackTrace();
