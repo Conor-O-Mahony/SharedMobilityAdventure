@@ -21,18 +21,20 @@ public class Collectable implements Serializable {
     // Serializable ID
     private static final long serialVersionUID = 2905924766571606302L;
 
-    // Name of the collectable
     protected String name;
-
-    // Coordinates of the collectable
     protected int collectabelX;
     protected int collectabelY;
 
-    // Visibility status of the collectable
     protected boolean visible;
-
-    // Image of the collectable
     transient BufferedImage image;
+
+    // Animation frames
+    protected transient BufferedImage[] animationFrames;
+    protected static final int NUM_FRAMES = 12; // Number of animation frames
+    protected int currentFrameIndex = 0; // Index of the current frame
+
+    // Animation speed
+    protected static final int ANIMATION_SPEED = 100; // Milliseconds per frame
 
     // Set to store dropped coordinates
     private static final Set<Integer> droppedCoordinates = new HashSet<>();
