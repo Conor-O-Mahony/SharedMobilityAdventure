@@ -26,6 +26,12 @@ public class Player implements Serializable {
     private transient BufferedImage image;
     private transient GamePanel gamePanel; // Added member variable for GamePanel
     
+
+    // Image cache for storing loaded images
+    @SuppressWarnings("unused")
+	private static Map<String, BufferedImage> imageCache = new HashMap<>();
+
+
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
         this.offset = Main.TILE_SIZE / 2;

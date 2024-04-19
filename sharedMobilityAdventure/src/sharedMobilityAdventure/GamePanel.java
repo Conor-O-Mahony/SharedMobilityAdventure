@@ -9,6 +9,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GamePanel extends JPanel implements KeyListener {
 
@@ -16,6 +18,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Player player;
 	private PopUp popup;
 	private Board board;
+	// Cache for storing loaded images
+	private Map<String, BufferedImage> imageCache;
 
   private String username; // Store the username
   private JFrame gameFrame; // Store the game frame  
@@ -41,7 +45,10 @@ public class GamePanel extends JPanel implements KeyListener {
 		
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
-			
+		
+        // Initalize the image cache
+        imageCache = new HashMap<>();
+        
         initGame();
 
         this.setFocusable(true);
@@ -98,17 +105,22 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
-		for (int i=0; i<imageNames.length; i++) {
-			String source = String.format("images/tiles/%s.png", imageNames[i]);
-		
-			try {
-				imageArray[i] = ImageIO.read(new File(source));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-    
+        for (int i = 0; i < imageNames.length; i++) {
+            String imageName = imageNames[i];
+            BufferedImage image = getImageFromCache(imageName);
+            if (image == null) {
+                String source = String.format("images/tiles/%s.png", imageName);
+                try {
+                    image = ImageIO.read(new File(source));
+                    // Cache the loaded image
+                    cacheImage(imageName, image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            imageArray[i] = image;
+        }
+    }
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
         JButton button = new JButton(text);
         int buttonWidth = 16*9;
@@ -253,6 +265,12 @@ public class GamePanel extends JPanel implements KeyListener {
     	}
     }
     
+    private BufferedImage getImageFromCache(String imageName) {
+    	return imageCache.get(imageName);
+    }
+    private void cacheImage(String imageName, BufferedImage image) {
+    	imageCache.put(imageName, image);
+    }
     public void restartGame() {
         initGame();
         repaint();
