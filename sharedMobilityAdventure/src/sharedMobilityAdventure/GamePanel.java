@@ -2,6 +2,7 @@
 package sharedMobilityAdventure;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,24 +10,27 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.List;
 
 public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
+	// Cache for storing loaded images
+	private Map<String, BufferedImage> imageCache;
 	private Player player;
 	private PopUp popup;
 	private Board board;
 	// Cache for storing loaded images
 	private Map<String, BufferedImage> imageCache;
-
   private String username; // Store the username
   private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
 	private transient BufferedImage sidebarImage;
+	
     
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
@@ -38,17 +42,37 @@ public class GamePanel extends JPanel implements KeyListener {
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
+	int showOption = 0;
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
+  public boolean showExitConfirmation = false;
+  public boolean showTransportOption = true;
+  public boolean haloDisplay = false;
+  public boolean optionDisplay = false;
+  public boolean waitingForInput = false;
+  private Set<String> uniqueStrings = new LinkedHashSet<>();
+  public List<String> uniqueStringsList;
+  
+  private boolean isDirectionButton(KeyEvent e) {
+	    if (	e.getKeyCode() == KeyEvent.VK_UP ||
+	    		e.getKeyCode() == KeyEvent.VK_DOWN ||
+	    		e.getKeyCode() == KeyEvent.VK_LEFT ||
+	    		e.getKeyCode() == KeyEvent.VK_RIGHT) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
+
+  
   
     public GamePanel(JFrame gameFrame, String username){
 		
         this.gameFrame = gameFrame; // Store the game frame
         this.username = username; // Store the username
-		
-        // Initalize the image cache
+	    
+	// Initalize the image cache
         imageCache = new HashMap<>();
-        
         initGame();
 
         this.setFocusable(true);
@@ -121,6 +145,7 @@ public class GamePanel extends JPanel implements KeyListener {
             imageArray[i] = image;
         }
     }
+    
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
         JButton button = new JButton(text);
         int buttonWidth = 16*9;
@@ -182,6 +207,7 @@ public class GamePanel extends JPanel implements KeyListener {
 					int extra = (int) Math.round(0.3*Main.TILE_SIZE);
 					g.drawImage(roadtileArray[3], col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
+				
 			}
         }
         
@@ -213,6 +239,7 @@ public class GamePanel extends JPanel implements KeyListener {
         
         paintHalos(g);
         
+        
         // Player
         g.setColor(Color.BLACK); // Set color to black
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -239,38 +266,84 @@ public class GamePanel extends JPanel implements KeyListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
         g.drawString("" + gameScore, Main.GAME_WIDTH+90, 375);
+        
+        if (showExitConfirmation) {
+	        String exitMessage = "Press Esc again to Exit!";
+	        g.setColor(Color.BLACK); 
+	        g.setFont(new Font("Tahoma", Font.BOLD, 14));
+	        g.drawString(exitMessage, Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 235);
+
+	    }
        
     }
     
-    public void paintHalos(Graphics g) {
-    	int player_x = player.getPlayerXTile();
-    	int player_y = player.getPlayerYTile();
-    	Tile currentTile = board.tiles[player_y][player_x];
-    	Route[] tileRoutes = currentTile.getRoutes();
-    	for (int i=0; i<tileRoutes.length; i++) {
-    		if (tileRoutes[i]!=null) {
-    			Tile[] tilesInRoute = tileRoutes[i].getTiles();
-    			for (int j=0; j<tilesInRoute.length; j++) {
-    				int tile_x = tilesInRoute[j].getX();
-    				int tile_y = tilesInRoute[j].getY();
-    				
-    				g.drawImage(haloArray[i], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
-    			}
-    			TransportTypes type = tileRoutes[i].getTransportType();
-    			String typeString = type.toString();
-    			g.setColor(Color.BLACK); // Set color to black
-    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-    	        g.drawString("Press "+(i+1)+" to take "+typeString, Main.GAME_WIDTH+35, 485 + i*25);
-    		}
-    	}
-    }
     
+    
+    public void paintHalos(Graphics g) {
+    	
+        int player_x = player.getPlayerXTile();
+        int player_y = player.getPlayerYTile();
+        Tile currentTile = board.tiles[player_y][player_x];
+        Route[] tileRoutes = currentTile.getRoutes();
+        uniqueStrings.clear(); // Works
+        for (int i = 0; i < tileRoutes.length; i++) {
+            if (tileRoutes[i] != null) {
+                Tile[] tilesInRoute = tileRoutes[i].getTiles();
+                for (int j = 0; j < tilesInRoute.length; j++) {
+                    int tile_x = tilesInRoute[j].getX();
+                    int tile_y = tilesInRoute[j].getY();
+
+                    g.drawImage(haloArray[i], tile_x * Main.TILE_SIZE, tile_y * Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+                }
+                TransportTypes type = tileRoutes[i].getTransportType();
+                String typeString = type.toString();
+                if (showTransportOption) { 
+                	haloDisplay = true;
+                    g.setColor(Color.BLACK);
+                    g.setFont(new Font("Tahoma", Font.BOLD, 14));
+                    g.drawString("Press " + (i + 1) + " to take " + typeString, Main.GAME_WIDTH + 35, 485 + i * 25);
+                    uniqueStrings.add(typeString);
+                }
+//                System.out.println("showOption: " + showOption);
+                if (showOption != 0) { 
+                	if (uniqueStringsList != null && !uniqueStringsList.isEmpty()) {
+                	if (showOption == 1) {
+	                		 g.setColor(Color.BLACK); 
+	             	        g.setFont(new Font("Tahoma", Font.BOLD, 14));
+                       		g.drawString("You Have Chosen " + uniqueStringsList.get(0), Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 235);
+                       		g.drawString("Carbon Cost: 30", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 220);
+                       		g.drawString("Time Cost: 20", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 205);
+                       		g.drawString("Press 1 to Continue", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 185);
+                       		g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 170);
+                	}
+                	}
+                	if (showOption == 2) {
+                		if (uniqueStrings != null && uniqueStringsList.size() > 1) { // Prevent out of index errors
+                		g.setColor(Color.BLACK); e
+             	        	g.setFont(new Font("Tahoma", Font.BOLD, 14));
+                		g.drawString("You Have Chosen " + uniqueStringsList.get(1), Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 235);
+				// Placeholder figures
+           			g.drawString("Carbon Cost: 30", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 220);
+                   		g.drawString("Time Cost: 20", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 205);
+                   		g.drawString("Press 1 to Continue", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 185);
+                   		g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, Main.GAME_HEIGHT - 170);
+                	}
+                		else {
+                		break;
+                		}
+                		}
+                	
+                }
+            }
+        }
+    }
     private BufferedImage getImageFromCache(String imageName) {
     	return imageCache.get(imageName);
     }
     private void cacheImage(String imageName, BufferedImage image) {
     	imageCache.put(imageName, image);
     }
+	
     public void restartGame() {
         initGame();
         repaint();
@@ -283,9 +356,59 @@ public class GamePanel extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        player.keyPressed(e); // Call the keyPressed method in the Player class
-        repaint(); // Redraw the panel after key press
+        if (showExitConfirmation) {
+        	showOption = 0;
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                System.exit(0); // Exit the game
+            } else {
+                showExitConfirmation = false; // Hide the exit confirmation message
+                showTransportOption = true; // Show transport options (again)
+                repaint();
+                player.keyPressed(e); // Pass Through the key press
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            showExitConfirmation = true; // Check if needed
+            showTransportOption = false; // Hide transport options - Prevent overlap
+            showOption = 0; // Hide Options - Prevent Overlap
+        } else if (isDirectionButton(e)) {
+        	player.keyPressed(e); // Pass Through the key press
+        }
+
+        // Key press logic when haloDisplay is true i.e when a route is mapped out / when player is stood at transport option
+        if (haloDisplay) {
+        	uniqueStringsList = new ArrayList<>(uniqueStrings); // Need to convert the Linked Set to a list for easy indexing
+        	 System.out.println("uniqueStrings " + uniqueStringsList);
+//            System.out.println("Halo Display");
+            if (!waitingForInput) {
+                if (e.getKeyCode() == KeyEvent.VK_1) {
+                    showTransportOption = false;
+                    showOption = 1; // Show the Carbon / Time info for option 1
+                    waitingForInput = true;
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_2) {
+                	if (uniqueStrings != null && uniqueStringsList.size() > 1) { // Ensure theres a second transport option
+                    showTransportOption = false;
+                    showOption = 2; // Show the Carbon / Time info for option 2
+                    waitingForInput = true;
+                }}
+            } else {
+                if (e.getKeyCode() == KeyEvent.VK_1) {
+                    player.keyPressed(e); // Passes key press through which allows the transport to occur
+                    showOption = 0;
+                    showTransportOption = true;
+                    waitingForInput = false;
+                } else if (e.getKeyCode() == KeyEvent.VK_0 || isDirectionButton(e)) { // Returns to normal if 0 is pressed or if the player moves
+                    showOption = 0;
+                    optionDisplay = false;
+                    showTransportOption = true;
+                    repaint(); // Check if needed
+                    waitingForInput = false;
+                }
+            }
+        }
     }
+
+
 
     @Override
     public void keyReleased(KeyEvent e) {
