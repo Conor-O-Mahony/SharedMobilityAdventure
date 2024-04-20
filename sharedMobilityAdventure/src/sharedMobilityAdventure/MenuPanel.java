@@ -1,56 +1,55 @@
 package sharedMobilityAdventure;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class MenuPanel extends JPanel {
 
-	private static final long serialVersionUID = 329006769552291165L;
-    
-    JTextField userName; // Username field
-    
-    public MenuPanel(JFrame menuFrame) {
-    	
+    int tile = 16 * 2; // initial tile length / width (16 * 16 pixels)
+    int columns = 32;
+    int rows = 18;
+    int totalWidth = columns * tile; // 640 pixels in length
+    int totalHeight = rows * tile; // 440 pixels in height
+
+    Player player; // Player object
+    JTextField usernameField; // Username field
+    BufferedImage backgroundImage; // Background image
+    JButton startButton; // Start Game button
+    JButton loadButton;
+
+    public MenuPanel(JFrame menuFrame, Player player) {
+        this.player = player;
+        loadBackgroundImage();
+
+        setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null); // Set layout to null for absolute positioning
+
         // Add username field
-        userName = new JTextField();
-        userName.setBounds(440, 200, 144, 30);
-        add(userName);
-        
-        add(createButton(menuFrame));
-        add(createLoadButton(440,400,"Load game"));
+        usernameField = new JTextField();
+        usernameField.setBounds(475, 295, 200, 30);
+        add(usernameField);
 
-    }
-    
-    private JButton createButton(JFrame menuFrame) {
-        int buttonX = 440; // x-coordinate of the button
-        int buttonY = 300; // y-coordinate of the button
-        int buttonWidth = 16 * 9; // Button width
-        int buttonHeight = 16 * 4; // Button height
-
-        JButton button = new JButton("Play Game");
-
-        // Create a Rectangle object representing the bounds of the button
-        Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
-
-        button.setBounds(bounds);
-
-        button.addActionListener(e -> {
-            // Retrieve the user's name from the text field
-            String username = userName.getText();
-            Main.openGameWindow(this, menuFrame, username);
+        // Create and add Start Game button
+        startButton = new JButton();
+        startButton.setBounds(125, 375, 320, 95);
+        setButtonIcons(startButton, "images/tiles/playgamebuttonhovered.png", "images/tiles/playgamebuttondefault.png");
+        startButton.addActionListener(e -> {
+            // Retrieve the username from the text field
+            String username = usernameField.getText();
+            Main.openGameWindow(this, menuFrame, username); // Window will be opened with username
         });
-
-        return button;
-    }
-    
-    private JButton createLoadButton(int buttonX, int buttonY, String text) {
-        JButton button = new JButton(text);
-        int buttonWidth = 16*9;
-        int buttonHeight = 16*4;
-        Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
-        button.setBounds(bounds);
-
-        button.addActionListener(e -> {       	
+        add(startButton);
+        
+        loadButton = new JButton();
+        loadButton.setBounds(550, 375, 320, 95);
+        setButtonIcons(loadButton, "images/tiles/loadgamebuttonhovered.png", "images/tiles/loadgamebuttondefault.png");
+        loadButton.addActionListener(e -> {       	
         	//Delete the current frame
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
             currentFrame.dispose(); // Dispose the current EndPanel frame
@@ -70,23 +69,76 @@ public class MenuPanel extends JPanel {
             saveloadFrame.setLocationRelativeTo(null);
             saveloadFrame.setVisible(true);
             
-        });  
-        return button;     
+        });
+        add(loadButton);
+
+        //mouse listener for button animation
+        startButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setButtonHoverIcon(startButton, "images/tiles/playgamebuttonhovered.png");
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setButtonIcon(startButton, "images/tiles/playgamebuttondefault.png");
+            }
+        });
+        
+        loadButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setButtonHoverIcon(loadButton, "images/tiles/loadgamebuttonhovered.png");
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setButtonIcon(loadButton, "images/tiles/loadgamebuttondefault.png");
+            }
+        });        
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-                
-        for (int row = 0; row < Main.WINDOW_HEIGHT/Main.DEFAULT_BOARD_SIZE; row++) {
-            for (int col = 0; col < Main.WINDOW_WIDTH/Main.DEFAULT_BOARD_SIZE ; col++) {
-                int x = col * Main.TILE_SIZE;
-                int y = row * Main.TILE_SIZE;
-                g.setColor(Color.BLACK);
-                g.fillRect(x, y, Main.TILE_SIZE, Main.TILE_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawRect(x, y, Main.TILE_SIZE, Main.TILE_SIZE);
-            }
+
+        //render background image if none present
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
+
+    }
+
+    private void loadBackgroundImage() {
+        try {
+            backgroundImage = ImageIO.read(new File("images/tiles/titlebg.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //setting button image/icons to correct status of button
+    private void setButtonIcons(JButton button, String hoverImagePath, String imagePath) {
+        setButtonIcon(button, imagePath);
+        setButtonHoverIcon(button, hoverImagePath);
+    }
+
+    
+    //Remove the default button border and fills to make images transparent buttons
+    private void setButtonIcon(JButton button, String imagePath) {
+    	button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+    	button.setBorder(null);
+        ImageIcon icon = new ImageIcon(imagePath);
+        button.setIcon(icon);
+    }
+
+    private void setButtonHoverIcon(JButton button, String hoverImagePath) {
+    	button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+    	button.setBorder(null);
+        ImageIcon icon = new ImageIcon(hoverImagePath);
+        button.setRolloverIcon(icon);
     }
 }
