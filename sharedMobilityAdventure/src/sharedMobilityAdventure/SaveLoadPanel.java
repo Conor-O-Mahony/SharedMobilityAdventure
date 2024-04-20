@@ -33,7 +33,7 @@ public class SaveLoadPanel extends JPanel {
 	private int buttonHeight = 65;
 	private JPanel game;
 	private int noofButtons = 3;
-    BufferedImage backgroundImage;
+    transient BufferedImage backgroundImage;
 
 	private static final long serialVersionUID = 8148807433563369470L;
 
