@@ -1,5 +1,7 @@
 package sharedMobilityAdventure;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -7,13 +9,15 @@ public class Route implements Serializable{
 
 	private static final long serialVersionUID = -2354648655745414L;
 
-	Tile[] routeTiles;
+	private Tile[] routeTiles;
 	
-	int startRow;
-	int startCol;
-	int finalRow;
-	int finalCol;
-	TransportTypes type;
+	private int startRow;
+	private int startCol;
+	private int finalRow;
+	private int finalCol;
+	private TransportTypes type;
+	private transient BufferedImage pinImage;
+	private Color pinColor;
 	
 	public Route(TransportTypes T, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
 		routeTiles = new Tile[routeSize];
@@ -104,6 +108,22 @@ public class Route implements Serializable{
 	
 	public TransportTypes getTransportType() {
 		return type;
+	}
+	
+	public void setPinImage(BufferedImage pin) {
+		pinImage = pin;
+	}
+	
+	public void setPinColor(Color pin) {
+		pinColor = pin;
+	}
+	
+	public BufferedImage getPinImage() {
+		return pinImage;
+	}
+	
+	public Color getPinColor() {
+		return pinColor;
 	}
 	
 	public static void main(String[] args) {

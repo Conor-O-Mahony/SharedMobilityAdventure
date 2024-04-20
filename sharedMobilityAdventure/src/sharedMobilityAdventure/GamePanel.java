@@ -21,25 +21,26 @@ public class GamePanel extends JPanel implements KeyListener {
 	// Cache for storing loaded images
 	private Map<String, BufferedImage> imageCache;
 
-  private String username; // Store the username
-  private JFrame gameFrame; // Store the game frame  
+	private String username; // Store the username
+	private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
 	private transient BufferedImage sidebarImage;
     
-  private CarbonCoin[] carbonCoins;
-  private int numCarbonCoins = 3;
+	private CarbonCoin[] carbonCoins;
+	private int numCarbonCoins = 3;
   
-  private Gem[] gems; //Array to store Gems
-  private int numGems = 3; // Number of gems to drop
+	private Gem[] gems; //Array to store Gems
+	private int numGems = 3; // Number of gems to drop
     
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
-  public boolean gemScoreUpdate = true;
-  public boolean coinScoreUpdate = true;
+	public boolean gemScoreUpdate = true;
+	public boolean coinScoreUpdate = true;
+	
   
     public GamePanel(JFrame gameFrame, String username){
 		
@@ -56,7 +57,7 @@ public class GamePanel extends JPanel implements KeyListener {
         addKeyListener(this);   
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
-        add(createButton(gameFrame, Main.GAME_WIDTH+60, Main.GAME_HEIGHT-80, "Save Game"));
+        add(createButton(gameFrame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
     }
 	
     public void initGame() {
@@ -91,7 +92,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
 		
-		popup.loadImage();
+		//popup.loadImage();
 		player.loadImage();
 		
 		// load images for gem
@@ -123,13 +124,15 @@ public class GamePanel extends JPanel implements KeyListener {
     }
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
         JButton button = new JButton(text);
-        int buttonWidth = 16*9;
-        int buttonHeight = 16*4;
+        setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
+        setButtonHoverIcon(button, "images/tiles/savegamebuttonhovered.png");
+        int buttonWidth = 226;
+        int buttonHeight = 65;
         Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         button.setBounds(bounds);
 
         button.addActionListener(e -> {       	
-        	//Delete the current frame
+            //Delete the current frame
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
             currentFrame.dispose(); // Dispose the current EndPanel frame
             
@@ -139,8 +142,8 @@ public class GamePanel extends JPanel implements KeyListener {
             saveloadFrame.setResizable(false);
             saveloadFrame.setTitle("Save/Load Game"); 
             
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,saveloadFrame,"save");
-            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
+            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this, saveloadFrame, "save");
+            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
             saveloadFrame.getContentPane().add(saveloadPanel);
             //saveloadFrame.add(saveloadPanel);
        
@@ -152,6 +155,19 @@ public class GamePanel extends JPanel implements KeyListener {
         return button;     
     }
 	
+    private void setButtonIcon(JButton button, String imagePath) {
+        button.setBorderPainted(false); // Remove button border
+        button.setFocusPainted(false); // Remove focus border
+        button.setContentAreaFilled(false); // Remove default content fill
+        button.setBorder(null); // Remove button border
+        ImageIcon icon = new ImageIcon(imagePath);
+        button.setIcon(icon);
+    }
+
+    private void setButtonHoverIcon(JButton button, String hoverImagePath) {
+        button.setRolloverIcon(new ImageIcon(hoverImagePath));
+    }
+    
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -214,31 +230,31 @@ public class GamePanel extends JPanel implements KeyListener {
         paintHalos(g);
         
         // Player
-        g.setColor(Color.BLACK); // Set color to black
-        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString(username, Main.GAME_WIDTH+90, 70);
+        //g.setColor(Color.BLACK); // Set color to black
+        //g.setFont(new Font("Tahoma", Font.BOLD, 16));
+        //g.drawString(username, Main.GAME_WIDTH+90, 70);
         
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, Main.GAME_WIDTH+90, 175);
+        g.drawString("" + playerTime, Main.GAME_WIDTH+45, 75);
         
         // Gems
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkGemScore(), Main.GAME_WIDTH+40, 270);
+        g.drawString("" + checkGemScore(), Main.GAME_WIDTH+40, 165);
         gemScoreUpdate = true;
                      
         // Carbon Coins
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + checkCoinScore(), Main.GAME_WIDTH+160, 270);
+        g.drawString("" + checkCoinScore(), Main.GAME_WIDTH+175, 75);
         coinScoreUpdate = true;
         
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + gameScore, Main.GAME_WIDTH+90, 375);
+        g.drawString("" + gameScore, Main.GAME_WIDTH+175, 165);
        
     }
     

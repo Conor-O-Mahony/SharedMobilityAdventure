@@ -28,7 +28,7 @@ public class Collectable implements Serializable {
     protected int collectabelY;
 
     protected boolean visible;
-    transient BufferedImage image;
+    transient BufferedImage filledImage;
 
     // Animation frames
     protected transient BufferedImage[] animationFrames;
@@ -144,17 +144,17 @@ public class Collectable implements Serializable {
         int adjustedY = collectabelY - (HEIGHT / 2);
 
         // Create a copy of the original image
-        BufferedImage filledImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        //BufferedImage filledImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         // Get the graphics object of the filled image
         Graphics gFilled = filledImage.getGraphics();
-        gFilled.drawImage(image, 0, 0, null);
+        gFilled.drawImage(filledImage, 0, 0, null);
 
         // Fill the image with the desired colour (bright pink)
         for (int y = 0; y < filledImage.getHeight(); y++) {
             for (int x = 0; x < filledImage.getWidth(); x++) {
                 // Get the pixel colour at this position
-                Color pixelColor = new Color(image.getRGB(x, y), true);
+                Color pixelColor = new Color(filledImage.getRGB(x, y), true);
 
                 // If the pixel is not transparent, fill it with the desired color
                 if (pixelColor.getAlpha() != 0) {
@@ -223,7 +223,7 @@ public class Collectable implements Serializable {
     	// check if the image is already cached
     	if (imageCache.containsKey(name)) {
     		// Retrieve the image from the cache
-    		image = imageCache.get(name);
+    		filledImage = imageCache.get(name);
     	}
     }
 };
