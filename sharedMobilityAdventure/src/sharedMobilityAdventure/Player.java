@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+
 public class Player implements Serializable {
 
     private static final long serialVersionUID = 325187586807794891L;
@@ -25,9 +26,11 @@ public class Player implements Serializable {
     private transient BufferedImage image;
     private transient GamePanel gamePanel; // Added member variable for GamePanel
     
+
     // Image cache for storing loaded images
     @SuppressWarnings("unused")
 	private static Map<String, BufferedImage> imageCache = new HashMap<>();
+
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
