@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class CarbonCoin extends Collectable {
 
     private static final long serialVersionUID = 1675131934479089420L;
-    private BufferedImage[] rotationImages; // Array to store rotation images
+    private transient BufferedImage[] rotationImages; // Array to store rotation images
     private int currentRotationIndex = 0; // Index of the current rotation image
     private GamePanel gamePanel; // Reference to the GamePanel
     private final int NUM_FRAMES = 8;
@@ -44,7 +44,7 @@ public class CarbonCoin extends Collectable {
     }
 
     // Start the rotation animation
-    private void startRotation() {
+    void startRotation() {
         Thread rotationThread = new Thread(() -> {
             while (true) {
                 try {

@@ -15,7 +15,7 @@ public class PopUp implements Serializable{
 	public int popUpY; // y-coordinate
     final int width; // width of popUp
     final int height; // height of popUp
-    transient BufferedImage image; // image of popUp
+    private transient BufferedImage image; // image of popUp
 	
     // List of dialogue strings
 //    private static String[] dialogueOptions = {

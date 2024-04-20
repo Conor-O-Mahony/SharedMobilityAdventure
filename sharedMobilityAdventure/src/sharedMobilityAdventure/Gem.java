@@ -22,7 +22,7 @@ public class Gem extends Collectable implements Serializable {
     }
     public void loadImage() {
         try {
-            image = ImageIO.read(new File("images/gems/gem.png"));
+            filledImage = ImageIO.read(new File("images/gems/gem.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
