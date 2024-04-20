@@ -21,7 +21,7 @@ public class Main {
       menuFrame.setResizable(false);
       menuFrame.setTitle("Shared-Mobility Adventure"); 
       
-      MenuPanel menuPanel = new MenuPanel(menuFrame);
+      MenuPanel menuPanel = new MenuPanel(menuFrame, null);
       menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
 	  menuFrame.getContentPane().add(menuPanel);
 		
