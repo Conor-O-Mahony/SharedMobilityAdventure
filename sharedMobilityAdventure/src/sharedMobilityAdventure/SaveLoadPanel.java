@@ -19,6 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class SaveLoadPanel extends JPanel {
 	
@@ -26,6 +32,7 @@ public class SaveLoadPanel extends JPanel {
 	private int buttonHeight = 16 * 4;
 	private JPanel game;
 	private int noofButtons = 3;
+    BufferedImage backgroundImage; // Background image
 
 	private static final long serialVersionUID = 8148807433563369470L;
 
@@ -33,7 +40,7 @@ public class SaveLoadPanel extends JPanel {
         setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT));
         setLayout(null);
         game = gameFrame;
-        
+        loadBackgroundImage();
         if (mode=="save") {
         	SavePanel(saveloadFrame);
         } else {
@@ -42,7 +49,7 @@ public class SaveLoadPanel extends JPanel {
         
         	//add(createButton(saveloadFrame,getButtonXLoc(noofButtons,i),400,"Load from file",String.format("savestate%d.ser",i)));
     }
-	
+
 	private void SavePanel(JFrame saveloadFrame) {
 		for (int i=1; i<noofButtons+1; i++) {
         	int xLoc = getButtonXLoc(noofButtons,i);
@@ -172,8 +179,18 @@ public class SaveLoadPanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         //g.fillRect(x, y, tile, tile);
+        //render background image if none present
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
-    
+    private void loadBackgroundImage() {
+        try {
+            backgroundImage = ImageIO.read(new File("images/tiles/savebg.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
     	JFrame testFrame = new JFrame();
     	testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
