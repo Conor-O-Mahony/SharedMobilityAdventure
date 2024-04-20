@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 
 import java.awt.Graphics;
@@ -14,16 +15,24 @@ public class CarbonCoin extends Collectable {
     private GamePanel gamePanel; // Reference to the GamePanel
     private final int NUM_FRAMES = 8;
 
-    public CarbonCoin(String name, GamePanel gamePanel, int playerX, int playerY) {
-        super(name);
+    public CarbonCoin(String name, Board board, GamePanel gamePanel, int playerX, int playerY) {
+        super(name, board);
         this.gamePanel = gamePanel; // Store the reference to the GamePanel
+        
+        // Get initial coordinates using dropRandomly method
         int[] coordinates = super.dropRandomly(playerX, playerY);
+        
+        // Continue generating new coordinates until the Euclidean distance condition is satisfied
+        while (!checkEuclideanDistance(coordinates[0], coordinates[1], board)) {
+            coordinates = super.dropRandomly(playerX, playerY);
+        }
+        // Assign the final coordinates that satisfy the Euclidean distance condition
         this.collectabelX = coordinates[0];
         this.collectabelY = coordinates[1];
+        
         loadImage(); // Load rotation images
         startRotation(); // Start the rotation animation
     }
-
     @Override
     public void loadImage() {
         try {
@@ -35,14 +44,12 @@ public class CarbonCoin extends Collectable {
             e.printStackTrace();
         }
     }
-
     @Override
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);
         int adjustedY = collectabelY - (HEIGHT / 2);
         g.drawImage(rotationImages[currentRotationIndex], adjustedX, adjustedY, WIDTH, HEIGHT, null);
     }
-
     // Start the rotation animation
     void startRotation() {
         Thread rotationThread = new Thread(() -> {
