@@ -41,6 +41,10 @@ public class Board implements Serializable { //Holds the Tile's
 		return tiles;
 	}
 	
+	public void setTiles(Tile[][] tiles) {
+		this.tiles = tiles;
+	}
+	
 	public static int getRandomNumber(int min, int max) {
 	    return (int) ((Math.random() * (max - min)) + min);
 	}

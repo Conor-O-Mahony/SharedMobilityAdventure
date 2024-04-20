@@ -22,19 +22,22 @@ public class Collectable implements Serializable {
 
     // Serializable ID
     private static final long serialVersionUID = 2905924766571606302L;
-
+    
     protected String name;
     protected int collectabelX;
     protected int collectabelY;
-
+    
     protected boolean visible;
     transient BufferedImage filledImage;
 
+    //protected transient BufferedImage image;
+        
     // Animation frames
     protected transient BufferedImage[] animationFrames;
     // Number of animation frames
     protected static final int NUM_FRAMES = 12; 
     protected int currentFrameIndex = 0; // Index of the current frame
+	protected Board board;
 
     // Animation speed
     protected static final int ANIMATION_SPEED = 100; // Milliseconds per frame
@@ -51,11 +54,15 @@ public class Collectable implements Serializable {
     // Thread pool for sound playback
     @SuppressWarnings("unused")
 	private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); 
+    
+    // Map to hold preloaded sound clips
+    private static transient final Map<String, Clip> soundCache = new HashMap<>();
 
     // Constructor
-    public Collectable(String name) {
+    public Collectable(String name, Board board) {
         this.name = name;
         this.visible = true;
+        this.board = board;
     }
 
     // Method to drop collectable randomly
@@ -85,12 +92,12 @@ public class Collectable implements Serializable {
             int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
             if (droppedCoordinates.contains(combinedCoordinates)) {
                 attempts++;
-                System.out.println("Coordinates overlap with previous position. Retrying...");
+                //System.out.println("Coordinates overlap with previous position. Retrying...");
                 continue;
             }
 
             droppedCoordinates.add(combinedCoordinates);
-            System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+            //System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
             break;
         }
 
@@ -106,36 +113,72 @@ public class Collectable implements Serializable {
     public String getDescription() {
         return "Name: " + name;
     }
- // Method to play sound of the collectable
-    public synchronized void playSound() {
+    // https://stackoverflow.com/questions/49469921/euclidean-distance-between-two-variables
+    // Find eucledian distance to calcualte the distance from the transport objects
+    public static boolean checkEuclideanDistance(int collectabelX, int collectabelY, Board board) {
+        final int MIN_DISTANCE_FROM_TRANSPORT = 10; // Define the minimum distance constant locally
+        
+		// Access the tiles array directly from the Main class
+        Tile[][] tiles = board.getTiles();
+        
+        // Flag to track if the collectable is too close to transportation
+        // boolean tooCloseToTransport = false;
+        
+        // Calculate the distance to the nearest transportation type
+        // double nearestTransportDistance = Double.MAX_VALUE;
+        //double nearestTransportCarbonFootprint = Double.MAX_VALUE;
+
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles[row].length; col++) {
+                Tile tile = tiles[row][col];
+                // Check if the tile has any routes
+                if (tile.getNumberOfRoutes() > 0) {
+                    int tileX = tile.getX() * Main.TILE_SIZE;
+                    int tileY = tile.getY() * Main.TILE_SIZE;
+                    // Calculate the Euclidean distance between the collectable and the tile
+                    double distance = Math.sqrt(Math.pow(collectabelX - (tileX + Main.TILE_SIZE / 2), 2)
+                            + Math.pow(collectabelY - (tileY + Main.TILE_SIZE / 2), 2));
+                    // Check if the distance is less than the minimum allowed distance
+                    if (distance < MIN_DISTANCE_FROM_TRANSPORT) {
+                        return false; // Too close to transportation, return false
+                    }
+                }
+            }
+        }
+        return true; // Distance is acceptable, return true
+    }
+
+    // Method to play sound of the collectable
+    public void playSound() {
         try {
             // Check if the collectable is a Gem
             if (this instanceof Gem) {
                 // Specify the sound file path for gems
                 String soundFilePath = "sounds/gem.wav";
 
-                System.out.println("Starting sound playback for " + name + "...");
+                // Retrieve the clip from the cache if it exists
+                Clip clip = soundCache.get(soundFilePath);
 
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile());
-                Clip clip = AudioSystem.getClip();
-                
-                // Open and start audio playback for this gem
-                clip.open(audioInputStream);
+                // If the clip is not in the cache, load it and put it in the cache
+                if (clip == null) {
+                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile());
+                    clip = AudioSystem.getClip();
+
+                    // Open audio input stream and clip for playback
+                    clip.open(audioInputStream);
+
+                    // Put the clip in the cache
+                    soundCache.put(soundFilePath, clip);
+                } else {
+                    // If the clip is already in the cache, set the frame position to the beginning
+                    clip.setFramePosition(0);
+                }
+
+                // Start playback of the clip
                 clip.start();
-
-                // Wait for the sound to finish playing
-                clip.addLineListener(event -> {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clip.close();
-                        System.out.println("Sound playback for " + name + " completed.");
-                    }
-                });
-            } else {
-                System.out.println("No sound playback for " + name + ".");
             }
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
-            System.err.println("Error occurred during sound playback for " + name + ": " + e.getMessage());
         }
     }
     // Method to draw the collectable
@@ -226,4 +269,4 @@ public class Collectable implements Serializable {
     		filledImage = imageCache.get(name);
     	}
     }
-};
+}

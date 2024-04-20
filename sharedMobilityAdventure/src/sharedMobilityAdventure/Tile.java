@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 
 import java.awt.Point;
@@ -82,7 +83,6 @@ public class Tile implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
