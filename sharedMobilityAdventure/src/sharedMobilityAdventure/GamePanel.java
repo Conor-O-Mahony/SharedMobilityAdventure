@@ -69,12 +69,12 @@ public class GamePanel extends JPanel implements KeyListener {
 
         gems = new Gem[numGems]; // Initialize array
         for (int i = 0; i < numGems; i++) {
-            gems[i] = new Gem("Diamond", this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+            gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
         }
 
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
-            carbonCoins[i] = new CarbonCoin("Carbon Credit", this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
+            carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
         
         popup = new PopUp();
