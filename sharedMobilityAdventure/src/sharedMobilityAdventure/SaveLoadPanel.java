@@ -127,8 +127,7 @@ public class SaveLoadPanel extends JPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-            }
-            
+            }    
         });
 
         return button;

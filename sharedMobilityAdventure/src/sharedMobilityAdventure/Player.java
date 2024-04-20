@@ -24,12 +24,12 @@ public class Player implements Serializable {
     private int tile;
     private int coins;
     private transient BufferedImage image;
-    private transient GamePanel gamePanel; // Added member variable for GamePanel
+    private GamePanel gamePanel; // Added member variable for GamePanel
     
 
     // Image cache for storing loaded images
     @SuppressWarnings("unused")
-	private static Map<String, BufferedImage> imageCache = new HashMap<>();
+	private transient static Map<String, BufferedImage> imageCache = new HashMap<>();
 
 
     public Player(GamePanel gamePanel) {
