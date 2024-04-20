@@ -1,5 +1,4 @@
 
-
 package sharedMobilityAdventure;
 
 import java.awt.*;
@@ -9,9 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.awt.FontMetrics;
 
 public class GamePanel extends JPanel implements KeyListener {
 
@@ -20,28 +19,27 @@ public class GamePanel extends JPanel implements KeyListener {
 	private PopUp popup;
 	private Board board;
 	// Cache for storing loaded images
-	private Map<String, BufferedImage> imageCache;
+	private transient Map<String, BufferedImage> imageCache;
 
-	private String username; // Store the username
-	private JFrame gameFrame; // Store the game frame  
+  private String username; // Store the username
+  private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
 	private transient BufferedImage sidebarImage;
     
-	private CarbonCoin[] carbonCoins;
-	private int numCarbonCoins = 3;
+  private CarbonCoin[] carbonCoins;
+  private int numCarbonCoins = 3;
   
-	private Gem[] gems; //Array to store Gems
-	private int numGems = 3; // Number of gems to drop
+  private Gem[] gems; //Array to store Gems
+  private int numGems = 3; // Number of gems to drop
     
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
-	public boolean gemScoreUpdate = true;
-	public boolean coinScoreUpdate = true;
-	
+  public boolean gemScoreUpdate = true;
+  public boolean coinScoreUpdate = true;
   
     public GamePanel(JFrame gameFrame, String username){
 		
@@ -71,30 +69,32 @@ public class GamePanel extends JPanel implements KeyListener {
 
         gems = new Gem[numGems]; // Initialize array
         for (int i = 0; i < numGems; i++) {
-            gems[i] = new Gem("Diamond" ,board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+            gems[i] = new Gem("Diamond", this, playerX, playerY); // Pass player's coordinates to the Gem constructor
         }
 
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
-            carbonCoins[i] = new CarbonCoin("Carbon Credit" ,board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
+            carbonCoins[i] = new CarbonCoin("Carbon Credit", this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
-
+        
         popup = new PopUp();
+        
         loadImages();
     }
 
     
     void loadImages() {
-    	String[] roadTileNames = {"intersection","bikepin","buspin","trainpin"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
+    	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
 		roadtileArray = new BufferedImage[roadTileNames.length];
 		loadTiles(roadTileNames,roadtileArray);
 		
-		String[] haloNames = {"halo","halo2"};
+		String[] haloNames = {"haloB","haloY","haloG"};
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
 		
-		//popup.loadImage();
+		popup.loadImage();
 		player.loadImage();
+		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
 		
 		// load images for gem
 		for (int i = 0; i < gems.length; i++) {
@@ -103,13 +103,19 @@ public class GamePanel extends JPanel implements KeyListener {
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
+			carbonCoins[i].startRotation();
 		  } 
     }
 
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
-            BufferedImage image = getImageFromCache(imageName);
+            BufferedImage image = null;
+            try {
+            	 image = getImageFromCache(imageName);
+            } catch (NullPointerException e) {
+            	e.printStackTrace();
+            }
             if (image == null) {
                 String source = String.format("images/tiles/%s.png", imageName);
                 try {
@@ -153,9 +159,8 @@ public class GamePanel extends JPanel implements KeyListener {
             saveloadFrame.setVisible(true);
             
         });  
-        return button;     
+        return button;    
     }
-	
     private void setButtonIcon(JButton button, String imagePath) {
         button.setBorderPainted(false); // Remove button border
         button.setFocusPainted(false); // Remove focus border
@@ -169,36 +174,27 @@ public class GamePanel extends JPanel implements KeyListener {
         button.setRolloverIcon(new ImageIcon(hoverImagePath));
     }
     
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
         for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
 			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
-				
-				TransportTypes[] routeTypes = board.tiles[row][col].getRouteTypes();
-				
-				boolean bus=Arrays.stream(routeTypes).anyMatch(TransportTypes.BUS::equals);
-				boolean train=Arrays.stream(routeTypes).anyMatch(TransportTypes.TRAIN::equals);
-				boolean bike=Arrays.stream(routeTypes).anyMatch(TransportTypes.BICYCLE::equals);
+								
+				Route[] routes = board.tiles[row][col].getRoutes();
 				
 				g.drawImage(roadtileArray[0], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
 				
-//	            g.setColor(Color.BLACK);
-//	            g.drawRect(col * tile, row * tile, tile, tile);
-				
-				if (bike==true) {
-					g.drawImage(roadtileArray[1], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+				int extra = (int) Math.round(0.3*Main.TILE_SIZE);
+				if (routes[0]!=null) {
+					g.drawImage(routes[0].getPinImage(), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
-				if (bus==true) {
-					int extra = (int) Math.round(0.3*Main.TILE_SIZE);
-					g.drawImage(roadtileArray[2], col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+				if (routes[1]!=null) {
+					g.drawImage(routes[1].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
-				if (train==true) {
-					int extra = (int) Math.round(0.3*Main.TILE_SIZE);
-					g.drawImage(roadtileArray[3], col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
-				}
+				//if (routes[2]!=null) {
+				//	g.drawImage(routes[2].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+				//}
 			}
         }
         
@@ -266,27 +262,63 @@ public class GamePanel extends JPanel implements KeyListener {
     	Route[] tileRoutes = currentTile.getRoutes();
     	for (int i=0; i<tileRoutes.length; i++) {
     		if (tileRoutes[i]!=null) {
+    			Color pinColor = tileRoutes[i].getPinColor();
+    			int haloArrayIndex = 0;
+    			if (pinColor.getRGB() == Color.YELLOW.getRGB()) {
+    				haloArrayIndex = 1;
+    			} else if (pinColor.getRGB() == Color.GREEN.getRGB()) {
+    				haloArrayIndex = 2;
+    			}
     			Tile[] tilesInRoute = tileRoutes[i].getTiles();
     			for (int j=0; j<tilesInRoute.length; j++) {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(haloArray[i], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+    				g.drawImage(haloArray[haloArrayIndex], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
     			TransportTypes type = tileRoutes[i].getTransportType();
     			String typeString = type.toString();
+    			
+    			String text1 = "Press "+(i+1)+" to take ";
+    			String text2 = typeString;
+    			Font font = new Font("Tahoma", Font.BOLD, 16);
+    			FontMetrics fontMetrics = g.getFontMetrics(font);
+    			g.setFont(font);
+    			
+    			//Graphics2D g2d = (Graphics2D) g;
+    			
+    			int string1Width = fontMetrics.stringWidth(text1);
+    			//GradientPaint gradient = new GradientPaint(
+    			//	    Main.GAME_WIDTH + 35, 485 + i * 25, Color.BLACK, 
+    			//	    Main.GAME_WIDTH + 35 + stringWidth, 485 + i * 25, pinColor); // Adjust the coordinates and width as needed
+
+    				// Apply the gradient paint to the graphics context
+    			//g2d.setPaint(gradient);
+    				
     			g.setColor(Color.BLACK); // Set color to black
-    	        g.setFont(new Font("Tahoma", Font.BOLD, 16));
-    	        g.drawString("Press "+(i+1)+" to take "+typeString, Main.GAME_WIDTH+35, 485 + i*25);
+    	        g.drawString(text1, Main.GAME_WIDTH+25, 285 + i*25);
+    	        
+    	        g.setColor(pinColor); // Set color to black
+    	        g.drawString(text2, Main.GAME_WIDTH+25+string1Width, 285 + i*25);
     		}
     	}
     }
     
-    private BufferedImage getImageFromCache(String imageName) {
-    	return imageCache.get(imageName);
+    private  BufferedImage getImageFromCache(String imageName) {
+    	try {
+    		BufferedImage cachedImage = imageCache.get(imageName);
+    		return cachedImage;
+    	} catch (NullPointerException e) {
+    		return null;
+    	}
     }
     private void cacheImage(String imageName, BufferedImage image) {
-    	imageCache.put(imageName, image);
+    	try {
+    		imageCache.put(imageName, image);
+    	} catch (NullPointerException e) {
+    		imageCache = new HashMap<>();
+    		imageCache.put(imageName, image);
+    	}
     }
     public void restartGame() {
         initGame();
