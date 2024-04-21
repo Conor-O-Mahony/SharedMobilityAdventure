@@ -59,12 +59,12 @@ public class SaveLoadPanel extends JPanel {
         	if (checkFile(fileName)) {
         		//add(createTextBox(xLoc+35, 150, "Overwrite Save"));
         		try {
-					add(createLoadStats(xLoc+35, 250, fileName));
+					add(createLoadStats(xLoc-80, 150, fileName));
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}
         	} else {
-        		add(createTextBox(xLoc+35, 250, "New Save"));
+        		add(createTextBox(xLoc+35, 230, "New Save"));
         	}
         	add(createSaveButton(saveloadFrame,xLoc,350,"Save to file",fileName));
 		}
@@ -79,12 +79,12 @@ public class SaveLoadPanel extends JPanel {
         		//add(createTextBox(xLoc+35, 150, "Load save"));
         		add(createLoadButton(saveloadFrame,xLoc,350,"Load from file",fileName));
         		try {
-					add(createLoadStats(xLoc+35, 250,fileName));
+					add(createLoadStats(xLoc-80, 150,fileName));
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}
         	} else {
-        		add(createTextBox(xLoc+35, 250, "No save file"));
+        		add(createTextBox(xLoc+35, 230, "No save file"));
         	}
 		}
 	}
@@ -108,8 +108,9 @@ public class SaveLoadPanel extends JPanel {
         Text.setHorizontalAlignment(SwingConstants.CENTER);
         Text.setBounds(x, y, 144, 64);
         Text.setEditable(false);
-        Text.setBackground(Color.BLACK);
-        Text.setForeground(Color.RED);
+        //Text.setBackground(Color.BLACK);
+        Text.setForeground(Color.BLACK);
+        Text.setOpaque(false);
         Text.setFont(new Font("Arial", Font.BOLD, 16));
         Text.setBorder(null);
         return Text;
@@ -131,7 +132,7 @@ public class SaveLoadPanel extends JPanel {
     	JLabel Text = new JLabel(html);
     	
     	Text.setHorizontalAlignment(SwingConstants.CENTER);
-        Text.setBounds(x-80, y-100, 300, 200);
+        Text.setBounds(x, y, 300, 200);
         //Text.setBackground(Color.BLACK);
         Text.setForeground(Color.BLACK);
         Text.setFont(new Font("Arial", Font.BOLD, 16));
