@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
+	int gameRound = 0;
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
   
@@ -60,7 +61,8 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 	
     public void initGame() {
-        board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
+    	gameRound += 1;
+    	board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
         player = new Player(this);
 
         // Get player's initial coordinates
@@ -80,6 +82,7 @@ public class GamePanel extends JPanel implements KeyListener {
         popup = new PopUp();
         
         loadImages();
+        JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
 
     
@@ -341,9 +344,9 @@ public class GamePanel extends JPanel implements KeyListener {
         // Not needed
     }
     
-    public static void endGame(JFrame gameFrame, String username) {
-        Main.openEndWindow(gameFrame, username);
-    }
+//    public static void endGame(JFrame gameFrame, String username, int gameRound, int gemScore, int coinScore, int gameScore) {
+//        Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
+//    }
 
 	public boolean takeTransportRoute(int mode, int player_x, int player_y) {
 		//TO DO: IMPLEMENT METHODS FOR SUBTRACTING TIME, CARBON COINS, ETC.
@@ -380,7 +383,8 @@ public class GamePanel extends JPanel implements KeyListener {
 	        }
 	    }
 
-	    if (allGemsCollected() && allCoinsCollected()) {
+//	    if (allGemsCollected() && allCoinsCollected()) {
+	    if (allGemsCollected()) {
 	        restartGame(); // Restart the game when all gems and coins are collected
 	    }
 
@@ -398,9 +402,9 @@ public class GamePanel extends JPanel implements KeyListener {
 	        }
 	    }
 
-	    if (allGemsCollected() && allCoinsCollected()) {
-	        restartGame(); // Restart the game when all gems and coins are collected
-	    }
+//	    if (allGemsCollected() && allCoinsCollected()) {
+//	        restartGame(); // Restart the game when all gems and coins are collected
+//	    }
 
 	    return coinScore;
 	}
@@ -437,7 +441,7 @@ public class GamePanel extends JPanel implements KeyListener {
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {   		
-    		Main.openEndWindow(gameFrame, username);
+    		Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		playerTime -= movement;

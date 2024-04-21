@@ -52,13 +52,13 @@ public class Main {
       
   }
 
-  public static void openEndWindow(JFrame gameFrame, String username) {
+  public static void openEndWindow(JFrame gameFrame, String username, int gameRound, int gemScore, int coinScore, int gameScore) {
       JFrame endFrame = new JFrame();
       endFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       endFrame.setResizable(false);
       endFrame.setTitle("Shared-Mobility Adventure"); 
       
-      EndPanel endPanel = new EndPanel(endFrame);
+      EndPanel endPanel = new EndPanel(endFrame, username, gameRound, gemScore, coinScore, gameScore);
       endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
       endFrame.getContentPane().add(endPanel);
       //endFrame.add(endPanel);
