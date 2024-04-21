@@ -22,7 +22,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	private transient Map<String, BufferedImage> imageCache;
 
   String username; // Store the username
-  private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
@@ -44,9 +43,7 @@ public class GamePanel extends JPanel implements KeyListener {
   
   public JButton button;
   
-    public GamePanel(JFrame gameFrame, String username){
-		
-        this.gameFrame = gameFrame; // Store the game frame
+    public GamePanel(String username){
         this.username = username; // Store the username
 		
         // Initalize the image cache
@@ -55,11 +52,16 @@ public class GamePanel extends JPanel implements KeyListener {
         initGame();
 
         this.setFocusable(true);
-        requestFocus();
+        focus();
+        
         addKeyListener(this);   
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
         addButton();
+    }
+    
+    public void focus() {
+    	requestFocus();
     }
 	
     public void initGame() {
@@ -88,7 +90,7 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     void addButton() {
-    	add(createButton(gameFrame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+    	add(createButton(Main.Frame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
     }
     
     void loadImages() {
@@ -152,25 +154,11 @@ public class GamePanel extends JPanel implements KeyListener {
     }
     
     void addActionListener() {
-    	button.addActionListener(e -> {       	
-            //Delete the current frame
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
-            currentFrame.dispose(); // Dispose the current EndPanel frame
-            
-            //Load the save/load frame, pass in the GamePanel as argument
-            JFrame saveloadFrame = new JFrame();
-            saveloadFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            saveloadFrame.setResizable(false);
-            saveloadFrame.setTitle("Save/Load Game"); 
-            
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this, saveloadFrame, "save");
+    	button.addActionListener(e -> {       	            
+            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this, "save");
             saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-            saveloadFrame.getContentPane().add(saveloadPanel);
-            //saveloadFrame.add(saveloadPanel);
-       
-            saveloadFrame.pack();
-            saveloadFrame.setLocationRelativeTo(null);
-            saveloadFrame.setVisible(true);
+
+            Main.changePanels(saveloadPanel);
             
         }); 
     }
@@ -452,7 +440,7 @@ public class GamePanel extends JPanel implements KeyListener {
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {   		
-    		Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		playerTime -= movement;

@@ -27,7 +27,7 @@ public class EndPanel extends JPanel {
     private int endCoinScore;
     private int endGameScore;
 
-    public EndPanel(JFrame endFrame, String username, int gameRound, int gemScore, int coinScore, int gameScore) {
+    public EndPanel(String username, int gameRound, int gemScore, int coinScore, int gameScore) {
     	
         this.username = username;
         this.endGameRound = gameRound;
@@ -41,7 +41,7 @@ public class EndPanel extends JPanel {
         add(statsTextbox());
         add(scoreTextbox());        
 
-        add(createButton(endFrame)); // Add the button to return to the main panel
+        add(createButton()); // Add the button to return to the main panel
     }
 
     private JTextField usernameTextbox() {
@@ -90,7 +90,7 @@ public class EndPanel extends JPanel {
 
   
     
-    private JButton createButton(JFrame endFrame) {
+    private JButton createButton() {
         int buttonX = 440; // x-coordinate of the button
         int buttonY = 400; // y-coordinate of the button
         int buttonWidth = 144; // Button width
