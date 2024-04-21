@@ -184,6 +184,7 @@ public class SaveLoadPanel extends JPanel {
             MenuPanel menuPanel = new MenuPanel();
             menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
             
+            Main.Frame.remove(this);
             Main.changePanels(menuPanel);
             
         });
@@ -254,6 +255,7 @@ public class SaveLoadPanel extends JPanel {
         panel.loadImages();
         panel.addActionListener();
         
+        Main.Frame.remove(this);
         Main.changePanels(panel);
         
         panel.focus();

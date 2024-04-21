@@ -6,11 +6,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 public class EndPanel extends JPanel {
 
@@ -100,13 +98,10 @@ public class EndPanel extends JPanel {
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
 
         button.addActionListener(e -> {
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (currentFrame != null) {
-                currentFrame.dispose();
-
-
-                Main.Game();
-        }
+        	Main.Frame.remove(this);
+            MenuPanel menuPanel = new MenuPanel();
+            menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
+            Main.changePanels(menuPanel);   
         });
 
         return button;

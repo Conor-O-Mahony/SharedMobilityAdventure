@@ -52,6 +52,7 @@ public class MenuPanel extends JPanel {
             SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,"load");
             saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
             
+            Main.Frame.remove(this);
             Main.changePanels(saveloadPanel);
         });
         add(loadButton);
