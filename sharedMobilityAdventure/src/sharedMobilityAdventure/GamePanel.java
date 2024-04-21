@@ -11,9 +11,8 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.FontMetrics;
-import java.io.Serializable;
 
-public class GamePanel extends JPanel implements KeyListener, Serializable {
+public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private Player player;
@@ -22,7 +21,7 @@ public class GamePanel extends JPanel implements KeyListener, Serializable {
 	// Cache for storing loaded images
 	private transient Map<String, BufferedImage> imageCache;
 
-  private String username; // Store the username
+  String username; // Store the username
   private JFrame gameFrame; // Store the game frame  
         
 	private transient BufferedImage[] roadtileArray;

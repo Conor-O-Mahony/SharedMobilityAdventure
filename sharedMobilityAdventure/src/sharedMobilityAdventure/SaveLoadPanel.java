@@ -16,7 +16,9 @@ import java.io.ObjectOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -55,7 +57,12 @@ public class SaveLoadPanel extends JPanel {
         	String fileName = String.format("savestate%d.ser",i);
         	
         	if (checkFile(fileName)) {
-        		add(createTextBox(xLoc+35, 250, "Overwrite Save"));
+        		//add(createTextBox(xLoc+35, 150, "Overwrite Save"));
+        		try {
+					add(createLoadStats(xLoc+35, 250, fileName));
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
         	} else {
         		add(createTextBox(xLoc+35, 250, "New Save"));
         	}
@@ -69,8 +76,13 @@ public class SaveLoadPanel extends JPanel {
         	String fileName = String.format("savestate%d.ser",i);
         	
         	if (checkFile(fileName)) {
-        		add(createTextBox(xLoc+35, 250, "Load save"));
+        		//add(createTextBox(xLoc+35, 150, "Load save"));
         		add(createLoadButton(saveloadFrame,xLoc,350,"Load from file",fileName));
+        		try {
+					add(createLoadStats(xLoc+35, 250,fileName));
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
         	} else {
         		add(createTextBox(xLoc+35, 250, "No save file"));
         	}
@@ -101,6 +113,32 @@ public class SaveLoadPanel extends JPanel {
         Text.setFont(new Font("Arial", Font.BOLD, 16));
         Text.setBorder(null);
         return Text;
+    }
+    
+    private JLabel createLoadStats(int x, int y, String fileName) throws FileNotFoundException, ClassNotFoundException, IOException {
+    	
+    	GamePanel panel = OpenSaveState(fileName);
+    	
+    	String username = panel.username;
+    	int playerTime = panel.playerTime;
+    	int gemScore = panel.gemScore;
+    	int coinScore = panel.coinScore;
+    	int gameScore = panel.gameScore;
+    	int gameRound = panel.gameRound;
+    	
+    	String html = String.format("<html>Player: %s<br><br>Round: %d<br>Time: %d<br><br>Coins: %d<br>Gems: %d<br><br>Score: %d</html>",username,gameRound,playerTime,coinScore,gemScore,gameScore);
+    	
+    	JLabel Text = new JLabel(html);
+    	
+    	Text.setHorizontalAlignment(SwingConstants.CENTER);
+        Text.setBounds(x-80, y-100, 300, 200);
+        //Text.setBackground(Color.BLACK);
+        Text.setForeground(Color.BLACK);
+        Text.setFont(new Font("Arial", Font.BOLD, 16));
+        Text.setBorder(null);
+    	
+		return Text;
+    	
     }
 
     private JButton createSaveButton(JFrame frame, int buttonX, int buttonY, String text, String fileName) {
@@ -147,6 +185,8 @@ public class SaveLoadPanel extends JPanel {
 					e1.printStackTrace();
 				}
             }
+            
+            Main.Game();
             
         });
 
@@ -196,8 +236,7 @@ public class SaveLoadPanel extends JPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-            }
-            
+            }     
         });
 
         return button;
@@ -212,15 +251,7 @@ public class SaveLoadPanel extends JPanel {
     
     public void LoadGame(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        GamePanel panel = null;
-
-        FileInputStream fileIn = new FileInputStream(fileName);
-        ObjectInputStream in = new ObjectInputStream(fileIn);
-
-        panel = (GamePanel) in.readObject();
-        
-        in.close();
-        fileIn.close();
+        GamePanel panel = OpenSaveState(fileName);
         
         panel.loadImages();
         panel.addActionListener();
@@ -235,6 +266,20 @@ public class SaveLoadPanel extends JPanel {
         gameFrame.pack();
         gameFrame.setLocationRelativeTo(null);
         gameFrame.setVisible(true);
+    }
+    
+    private GamePanel OpenSaveState(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    	GamePanel panel = null;
+
+        FileInputStream fileIn = new FileInputStream(fileName);
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+
+        panel = (GamePanel) in.readObject();
+        
+        in.close();
+        fileIn.close();
+        
+        return panel;
     }
     
     //Remove the default button border and fills to make images transparent buttons
