@@ -11,8 +11,9 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.FontMetrics;
+import java.io.Serializable;
 
-public class GamePanel extends JPanel implements KeyListener {
+public class GamePanel extends JPanel implements KeyListener, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Player player;
@@ -42,6 +43,8 @@ public class GamePanel extends JPanel implements KeyListener {
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
   
+  public JButton button;
+  
     public GamePanel(JFrame gameFrame, String username){
 		
         this.gameFrame = gameFrame; // Store the game frame
@@ -57,7 +60,7 @@ public class GamePanel extends JPanel implements KeyListener {
         addKeyListener(this);   
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
-        add(createButton(gameFrame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+        addButton();
     }
 	
     public void initGame() {
@@ -85,6 +88,9 @@ public class GamePanel extends JPanel implements KeyListener {
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
 
+    void addButton() {
+    	add(createButton(gameFrame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+    }
     
     void loadImages() {
     	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
@@ -133,7 +139,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
-        JButton button = new JButton(text);
+        button = new JButton(text);
         setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
         setButtonHoverIcon(button, "images/tiles/savegamebuttonhovered.png");
         int buttonWidth = 226;
@@ -141,7 +147,13 @@ public class GamePanel extends JPanel implements KeyListener {
         Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         button.setBounds(bounds);
 
-        button.addActionListener(e -> {       	
+        addActionListener();
+        
+        return button;    
+    }
+    
+    void addActionListener() {
+    	button.addActionListener(e -> {       	
             //Delete the current frame
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
             currentFrame.dispose(); // Dispose the current EndPanel frame
@@ -161,9 +173,9 @@ public class GamePanel extends JPanel implements KeyListener {
             saveloadFrame.setLocationRelativeTo(null);
             saveloadFrame.setVisible(true);
             
-        });  
-        return button;    
+        }); 
     }
+    
     private void setButtonIcon(JButton button, String imagePath) {
         button.setBorderPainted(false); // Remove button border
         button.setFocusPainted(false); // Remove focus border
@@ -419,14 +431,14 @@ public class GamePanel extends JPanel implements KeyListener {
 	    return true; // All gems are collected
 	}
 
-	private boolean allCoinsCollected() {
-	    for (CarbonCoin coin : carbonCoins) {
-	        if (coin.getVisibility()) {
-	            return false; // If any coin is still visible, return false
-	        }
-	    }
-	    return true; // All coins are collected
-	}
+//	private boolean allCoinsCollected() {
+//	    for (CarbonCoin coin : carbonCoins) {
+//	        if (coin.getVisibility()) {
+//	            return false; // If any coin is still visible, return false
+//	        }
+//	    }
+//	    return true; // All coins are collected
+//	}
 
     
     public void calculateGameScore() {        

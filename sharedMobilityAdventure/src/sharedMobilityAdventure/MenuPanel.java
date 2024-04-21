@@ -11,7 +11,8 @@ import javax.imageio.ImageIO;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16 * 2; // initial tile length / width (16 * 16 pixels)
+	private static final long serialVersionUID = 1881465311138285638L;
+	int tile = 16 * 2; // initial tile length / width (16 * 16 pixels)
     int columns = 32;
     int rows = 18;
     int totalWidth = columns * tile; // 640 pixels in length

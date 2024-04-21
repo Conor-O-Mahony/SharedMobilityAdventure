@@ -23,8 +23,6 @@ import javax.swing.SwingUtilities;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SaveLoadPanel extends JPanel {
@@ -225,6 +223,7 @@ public class SaveLoadPanel extends JPanel {
         fileIn.close();
         
         panel.loadImages();
+        panel.addActionListener();
         
         JFrame gameFrame = new JFrame();
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -237,6 +236,7 @@ public class SaveLoadPanel extends JPanel {
         gameFrame.setLocationRelativeTo(null);
         gameFrame.setVisible(true);
     }
+    
     //Remove the default button border and fills to make images transparent buttons
     private void setButtonIcon(JButton button, String imagePath) {
     	button.setBorderPainted(false);
