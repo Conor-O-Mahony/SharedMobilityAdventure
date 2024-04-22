@@ -155,12 +155,7 @@ public class GamePanel extends JPanel implements KeyListener {
     
     void addActionListener() {
     	button.addActionListener(e -> {       	            
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this, "save");
-            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-
-            Main.Frame.remove(this);
-            Main.changePanels(saveloadPanel);
-            
+            Main.openSaveLoadWindow(this,"save");
         }); 
     }
     
@@ -441,8 +436,7 @@ public class GamePanel extends JPanel implements KeyListener {
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {   	
-    		Main.Frame.remove(this);
-    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(this,username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		playerTime -= movement;

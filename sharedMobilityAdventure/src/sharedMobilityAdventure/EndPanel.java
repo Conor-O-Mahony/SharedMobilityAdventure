@@ -98,10 +98,7 @@ public class EndPanel extends JPanel {
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
 
         button.addActionListener(e -> {
-        	Main.Frame.remove(this);
-            MenuPanel menuPanel = new MenuPanel();
-            menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
-            Main.changePanels(menuPanel);   
+            Main.openMenuWindow();  
         });
 
         return button;

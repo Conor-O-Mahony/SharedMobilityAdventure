@@ -41,7 +41,7 @@ public class MenuPanel extends JPanel {
         startButton.addActionListener(e -> {
             // Retrieve the username from the text field
             String username = usernameField.getText();
-            Main.openGameWindow(username); // Window will be opened with username
+            Main.openGameWindow(this,username); // Window will be opened with username
         });
         add(startButton);
         
@@ -49,11 +49,7 @@ public class MenuPanel extends JPanel {
         loadButton.setBounds(550, 375, 320, 95);
         setButtonIcons(loadButton, "images/tiles/loadgamebuttonhovered.png", "images/tiles/loadgamebuttondefault.png");
         loadButton.addActionListener(e -> {       	            
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,"load");
-            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-            
-            Main.Frame.remove(this);
-            Main.changePanels(saveloadPanel);
+            Main.openSaveLoadWindow(this,"load");
         });
         add(loadButton);
 

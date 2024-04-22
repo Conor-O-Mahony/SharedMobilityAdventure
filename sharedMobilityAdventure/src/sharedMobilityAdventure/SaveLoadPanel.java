@@ -181,11 +181,7 @@ public class SaveLoadPanel extends JPanel {
 				}
             }
             
-            MenuPanel menuPanel = new MenuPanel();
-            menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
-            
-            Main.Frame.remove(this);
-            Main.changePanels(menuPanel);
+            //Main.openMenuWindow();
             
         });
 
@@ -246,6 +242,8 @@ public class SaveLoadPanel extends JPanel {
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
         out.writeObject(panel);
         out.close();
+        
+        Main.openMenuWindow();
     }
     
     public void LoadGame(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -253,9 +251,8 @@ public class SaveLoadPanel extends JPanel {
         GamePanel panel = OpenSaveState(fileName);
         
         panel.loadImages();
-        panel.addActionListener();
+        panel.addButton();
         
-        Main.Frame.remove(this);
         Main.changePanels(panel);
         
         panel.focus();

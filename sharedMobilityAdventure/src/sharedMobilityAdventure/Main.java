@@ -16,8 +16,13 @@ public class Main {
     	Game(); 
     }
     
-  public static void changePanels(JPanel panel) {
-	  Frame.setContentPane(panel);
+  public static void changePanels(JPanel newPanel) {
+	  //Discard old panel
+	  Frame.getContentPane().removeAll();
+	  System.gc();
+	  
+	  //Add new panel
+	  Frame.setContentPane(newPanel);
       Frame.revalidate();
   }
 
@@ -27,24 +32,38 @@ public class Main {
 	  Frame.setResizable(false);
 	  Frame.setTitle("Shared-Mobility Adventure"); 
       
-      MenuPanel menuPanel = new MenuPanel();
-      menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)      
-      Frame.getContentPane().add(menuPanel);
+	  MenuPanel menuPanel = new MenuPanel();
+      menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
+      Frame.setContentPane(menuPanel);
  
       Frame.pack();
       Frame.setLayout(null);
       Frame.setLocationRelativeTo(null);
       Frame.setVisible(true);    
   }
+  
+  public static void openSaveLoadWindow(JPanel gamePanel, String mode) {
+	  SaveLoadPanel saveloadPanel = new SaveLoadPanel(gamePanel,mode);
+      saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT));
+
+      changePanels(saveloadPanel);
+  }
+  
+  public static void openMenuWindow() {
+	  MenuPanel menuPanel = new MenuPanel();
+      menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); 
+      
+      changePanels(menuPanel);
+  }
     
-  public static void openGameWindow(String username) {
+  public static void openGameWindow(JPanel oldPanel, String username) {
       GamePanel gamePanel = new GamePanel(username);
-      gamePanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
+      gamePanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
       
       changePanels(gamePanel);
   }
 
-  public static void openEndWindow(String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
+  public static void openEndWindow(JPanel oldPanel, String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
       EndPanel endPanel = new EndPanel(username, gameRound, gemScore, coinScore, gameScore);
       endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
       
