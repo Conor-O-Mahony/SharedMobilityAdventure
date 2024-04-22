@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.imageio.ImageIO;
 
 public class CarbonCoin extends Collectable {
@@ -14,6 +17,7 @@ public class CarbonCoin extends Collectable {
     private int currentRotationIndex = 0; // Index of the current rotation image
     private GamePanel gamePanel; // Reference to the GamePanel
     private final int NUM_FRAMES = 8;
+    private static ExecutorService executor;
 
     public CarbonCoin(String name, Board board, GamePanel gamePanel, int playerX, int playerY) {
         super(name, board);
@@ -31,7 +35,7 @@ public class CarbonCoin extends Collectable {
         this.collectabelY = coordinates[1];
         
         loadImage(); // Load rotation images
-        startRotation(); // Start the rotation animation
+        //startRotation(); // Start the rotation animation
     }
     @Override
     public void loadImage() {
@@ -51,18 +55,30 @@ public class CarbonCoin extends Collectable {
         g.drawImage(rotationImages[currentRotationIndex], adjustedX, adjustedY, WIDTH, HEIGHT, null);
     }
     // Start the rotation animation
-    void startRotation() {
-        Thread rotationThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(200); // Adjust rotation speed as needed
-                    currentRotationIndex = (currentRotationIndex + 1) % NUM_FRAMES; // Cycle through images
-                    gamePanel.repaint(); // Redraw the panel to update the image
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        rotationThread.start();
+    void startRotation() {    	
+    	if (executor == null || executor.isShutdown() || executor.isTerminated()) {
+    		executor = Executors.newFixedThreadPool(3);
+        }
+    	
+    	executor.submit(new Runnable() {
+            @Override public void run() 
+            {
+                   while(!Thread.currentThread().isInterrupted()) {
+                	   try {
+                           Thread.sleep(200); // Adjust rotation speed as needed
+                           currentRotationIndex = (currentRotationIndex + 1) % NUM_FRAMES; // Cycle through images
+                           gamePanel.repaint(); // Redraw the panel to update the image
+                       } catch (InterruptedException e) {
+                    	   Thread.currentThread().interrupt();
+                           //return; // Exit the task if interrupted
+                       }
+                   }
+
+             }
+	    });
+	    }
+    
+    static void stopRotation() {
+        executor.shutdownNow();
     }
 }

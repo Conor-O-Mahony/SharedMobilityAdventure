@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements KeyListener {
   
   public JButton button;
   
+  
     public GamePanel(String username){
         this.username = username; // Store the username
 		
@@ -50,6 +51,7 @@ public class GamePanel extends JPanel implements KeyListener {
         imageCache = new HashMap<>();
         
         initGame();
+        loadImages();
 
         this.setFocusable(true);
         focus();
@@ -83,10 +85,17 @@ public class GamePanel extends JPanel implements KeyListener {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
         
+        startRotation();
+        
         popup = new PopUp();
         
-        loadImages();
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
+    }
+    
+    void startRotation() {
+    	for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i].startRotation();
+        }
     }
 
     void addButton() {
@@ -113,10 +122,9 @@ public class GamePanel extends JPanel implements KeyListener {
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
-			carbonCoins[i].startRotation();
 		  } 
     }
-
+    
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
@@ -139,6 +147,7 @@ public class GamePanel extends JPanel implements KeyListener {
             imageArray[i] = image;
         }
     }
+
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
         button = new JButton(text);
         setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
@@ -154,7 +163,8 @@ public class GamePanel extends JPanel implements KeyListener {
     }
     
     void addActionListener() {
-    	button.addActionListener(e -> {       	            
+    	button.addActionListener(e -> {     
+    		CarbonCoin.stopRotation();
             Main.openSaveLoadWindow(this,"save");
         }); 
     }
@@ -319,6 +329,26 @@ public class GamePanel extends JPanel implements KeyListener {
     	}
     }
     public void restartGame() {
+    	//CLEAR OLD OBJECTS OUT
+        player = null;
+        popup = null;
+        
+        for (int i = 0; i < numGems; i++) {
+            gems[i] = null;
+        }
+        gems = null;
+
+        CarbonCoin.stopRotation();
+        for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i] = null;
+        }
+        carbonCoins = null;
+        
+        board = null;
+        
+        System.gc();
+        
+    	//Initialise new objects
         initGame();
         repaint();
     } 
@@ -435,7 +465,8 @@ public class GamePanel extends JPanel implements KeyListener {
     } 
        
     public void timer(int movement) {  	
-    	if ((playerTime - movement) <= 0) {   	
+    	if ((playerTime - movement) <= 0) {  
+    		CarbonCoin.stopRotation();
     		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {

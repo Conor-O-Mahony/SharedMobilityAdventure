@@ -252,6 +252,7 @@ public class SaveLoadPanel extends JPanel {
         
         panel.loadImages();
         panel.addButton();
+        panel.startRotation();
         
         Main.changePanels(panel);
         
