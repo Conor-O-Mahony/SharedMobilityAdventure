@@ -66,7 +66,7 @@ public class Player implements Serializable {
                 }
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
-                gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
                 gamePanel.timer(10);
         	}
         }
@@ -81,7 +81,7 @@ public class Player implements Serializable {
                 }
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
-                gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
                 gamePanel.timer(10);
         	}
         }
@@ -96,7 +96,7 @@ public class Player implements Serializable {
                 }
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
-                gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
                 gamePanel.timer(10);
         	}
         }
@@ -111,7 +111,7 @@ public class Player implements Serializable {
                 }
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
-                gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
                 gamePanel.timer(10);
         	}
         }
@@ -121,7 +121,7 @@ public class Player implements Serializable {
         	if (taken) {
         		gamePanel.checkGemScore();
         		gamePanel.checkCoinScore();
-        		gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
         		gamePanel.timer(10); //CHANGE
         	}
         }
@@ -131,7 +131,7 @@ public class Player implements Serializable {
         	if (taken) {
         		gamePanel.checkGemScore();
         		gamePanel.checkCoinScore();
-        		gamePanel.checkPopUp();
+                gamePanel.popupIntersection();
         		gamePanel.timer(10); //CHANGE
         	}
         }

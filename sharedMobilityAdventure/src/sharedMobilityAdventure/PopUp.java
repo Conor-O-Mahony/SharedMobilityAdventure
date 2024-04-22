@@ -1,5 +1,6 @@
 package sharedMobilityAdventure;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -8,16 +9,17 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Random;
 
-public class PopUp implements Serializable{
-
-	private static final long serialVersionUID = -8421318084033730800L;
-	public int popUpX; // x-coordinate
-	public int popUpY; // y-coordinate
-    final int width; // width of popUp
-    final int height; // height of popUp
-    private transient BufferedImage image; // image of popUp
+public class PopUp {
+		
+	protected int popupX;
+    protected int popupY;
+    private BufferedImage image;
+    int panelWidth = Main.DEFAULT_BOARD_SIZE;
+    int panelHeight = Main.DEFAULT_BOARD_SIZE;
+    protected static final int WIDTH = 32;
+    protected static final int HEIGHT = 32;
+    protected boolean visible;
 	
-    // List of dialogue strings
     private static String[] informationOptions = {
     "Carbon emissions primarily consist of carbon dioxide (CO2)\n and other greenhouse gases released into the atmosphere.",
     "The burning of fossil fuels like coal, oil, and natural gas\n is the largest source of carbon emissions.",
@@ -40,44 +42,52 @@ public class PopUp implements Serializable{
     "Carbon offsets can take various forms, including reforestation projects,\n renewable energy initiatives, and investments in energy efficiency.",
     "The aviation industry is responsible for around 2% of global carbon emissions,\n and efforts are underway to develop sustainable aviation fuels and improve fuel efficiency."
     };
-    
-    public PopUp () {
-        width = 16;
-        height = 16;
-        //loadImage();
-        
-        dropPopUp();
+ 
+    public PopUp() {
+    	
+//    	System.out.println("Hello, world");
+    	
+    	this.visible = true;
+    	Random random = new Random();
+
+    	int randomNumberX = random.nextInt(panelWidth);
+        int randomNumberY = random.nextInt(panelHeight);
+
+        int oddNumberX = randomNumberX * 2 + 1;
+        int oddNumberY = randomNumberY * 2 + 1;
+
+        popupX = Main.TILE_SIZE / 2 * oddNumberX;
+        popupY = Main.TILE_SIZE / 2 * oddNumberY; 
+            
+  }
+  
+    public boolean getVisibility() {
+        return this.visible;
     }
     
     public void loadImage() {
-    	try {
-            image = ImageIO.read(new File("images/tiles/water.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+      try {
+          image = ImageIO.read(new File("images/info/info_popup.png"));
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+  }
 
-    public void dropPopUp() {
-            
-        Random random = new Random();
-        int randomNumberX = random.nextInt(12);
-        int randomNumberY = random.nextInt(9);
-    	
-        int oddNumberX = randomNumberX * 2 + 1;
-        int oddNumberY = randomNumberY * 2 + 1;
-        
-        popUpX = 8*4*oddNumberX;
-        popUpY = 8*4*oddNumberY;
-             
-    }
-   
-    public void draw(Graphics g) {
-        int adjustedX = popUpX - (width / 2);
-        int adjustedY = popUpY - (height / 2);
+  public void draw(Graphics g) {
+      int adjustedX = popupX - (WIDTH / 2);
+      int adjustedY = popupY - (HEIGHT / 2);
+      g.drawImage(image, adjustedX, adjustedY, WIDTH, HEIGHT, null);
+  }
 
-        g.drawImage(image, adjustedX, adjustedY, width, height, null);
-    }
-         	
+public void setVisibility(boolean visibleUpdated) {
+    this.visible = visibleUpdated;
+	
+}
 
-
+public void displayPopup() {
+	
+    Random randomObj = new Random();
+    int randomNumber = randomObj.nextInt(20);
+	JOptionPane.showMessageDialog(null, "Did you know: " + informationOptions[randomNumber]);	
+} 
 }
