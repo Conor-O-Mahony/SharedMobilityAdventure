@@ -116,11 +116,19 @@ public JButton button;
             popups[i] = new PopUp();
         }
         
-        
         loadImages();
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
 
+    void startRotation() {
+    	for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i].startRotation();
+        }
+    }
+
+    void addButton() {
+    	add(createButton(Main.Frame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+    }
     
     void loadImages() {
     	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
@@ -131,7 +139,6 @@ public JButton button;
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
 		
-		popup.loadImage();
 		player.loadImage();
 		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
 		
@@ -637,7 +644,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
     public void coinCount(int movement) {  	
     	if ((coinScore - movement) <= 0) { 
     		coinScore = 0;
-    		Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		coinScore -= movement;
