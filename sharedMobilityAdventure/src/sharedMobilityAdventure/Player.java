@@ -41,7 +41,7 @@ public class Player implements Serializable {
         this.height = 16;
         this.speed = Main.TILE_SIZE;
         this.tile = Main.TILE_SIZE;
-        this.coins = 100;
+        this.coins = 1000;
         loadImage();
     }
     
@@ -67,7 +67,7 @@ public class Player implements Serializable {
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.checkPopUp();
-                gamePanel.timer(10);
+                gamePanel.timer(50);
         	}
         }
         
@@ -82,7 +82,7 @@ public class Player implements Serializable {
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.checkPopUp();
-                gamePanel.timer(10);
+                gamePanel.timer(50);
         	}
         }
         
@@ -97,7 +97,7 @@ public class Player implements Serializable {
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.checkPopUp();
-                gamePanel.timer(10);
+                gamePanel.timer(50);
         	}
         }
         
@@ -112,7 +112,7 @@ public class Player implements Serializable {
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.checkPopUp();
-                gamePanel.timer(10);
+                gamePanel.timer(50);
         	}
         }
         
@@ -122,7 +122,7 @@ public class Player implements Serializable {
         		gamePanel.checkGemScore();
         		gamePanel.checkCoinScore();
         		gamePanel.checkPopUp();
-        		gamePanel.timer(10); //CHANGE
+        		gamePanel.timer(50); 
         	}
         }
         
@@ -132,7 +132,7 @@ public class Player implements Serializable {
         		gamePanel.checkGemScore();
         		gamePanel.checkCoinScore();
         		gamePanel.checkPopUp();
-        		gamePanel.timer(10); //CHANGE
+        		gamePanel.timer(50); 
         	}
         }
     }
@@ -183,35 +183,5 @@ public class Player implements Serializable {
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
     }
   
-//    public int getTimer() {  	
-//    	return playerTime;
-//    }
-//    
-//    public void setTimer(int time) {
-//    	playerTime = time;
-//    	System.out.println("Time updated to: " + playerTime);
-//    }
-//    
-//    public void adjustTimer(double adjustment) {
-//        this.playerTime += adjustment;
-//        System.out.println("Time updated to: " + playerTime);
-//    }
-    
-    public void updateTravel(Route route) {
-        TransportTypes type = route.getTransportType();
-        int distance = route.getTiles().length; // Calculate the number of tiles in the route
-
-        // Carbon Cost
-        double carbonCost = type.calculateCarbonFootprint(distance);
-        adjustCoins(-carbonCost); // Adjust carbon coins based on the cost
-
-        // Time Cost
-        double timePerTile = type.getSpeed(); // Get adjusted speed considering congestion
-        int totalTravelTime = (int) (timePerTile * distance); // Total time taken on route
-        //adjustTimer(-totalTravelTime); // Subtract this time from the game timer   ->>>> FIXXXX
-
-        System.out.println("Travel Costs - Distance: " + distance + ", Carbon Cost: " + carbonCost + ", Time Cost: " + totalTravelTime + " seconds");
-    }
-
 
 }
