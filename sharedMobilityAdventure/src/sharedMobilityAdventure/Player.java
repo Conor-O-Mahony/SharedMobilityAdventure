@@ -29,7 +29,7 @@ public class Player implements Serializable {
 
     // Image cache for storing loaded images
     @SuppressWarnings("unused")
-	private transient static Map<String, BufferedImage> imageCache = new HashMap<>();
+	private static transient Map<String, BufferedImage> imageCache = new HashMap<>();
 
 
     public Player(GamePanel gamePanel) {

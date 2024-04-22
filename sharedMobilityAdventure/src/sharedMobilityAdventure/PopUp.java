@@ -7,18 +7,23 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
-public class PopUp {
+public class PopUp implements Serializable{
 		
+	private static final long serialVersionUID = 2L;
 	protected int popupX;
     protected int popupY;
-    private BufferedImage image;
+    private transient BufferedImage image;
     int panelWidth = Main.DEFAULT_BOARD_SIZE;
     int panelHeight = Main.DEFAULT_BOARD_SIZE;
     protected static final int WIDTH = 32;
     protected static final int HEIGHT = 32;
     protected boolean visible;
+    
+    private static transient Map<String, BufferedImage> popupCache = new HashMap<>();
 	
     private static String[] informationOptions = {
     "Carbon emissions primarily consist of carbon dioxide (CO2)\n and other greenhouse gases released into the atmosphere.",
@@ -58,6 +63,8 @@ public class PopUp {
 
         popupX = Main.TILE_SIZE / 2 * oddNumberX;
         popupY = Main.TILE_SIZE / 2 * oddNumberY; 
+        
+        loadImage();
             
   }
   
@@ -66,12 +73,17 @@ public class PopUp {
     }
     
     public void loadImage() {
-      try {
-          image = ImageIO.read(new File("images/info/info_popup.png"));
-      } catch (IOException e) {
-          e.printStackTrace();
-      }
-  }
+    	if (popupCache.containsKey("info_popup")) {
+    		image = popupCache.get("info_popup");
+    	} else {
+    		try {
+				image = ImageIO.read(new File("images/info/info_popup.png"));
+				popupCache.put("info_popup", image);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+    }
 
   public void draw(Graphics g) {
       int adjustedX = popupX - (WIDTH / 2);

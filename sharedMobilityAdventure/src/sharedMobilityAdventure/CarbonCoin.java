@@ -34,20 +34,25 @@ public class CarbonCoin extends Collectable {
         this.collectabelX = coordinates[0];
         this.collectabelY = coordinates[1];
         
-        loadImage(); // Load rotation images
-
+        loadImage();
     }
     @Override
     public void loadImage() {
         try {
             rotationImages = new BufferedImage[NUM_FRAMES];
             for (int i = 0; i < NUM_FRAMES; i++) {
-                rotationImages[i] = ImageIO.read(new File("images/coins/coin_" + String.format("%02d", i + 1) + ".png"));
+            	String fileName = String.format("coin_%02d", i + 1);
+            	if (imageCache.containsKey(fileName)) {
+            		rotationImages[i] = imageCache.get(fileName);
+            	} else {
+            		rotationImages[i] = ImageIO.read(new File("images/coins/" + fileName + ".png"));
+            	}
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+     
     @Override
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);

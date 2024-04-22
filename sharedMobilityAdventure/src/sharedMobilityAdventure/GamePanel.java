@@ -345,7 +345,10 @@ public class GamePanel extends JPanel implements KeyListener {
     public void restartGame() {
     	//CLEAR OLD OBJECTS OUT
         player = null;
-        popup = null;
+        for (int i = 0; i < numPopups; i++) {
+            popups[i] = null;
+        }
+        popups = null;
         
         for (int i = 0; i < numGems; i++) {
             gems[i] = null;

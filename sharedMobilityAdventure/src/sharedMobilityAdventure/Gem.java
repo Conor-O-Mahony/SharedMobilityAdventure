@@ -11,6 +11,7 @@ public class Gem extends Collectable implements Serializable {
 
     private static final long serialVersionUID = 3349609681759015759L;
     
+    
     // private GamePanel gamePanel; // Declare a field to store the GamePanel object
 
     public Gem(String name, Board board, GamePanel gamePanel, int playerX, int playerY) {
@@ -30,13 +31,19 @@ public class Gem extends Collectable implements Serializable {
         this.collectabelX = coordinates[0];
         this.collectabelY = coordinates[1];
         
+        loadImage();
     }
     
     public void loadImage() {
-        try {
-            filledImage = ImageIO.read(new File("images/gems/gem.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    	if (imageCache.containsKey(name)) {
+    		filledImage = imageCache.get(name);
+    	} else {
+    		try {
+				filledImage = ImageIO.read(new File("images/gems/gem.png"));
+				imageCache.put(name, filledImage);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
     

@@ -44,7 +44,7 @@ public class Collectable implements Serializable {
     private static final int MIN_DISTANCE_FROM_PLAYER = 3;
 
     // Cache for storing loaded images
-    private static Map<String, BufferedImage> imageCache = new HashMap<>();
+    protected static transient Map<String, BufferedImage> imageCache = new HashMap<>();
     
     // Thread pool for sound playback
     //@SuppressWarnings("unused")
@@ -236,7 +236,7 @@ public class Collectable implements Serializable {
     public void setVisibility(boolean visibleUpdated) {
         this.visible = visibleUpdated;
     }
-
+    
     // Method to load the image of the collectable
     public void loadImage() {
     	// check if the image is already cached
