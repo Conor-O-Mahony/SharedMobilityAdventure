@@ -164,12 +164,6 @@ public class Board implements Serializable { //Holds the Tile's
 	}
 	
 
-
-	
-	public static int getMaxRouteSize() {
-		return max_route_size;
-	}
-
 	public static void main(String[] args) {
 	    // Test board creation
 	    int test_rows = 10;
