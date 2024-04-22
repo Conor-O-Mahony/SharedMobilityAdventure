@@ -292,7 +292,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         // Score
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + gameScore, Main.GAME_WIDTH+175, 165);
+        g.drawString("" + gameScore, Main.GAME_WIDTH+155, 165);
         
         if (showExitConfirmation) { // Part of Press Esc to Exit logic
 	        String exitMessage = "Press Esc again to Exit!";
