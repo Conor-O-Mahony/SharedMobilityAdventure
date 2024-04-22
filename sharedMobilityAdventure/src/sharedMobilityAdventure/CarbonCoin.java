@@ -35,7 +35,7 @@ public class CarbonCoin extends Collectable {
         this.collectabelY = coordinates[1];
         
         loadImage(); // Load rotation images
-        //startRotation(); // Start the rotation animation
+
     }
     @Override
     public void loadImage() {

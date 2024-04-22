@@ -30,7 +30,6 @@ public class Gem extends Collectable implements Serializable {
         this.collectabelX = coordinates[0];
         this.collectabelY = coordinates[1];
         
-        loadImage(); // Load gem image
     }
     
     public void loadImage() {

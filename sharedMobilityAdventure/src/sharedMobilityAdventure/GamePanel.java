@@ -16,7 +16,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private Player player;
-	private PopUp popup;
 	private Board board;
 	// Cache for storing loaded images
 	private transient Map<String, BufferedImage> imageCache;
@@ -30,14 +29,18 @@ public class GamePanel extends JPanel implements KeyListener {
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
   
-  private Gem[] gems; //Array to store Gems
+  private Gem[] gems; // Array to store Gems
   private int numGems = 3; // Number of gems to drop
-    
+
+  private PopUp[] popups; // Array to store Popups
+  private int numPopups = 3; // Number of popups to drop
+  
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
 	int gameRound = 0;
+  
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
   
@@ -84,10 +87,12 @@ public class GamePanel extends JPanel implements KeyListener {
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
-        
         startRotation();
-        
-        popup = new PopUp();
+                 
+        popups = new PopUp[numPopups];
+        for (int i = 0; i < numPopups; i++) {
+            popups[i] = new PopUp();
+        }
         
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
@@ -110,8 +115,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] haloNames = {"haloB","haloY","haloG"};
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
-		
-		popup.loadImage();
+
 		player.loadImage();
 		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
 		
@@ -123,6 +127,10 @@ public class GamePanel extends JPanel implements KeyListener {
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
 		  } 
+
+		for (int i=0; i<popups.length; i++) {
+			popups[i].loadImage();
+		  }
     }
     
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
@@ -221,7 +229,13 @@ public class GamePanel extends JPanel implements KeyListener {
                 coin.draw(g);
             }
         }              
-        //popup.draw(g);
+        
+        for (int i = 0; i < popups.length; i++) {
+            PopUp popup = popups[i];
+            if (popup.getVisibility()) {
+            	popup.draw(g);
+            }
+        }
         
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
@@ -453,16 +467,25 @@ public class GamePanel extends JPanel implements KeyListener {
 //	    return true; // All coins are collected
 //	}
 
-    
+	public void popupIntersection() {
+	    for (int i = 0; i < popups.length; i++) {
+	    	PopUp popup = popups[i];
+	        if (player.getPlayerX() == popup.popupX && player.getPlayerY() == popup.popupY && popup.getVisibility()) {
+	        	popup.setVisibility(false);
+	        	popup.displayPopup();
+	        }
+	    }
+	}
+	
     public void calculateGameScore() {        
     	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
     }
        
-    public void checkPopUp() {
-        if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
-            System.out.println("Pop Up");   	
-    	}
-    } 
+//    public void checkPopUp() {
+//        if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
+//            System.out.println("Pop Up");   	
+//    	}
+//    } 
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {  
