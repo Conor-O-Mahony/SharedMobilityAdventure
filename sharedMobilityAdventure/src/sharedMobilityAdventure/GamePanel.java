@@ -436,7 +436,7 @@ public class GamePanel extends JPanel implements KeyListener {
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {   	
-    		Main.openEndWindow(this,username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		playerTime -= movement;

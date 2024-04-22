@@ -56,14 +56,14 @@ public class Main {
       changePanels(menuPanel);
   }
     
-  public static void openGameWindow(JPanel oldPanel, String username) {
+  public static void openGameWindow(String username) {
       GamePanel gamePanel = new GamePanel(username);
       gamePanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
       
       changePanels(gamePanel);
   }
 
-  public static void openEndWindow(JPanel oldPanel, String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
+  public static void openEndWindow(String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
       EndPanel endPanel = new EndPanel(username, gameRound, gemScore, coinScore, gameScore);
       endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
       
