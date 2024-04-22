@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.Math;
 
 import javax.imageio.ImageIO;
 
@@ -31,6 +32,7 @@ public class Board implements Serializable { //Holds the Tile's
 
 		loadImages();
 		assignRoutesv2(rows, cols); // Assign Routes to the blank Board
+		validateRoutes();
 	}
 	
 	public Tile[][] getTiles() {
@@ -39,6 +41,10 @@ public class Board implements Serializable { //Holds the Tile's
 	
 	public void setTiles(Tile[][] tiles) {
 		this.tiles = tiles;
+	}
+	
+	public static int getRandomNumber(int min, int max) {
+	    return (int) ((Math.random() * (max - min)) + min);
 	}
 	
 	public void loadImages() {
@@ -57,31 +63,66 @@ public class Board implements Serializable { //Holds the Tile's
     }
 	
 	private void assignRoutesv2(int rows, int cols) {
-		int[] no_stations = {0,0,0};
-		int[] max_stations = {max_bus,max_train,max_bike};
-		TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};
-		for (int i=0; i<no_stations.length; i++) {
-			int j=0;
-			while (no_stations[i]<max_stations[i]) {
-				int random_col = Main.getRandomNumber(0, cols);
-				int random_row = Main.getRandomNumber(0, rows);
-				if (tiles[random_row][random_col].RouteAddable()) {
-					int route_size = Main.getRandomNumber(Main.MIN_ROUTE_SIZE,Main.MAX_ROUTE_SIZE);
-					Route new_route = new Route(transport_types[i],tiles,random_row,random_col,route_size);
-					if (new_route.getTiles() != null) {
-						tiles[random_row][random_col].asignRouteToTile(new_route); //Assign Route to starting Tile
-						int finalRow = new_route.getFinalRow();
-						int finalCol = new_route.getFinalCol();
-						tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
-						new_route.setPinImage(pinArray[i*max_stations[i]+j]);  //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
-						new_route.setPinColor(pinColors[j]);
-						j++;
-						no_stations[i]+=1;
-					}
-				}
-			}
-		}
+	    int[] no_stations = {0, 0, 0};
+	    int[] max_stations = {max_bus, max_train, max_bike};
+	    TransportTypes[] transport_types = {TransportTypes.BUS, TransportTypes.TRAIN, TransportTypes.BICYCLE};
+	    for (int i = 0; i < no_stations.length; i++) {
+	        int j = 0;
+
+	        while (no_stations[i] < max_stations[i]) {
+
+	            Color pinColor = pinColors[j % pinColors.length]; // Define a pin color for the pin
+	            int random_col = Main.getRandomNumber(1, cols); // Start from (1,1)
+	            int random_row = Main.getRandomNumber(1, rows);
+	            if (random_col > 0 && random_row > 0) { // Ensure it starts from (1,1)
+	            if (tiles[random_row][random_col].RouteAddable(transport_types[i], pinColor, random_row, random_col)) { // Check Route can be added to the starting tile
+	                int route_size = Main.getRandomNumber(Main.MIN_ROUTE_SIZE,Main.MAX_ROUTE_SIZE);
+	                Route new_route = new Route(transport_types[i], tiles, pinColor, random_row, random_col, route_size);
+	                if (new_route.getTiles() != null) {
+	                    tiles[random_row][random_col].asignRouteToTile(new_route); //Assign Route to starting Tile
+	                    int finalRow = new_route.getFinalRow();
+	                    int finalCol = new_route.getFinalCol();
+	                    if (finalRow > 0 && finalCol > 0) {
+	                    if (tiles[finalRow][finalCol].RouteAddable(transport_types[i], pinColor, finalRow, finalCol)) { // Check Route can be added to the starting tile
+	                        tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
+	                        System.out.println("Route " + i + " " + pinColor + transport_types[i] + ": Added from(" + random_row + ", " + random_col + ") to (" + finalRow + ", " + finalCol + ")");
+	                        new_route.setPinImage(pinArray[i * max_stations[i] + j]); //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
+	                        new_route.setPinColor(pinColors[j % pinColors.length]);
+	                        j++;
+	                        no_stations[i]++;
+	                    } 
+	                    
+	                    }}
+	                
+	            }
+	            
+	        }}
+	        
+	    }
 	}
+
+
+	public void validateRoutes() {
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles[row].length; col++) {
+                Tile tile = tiles[row][col];
+                Route[] routes = tile.getRoutes(); //Go Through Cols / Rows and check for routes
+                for (int i = 0; i < routes.length; i++) {
+                    Route route = routes[i];
+                    if (route != null) { 
+                        route.updateTravel(); // Update to get cost values for routes
+                        if (!route.isValid()) { // Check if the route is valid
+                            System.out.println("Removing invalid route at (" + row + ", " + col + ")");
+                            tile.removeRoute(route); // Remove the route if it's invalid
+                            i--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+	
+
 	
 	public void reloadPins(int rows, int cols) {
 		loadImages();
@@ -121,40 +162,57 @@ public class Board implements Serializable { //Holds the Tile's
 		
 		return -1;
 	}
+	
+
+
+	
+	public static int getMaxRouteSize() {
+		return max_route_size;
+	}
 
 	public static void main(String[] args) {
-		//Test board creation
-		int test_rows = 10;
-		int test_cols = 20;
-		Board test_board = new Board(test_rows,test_cols);
-		int no_of_stops = 0;
-		int no_bikes = 0;
-		int no_buses = 0;
-		int no_trains = 0;
-		for (int row = 0; row<test_rows; row++) {
-			for (int col = 0; col<test_cols; col++) {
-				System.out.println("("+test_board.tiles[row][col].getX()+","+test_board.tiles[row][col].getY()+")");
-				Route[] routes = test_board.tiles[row][col].getRoutes();
-				int no_of_routes = test_board.tiles[row][col].getNumberOfRoutes();
-				for (int i=0; i<no_of_routes; i++) {
-					TransportTypes type = routes[i].getTransportType();
-					System.out.println("Stops exist at above coordinate for: "+type);
-					if (routes[i].getPinImage() instanceof BufferedImage) {
-						System.out.println("Pin added successfully");
-					}
-					no_of_stops+=1;
-					if (type==TransportTypes.BUS) {
-						no_buses+=1;
-					} else if (type==TransportTypes.TRAIN) {
-						no_trains+=1;
-					} else {
-						no_bikes+=1;
-					}
-				}
-			}
-		}
-		System.out.println("Stats: Boardsize="+test_rows+"*"+test_cols+", Total No. of Stops="+no_of_stops+" => "+(no_of_stops/2)+" transport routes.");
-		System.out.println("Number of bike routes: "+no_bikes/2+", bus routes: "+no_buses/2+" and train routes: "+no_trains/2);
+	    // Test board creation
+	    int test_rows = 10;
+	    int test_cols = 20;
+	    Board test_board = new Board(test_rows, test_cols);
+	    int no_of_stops = 0;
+	    int no_bikes = 0;
+	    int no_buses = 0;
+	    int no_trains = 0;
+
+	    for (int row = 0; row < test_rows; row++) {
+	        for (int col = 0; col < test_cols; col++) {
+
+	            Route[] routes = test_board.tiles[row][col].getRoutes();
+	            int no_of_routes = test_board.tiles[row][col].getNumberOfRoutes();
+
+	       
+
+	            for (int i = 0; i < no_of_routes; i++) {
+	                TransportTypes type = routes[i].getTransportType();
+
+	             
+	                if (routes[i].getPinImage() instanceof BufferedImage) {     
+		                no_of_stops += 1;
+	                } else {
+	                   
+	                }
+	                
+
+	                if (type == TransportTypes.BUS) {
+	                    no_buses += 1;
+	                } else if (type == TransportTypes.TRAIN) {
+	                    no_trains += 1;
+	                } else {
+	                    no_bikes += 1;
+	                }
+	            }
+	        }
+	    }
+
+	    System.out.println("Boardsize=" + test_rows + "*" + test_cols + ", Total Stops=" + no_of_stops + ". Routes: " + (no_of_stops / 2));
+	    System.out.println("bike routes: " + no_bikes + ", bus routes: " + no_buses + "train routes: " + no_trains);
 	}
+
 
 }
