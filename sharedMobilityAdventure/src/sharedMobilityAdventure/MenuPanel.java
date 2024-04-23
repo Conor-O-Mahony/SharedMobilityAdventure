@@ -11,20 +11,19 @@ import javax.imageio.ImageIO;
 
 public class MenuPanel extends JPanel {
 
-    int tile = 16 * 2; // initial tile length / width (16 * 16 pixels)
+	private static final long serialVersionUID = 1881465311138285638L;
+	int tile = 16 * 2; // initial tile length / width (16 * 16 pixels)
     int columns = 32;
     int rows = 18;
     int totalWidth = columns * tile; // 640 pixels in length
     int totalHeight = rows * tile; // 440 pixels in height
 
-    Player player; // Player object
     JTextField usernameField; // Username field
     BufferedImage backgroundImage; // Background image
     JButton startButton; // Start Game button
     JButton loadButton;
 
-    public MenuPanel(JFrame menuFrame, Player player) {
-        this.player = player;
+    public MenuPanel() {
         loadBackgroundImage();
 
         setPreferredSize(new Dimension(totalWidth, totalHeight));
@@ -42,33 +41,15 @@ public class MenuPanel extends JPanel {
         startButton.addActionListener(e -> {
             // Retrieve the username from the text field
             String username = usernameField.getText();
-            Main.openGameWindow(this, menuFrame, username); // Window will be opened with username
+            Main.openGameWindow(username); // Window will be opened with username
         });
         add(startButton);
         
         loadButton = new JButton();
         loadButton.setBounds(550, 375, 320, 95);
         setButtonIcons(loadButton, "images/tiles/loadgamebuttonhovered.png", "images/tiles/loadgamebuttondefault.png");
-        loadButton.addActionListener(e -> {       	
-        	//Delete the current frame
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
-            currentFrame.dispose(); // Dispose the current EndPanel frame
-            
-            //Load the save/load frame, pass in the GamePanel as argument
-            JFrame saveloadFrame = new JFrame();
-            saveloadFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            saveloadFrame.setResizable(false);
-            saveloadFrame.setTitle("Save/Load Game"); 
-            
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this,saveloadFrame,"load");
-            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-            saveloadFrame.getContentPane().add(saveloadPanel);
-            //saveloadFrame.add(saveloadPanel);
-       
-            saveloadFrame.pack();
-            saveloadFrame.setLocationRelativeTo(null);
-            saveloadFrame.setVisible(true);
-            
+        loadButton.addActionListener(e -> {       	            
+            Main.openSaveLoadWindow(this,"load");
         });
         add(loadButton);
 
