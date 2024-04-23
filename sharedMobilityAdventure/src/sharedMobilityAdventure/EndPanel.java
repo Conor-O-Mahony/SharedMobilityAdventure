@@ -108,16 +108,22 @@ public class EndPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Get the width and height of the panel
+        int width = getWidth();
+        int height = getHeight();
+
+        // Fill the entire panel with black
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, width, height);
+
+        // Draw the grid
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 int x = col * tile;
                 int y = row * tile;
                 g.setColor(Color.BLACK);
-                g.fillRect(x, y, tile, tile);
-                g.setColor(Color.BLACK);
                 g.drawRect(x, y, tile, tile);
             }
         }
     }
-
 }
