@@ -16,13 +16,11 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private Player player;
-	private PopUp popup;
 	private Board board;
 	// Cache for storing loaded images
 	private transient Map<String, BufferedImage> imageCache;
 
-  private String username; // Store the username
-  private JFrame gameFrame; // Store the game frame  
+  String username; // Store the username
         
 	private transient BufferedImage[] roadtileArray;
 	private transient BufferedImage[] haloArray;
@@ -31,33 +29,44 @@ public class GamePanel extends JPanel implements KeyListener {
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
   
-  private Gem[] gems; //Array to store Gems
-  private int numGems = 3; // Number of gems to drop
-    
+  private Gem[] gems; // Array to store Gems
+  private int numGems; // Number of gems to drop
+
+  private PopUp[] popups; // Array to store Popups
+  private int numPopups = 3;
+  
 	int playerTime = 1000;
 	int gemScore = 0;
 	int coinScore = 100;
 	int gameScore = 0;
 	int gameRound = 0;
+  
   public boolean gemScoreUpdate = true;
   public boolean coinScoreUpdate = true;
   
-    public GamePanel(JFrame gameFrame, String username){
-		
-        this.gameFrame = gameFrame; // Store the game frame
+  public JButton button;
+  
+  
+    public GamePanel(String username){
         this.username = username; // Store the username
 		
         // Initalize the image cache
         imageCache = new HashMap<>();
         
         initGame();
+        loadImages();
 
         this.setFocusable(true);
-        requestFocus();
+        focus();
+        
         addKeyListener(this);   
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
-        add(createButton(gameFrame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+        addButton();
+    }
+    
+    public void focus() {
+    	requestFocus();
     }
 	
     public void initGame() {
@@ -68,24 +77,49 @@ public class GamePanel extends JPanel implements KeyListener {
         // Get player's initial coordinates
         int playerX = player.getPlayerX();
         int playerY = player.getPlayerY();
-
+        
         Collectable.clearDroppedCoordinates();
-        gems = new Gem[numGems]; // Initialize array
-        for (int i = 0; i < numGems; i++) {
-            gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
-        }
-
+        if (gameRound == 1 || gameRound == 2 || gameRound == 3) {
+        	int numGems = 1;
+        	gems = new Gem[numGems]; // Initialize array
+        	gems[0] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+        	
+        } else {
+        	            
+        	int numGems = 3;
+        	gems = new Gem[numGems]; // Initialize array
+        	
+        	for (int i = 0; i < numGems; i++) {
+        		gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+            }        	
+        
+        }     
+        
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
         
-        popup = new PopUp();
+        startRotation();
+                 
+        popups = new PopUp[numPopups];
+    	
+    	for (int i = 0; i < numPopups; i++) {
+            popups[i] = new PopUp();
+        }
         
-        loadImages();
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
+    
+    void startRotation() {
+    	for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i].startRotation();
+        }
+    }
 
+    void addButton() {
+    	add(createButton(Main.Frame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
+    }
     
     void loadImages() {
     	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
@@ -95,8 +129,7 @@ public class GamePanel extends JPanel implements KeyListener {
 		String[] haloNames = {"haloB","haloY","haloG"};
 		haloArray = new BufferedImage[haloNames.length];
 		loadTiles(haloNames,haloArray);
-		
-		//popup.loadImage();
+
 		player.loadImage();
 		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
 		
@@ -107,10 +140,13 @@ public class GamePanel extends JPanel implements KeyListener {
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
-			carbonCoins[i].startRotation();
 		  } 
-    }
 
+		for (int i=0; i<popups.length; i++) {
+			popups[i].loadImage();
+		  }
+    }
+    
     private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
@@ -133,8 +169,9 @@ public class GamePanel extends JPanel implements KeyListener {
             imageArray[i] = image;
         }
     }
+
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
-        JButton button = new JButton(text);
+        button = new JButton(text);
         setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
         setButtonHoverIcon(button, "images/tiles/savegamebuttonhovered.png");
         int buttonWidth = 226;
@@ -142,29 +179,18 @@ public class GamePanel extends JPanel implements KeyListener {
         Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         button.setBounds(bounds);
 
-        button.addActionListener(e -> {       	
-            //Delete the current frame
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
-            currentFrame.dispose(); // Dispose the current EndPanel frame
-            
-            //Load the save/load frame, pass in the GamePanel as argument
-            JFrame saveloadFrame = new JFrame();
-            saveloadFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            saveloadFrame.setResizable(false);
-            saveloadFrame.setTitle("Save/Load Game"); 
-            
-            SaveLoadPanel saveloadPanel = new SaveLoadPanel(this, saveloadFrame, "save");
-            saveloadPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-            saveloadFrame.getContentPane().add(saveloadPanel);
-            //saveloadFrame.add(saveloadPanel);
-       
-            saveloadFrame.pack();
-            saveloadFrame.setLocationRelativeTo(null);
-            saveloadFrame.setVisible(true);
-            
-        });  
+        addActionListener();
+        
         return button;    
     }
+    
+    void addActionListener() {
+    	button.addActionListener(e -> {     
+    		CarbonCoin.stopRotation();
+            Main.openSaveLoadWindow(this,"save");
+        }); 
+    }
+    
     private void setButtonIcon(JButton button, String imagePath) {
         button.setBorderPainted(false); // Remove button border
         button.setFocusPainted(false); // Remove focus border
@@ -202,22 +228,30 @@ public class GamePanel extends JPanel implements KeyListener {
 			}
         }
         
-        player.draw(g);
 
+        player.draw(g);       
+
+        for (int i = 0; i < popups.length; i++) {
+            PopUp popup = popups[i];
+            if (popup.getVisibility()) {
+                popup.draw(g);
+            }
+        }
+        
         for (int i = 0; i < gems.length; i++) {
             Gem gem = gems[i];
-            if (gem != null && gem.getVisibility()) {
+            if (gem.getVisibility()) {
                 gem.draw(g);
             }
         }
+        
         for (int i = 0; i < carbonCoins.length; i++) {
             CarbonCoin coin = carbonCoins[i];
-            if (coin != null && coin.getVisibility()) {
+            if (coin.getVisibility()) {
                 coin.draw(g);
             }
-        }      
-        //popup.draw(g);
-        
+        }              
+                
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
         } catch (IOException ex) {
@@ -324,6 +358,33 @@ public class GamePanel extends JPanel implements KeyListener {
     	}
     }
     public void restartGame() {
+    	
+    	calculateGameScore();   	
+    	//CLEAR OLD OBJECTS OUT        
+    	player = null;
+
+    	for (int i = 0; i < numPopups; i++) {
+            popups[i] = null;
+        }
+        
+    	popups = null;
+        
+        for (int i = 0; i < numGems; i++) {
+            gems[i] = null;
+        }
+        gems = null;
+
+        CarbonCoin.stopRotation();
+        for (int i = 0; i < numCarbonCoins; i++) {
+            carbonCoins[i] = null;
+        }
+        carbonCoins = null;
+        
+        board = null;
+        
+        System.gc();
+        
+    	//Initialise new objects
         initGame();
         repaint();
     } 
@@ -378,15 +439,13 @@ public class GamePanel extends JPanel implements KeyListener {
 	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
 	            gemScore++; // Increase the score
 	            gem.setVisibility(false);
-	            calculateGameScore();
 	            gem.playSound();
 	        }
 	    }
 
-//	    if (allGemsCollected() && allCoinsCollected()) {
-	    if (allGemsCollected()) {
-	        restartGame(); // Restart the game when all gems and coins are collected
-	    }
+//	    if (allGemsCollected()) {
+//	        restartGame(); // Restart the game when all gems and coins are collected
+//	    }
 
 	    return gemScore;
 	}
@@ -395,9 +454,9 @@ public class GamePanel extends JPanel implements KeyListener {
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
-	            coinScore++; // Increase the score
+	            coinScore += 20; // Increase the score
 	            coin.setVisibility(false);
-	            calculateGameScore();
+//	            calculateGameScore();
 	            coin.playSound();
 	        }
 	    }
@@ -410,38 +469,50 @@ public class GamePanel extends JPanel implements KeyListener {
 	}
 
 
-	private boolean allGemsCollected() {
+	public boolean allGemsCollected() {
 	    for (Gem gem : gems) {
 	        if (gem.getVisibility()) {
-	            return false; // If any gem is still visible, return false
+	            return false;
 	        }
 	    }
 	    return true; // All gems are collected
 	}
 
-	private boolean allCoinsCollected() {
+/**	private boolean allCoinsCollected() {
 	    for (CarbonCoin coin : carbonCoins) {
-	        if (coin.getVisibility()) {
-	            return false; // If any coin is still visible, return false
-	        }
-	    }
+	        if (coin.getVisibility()) {	            return false; // If any coin is still visible, return false
+  	        }
+    }
 	    return true; // All coins are collected
 	}
+ **/
+ 
 
-    
+	public void popupIntersection() {
+	    for (int i = 0; i < popups.length; i++) {
+	    	PopUp popup = popups[i];
+	        if (player.getPlayerX() == popup.popupX && player.getPlayerY() == popup.popupY && popup.getVisibility()) {
+	        	popup.setVisibility(false);
+	        	popup.displayPopup();
+	        }
+	    }
+	}
+	
     public void calculateGameScore() {        
     	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
     }
        
-    public void checkPopUp() {
+/**    public void checkPopUp() {
         if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
             System.out.println("Pop Up");   	
     	}
-    } 
+  } 
        
+      **/
     public void timer(int movement) {  	
-    	if ((playerTime - movement) <= 0) {   		
-    	//	Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
+    	if ((playerTime - movement) <= 0) {  
+    		CarbonCoin.stopRotation();
+    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
     		playerTime -= movement;

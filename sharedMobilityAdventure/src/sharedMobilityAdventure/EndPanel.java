@@ -4,20 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 public class EndPanel extends JPanel {
 
@@ -25,105 +16,108 @@ public class EndPanel extends JPanel {
 	int tile = 16;
     int columns = 64;
     int rows = 36;
-    // int totalWidth = columns * tile;
-    // int totalHeight = rows * tile;
-    private BufferedImage backgroundImage; // Background image 
-    private int totalWidth = 1024; // Width of the panel
-    private int totalHeight = 576; // Height of the panel
+    int totalWidth = columns * tile;
+    int totalHeight = rows * tile;
+    
+    private String username;
+    private int endGameRound;
+    private int endGemScore;
+    private int endCoinScore;
+    private int endGameScore;
 
-    public EndPanel(JFrame endFrame) {
+    public EndPanel(String username, int gameRound, int gemScore, int coinScore, int gameScore) {
+    	
+        this.username = username;
+        this.endGameRound = gameRound;
+        this.endGemScore = gemScore;
+        this.endCoinScore = coinScore;
+        this.endGameScore = gameScore;
+        
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null);
-        loadBackgroundImage(); // Load the background image
-        add(createEndGameTextBox()); // Add the "End Game" textbox
-        add(createButton(endFrame)); // Add the button to return to the main panel
+        add(usernameTextbox());
+        add(statsTextbox());
+        add(scoreTextbox());        
+
+        add(createButton()); // Add the button to return to the main panel
     }
 
-    private JTextField createEndGameTextBox() {
-        JTextField endGameText = new JTextField("Game Over");
+    private JTextField usernameTextbox() {
+
+        JTextField endGameText = new JTextField("Game Over. Well done, " + username + "!");    	
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
-        int textWidth = 144;
-        int textHeight = 64;
-        int textX = (totalWidth - textWidth) / 2; // Centered horizontally
-        int textY = 50; // Adjusted y-coordinate to move higher
-        endGameText.setBounds(textX, textY, textWidth, textHeight);
+        endGameText.setBounds(100, 50, 824, 64);
+//        setBounds(x, y, width, height)       
         endGameText.setEditable(false);
-        endGameText.setBackground(Color.ORANGE);
-        endGameText.setForeground(getRainbowColor()); // Rainbow neon color for text
+        endGameText.setBackground(Color.BLACK);
+        endGameText.setForeground(Color.RED);
         endGameText.setFont(new Font("Arial", Font.BOLD, 16));
         endGameText.setBorder(null);
         return endGameText;
     }
 
-    private Color getRainbowColor() {
-        float hue = (System.currentTimeMillis() % 10000) / 10000f; // Cycling through hue values
-        return Color.getHSBColor(hue, 1, 1); // Convert hue to RGB color
+    
+    private JTextField statsTextbox() {
+
+        JTextField endGameText = new JTextField("You made it to round: " + endGameRound + " | Gems collected: " + endGemScore + " | Coins collected: " + endCoinScore);
+    	
+        endGameText.setHorizontalAlignment(SwingConstants.CENTER);
+        endGameText.setBounds(100, 150, 824, 64);       
+        endGameText.setEditable(false);
+        endGameText.setBackground(Color.BLACK);
+        endGameText.setForeground(Color.RED);
+        endGameText.setFont(new Font("Arial", Font.BOLD, 16));
+        endGameText.setBorder(null);
+        return endGameText;
     }
 
-    private JButton createButton(JFrame menuFrame) {
-        int buttonWidth = 320;
-        int buttonHeight = 95;
-        int buttonX = (totalWidth - buttonWidth) / 2;
-        int buttonY = 150; // Adjusted y-coordinate to move higher
+    
+    private JTextField scoreTextbox() {
 
-        JButton button = new JButton();
+        JTextField endGameText = new JTextField("Final score: " + endGameScore);
+    	
+        endGameText.setHorizontalAlignment(SwingConstants.CENTER);
+        endGameText.setBounds(100, 250, 824, 64);       
+        endGameText.setEditable(false);
+        endGameText.setBackground(Color.BLACK);
+        endGameText.setForeground(Color.RED);
+        endGameText.setFont(new Font("Arial", Font.BOLD, 16));
+        endGameText.setBorder(null);
+        return endGameText;
+    }
+
+  
+    
+    private JButton createButton() {
+        int buttonX = 440; // x-coordinate of the button
+        int buttonY = 400; // y-coordinate of the button
+        int buttonWidth = 144; // Button width
+        int buttonHeight = 64; // Button height
+
+        JButton button = new JButton("Back to Main Panel");
         button.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
-        setButtonIcons(button, "images/tiles/playgamebuttonhovered.png", "images/tiles/playgamebuttondefault.png");
+
         button.addActionListener(e -> {
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            currentFrame.dispose();
-            Main.Game();
+            Main.openMenuWindow();  
         });
 
         return button;
     }
-
-
-
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Render background image if available
-        if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        } else {
-            // If background image is not available, fill with black
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                int x = col * tile;
+                int y = row * tile;
+                g.setColor(Color.BLACK);
+                g.fillRect(x, y, tile, tile);
+                g.setColor(Color.BLACK);
+                g.drawRect(x, y, tile, tile);
+            }
         }
     }
 
-    private void loadBackgroundImage() {
-        try {
-            backgroundImage = ImageIO.read(new File("images/tiles/Dublin_1980.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //setting button image/icons to correct status of button
-    private void setButtonIcons(JButton button, String hoverImagePath, String imagePath) {
-        setButtonIcon(button, imagePath);
-        setButtonHoverIcon(button, hoverImagePath);
-    }
-
-    //Remove the default button border and fills to make images transparent buttons
-    private void setButtonIcon(JButton button, String imagePath) {
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setBorder(null);
-        ImageIcon icon = new ImageIcon(imagePath);
-        button.setIcon(icon);
-    }
-
-    private void setButtonHoverIcon(JButton button, String hoverImagePath) {
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setBorder(null);
-        ImageIcon icon = new ImageIcon(hoverImagePath);
-        button.setRolloverIcon(icon);
-    }
 }

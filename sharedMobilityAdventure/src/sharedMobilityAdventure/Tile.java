@@ -1,4 +1,5 @@
 
+
 package sharedMobilityAdventure;
 
 import java.awt.Point;
@@ -87,4 +88,3 @@ public class Tile implements Serializable {
 	}
 
 }
- 

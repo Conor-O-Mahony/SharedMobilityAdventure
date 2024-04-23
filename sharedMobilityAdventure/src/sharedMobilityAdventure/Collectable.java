@@ -1,10 +1,7 @@
 package sharedMobilityAdventure;
 
-import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Random;
 import java.util.Set;
@@ -47,10 +44,7 @@ public class Collectable implements Serializable {
     private static final int MIN_DISTANCE_FROM_PLAYER = 5;
 
     // Cache for storing loaded images
-    private static Map<String, BufferedImage> imageCache = new HashMap<>();
-        
-    // Map to hold preloaded sound clips
-    private static transient final Map<String, Clip> soundCache = new HashMap<>();
+    protected static transient Map<String, BufferedImage> imageCache = new HashMap<>();
 
     // Constructor
     public Collectable(String name, Board board) {
@@ -62,7 +56,7 @@ public class Collectable implements Serializable {
     public static void clearDroppedCoordinates() {
     	droppedCoordinates.clear();
     }
- // Method to drop collectable randomly
+    // Method to drop collectable randomly
     public int[] dropRandomly(int playerX, int playerY) {
         int panelWidth = Main.DEFAULT_BOARD_SIZE;
         int panelHeight = Main.DEFAULT_BOARD_SIZE;
@@ -145,8 +139,8 @@ public class Collectable implements Serializable {
         
         return new int[]{collectabelX, collectabelY};
     }
-
-
+    
+    // Method to detect overlap of either gem or coin
     public boolean isOverlap(int collectabelX, int collectabelY) {
         // Round up the coordinates to the nearest Main.TILE_SIZE interval
         collectabelX -= (collectabelX % Main.TILE_SIZE);
@@ -253,37 +247,19 @@ public class Collectable implements Serializable {
 **/
 
     // Method to play sound of the collectable
+    // Method to play sound of the collectable
     public void playSound() {
-        try {
             // Check if the collectable is a Gem
             if (this instanceof Gem) {
                 // Specify the sound file path for gems
-                String soundFilePath = "sounds/gem.wav";
-
-                // Retrieve the clip from the cache if it exists
-                Clip clip = soundCache.get(soundFilePath);
-
-                // If the clip is not in the cache, load it and put it in the cache
-                if (clip == null) {
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile());
-                    clip = AudioSystem.getClip();
-
-                    // Open audio input stream and clip for playback
-                    clip.open(audioInputStream);
-
-                    // Put the clip in the cache
-                    soundCache.put(soundFilePath, clip);
-                } else {
-                    // If the clip is already in the cache, set the frame position to the beginning
-                    clip.setFramePosition(0);
-                }
-
                 // Start playback of the clip
-                clip.start();
+            	
+            	if (Main.clip.getFramePosition() != 0) {
+            		Main.clip.stop();
+            		Main.clip.setFramePosition(0);
+            	}
+                Main.clip.start();
             }
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
     }
     // Method to draw the collectable
     public void draw(Graphics g) {

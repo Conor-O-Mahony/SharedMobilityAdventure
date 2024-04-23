@@ -15,16 +15,13 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SaveLoadPanel extends JPanel {
@@ -33,48 +30,58 @@ public class SaveLoadPanel extends JPanel {
 	private int buttonHeight = 65;
 	private JPanel game;
 	private int noofButtons = 3;
-    BufferedImage backgroundImage;
+    transient BufferedImage backgroundImage;
 
 	private static final long serialVersionUID = 8148807433563369470L;
 
-	public SaveLoadPanel(JPanel gameFrame, JFrame saveloadFrame, String mode) {
+	public SaveLoadPanel(JPanel gameFrame, String mode) {
         setPreferredSize(new Dimension(Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT));
         setLayout(null);
         game = gameFrame;
         loadBackgroundImage();
         if (mode=="save") {
-        	SavePanel(saveloadFrame);
+        	SavePanel();
         } else {
-        	LoadPanel(saveloadFrame);
+        	LoadPanel();
         }
         
         	//add(createButton(saveloadFrame,getButtonXLoc(noofButtons,i),400,"Load from file",String.format("savestate%d.ser",i)));
     }
 
-	private void SavePanel(JFrame saveloadFrame) {
+	private void SavePanel() {
 		for (int i=1; i<noofButtons+1; i++) {
         	int xLoc = getButtonXLoc(noofButtons,i);
         	String fileName = String.format("savestate%d.ser",i);
         	
         	if (checkFile(fileName)) {
-        		add(createTextBox(xLoc+35, 250, "Overwrite Save"));
+        		//add(createTextBox(xLoc+35, 150, "Overwrite Save"));
+        		try {
+					add(createLoadStats(xLoc-80, 150, fileName));
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
         	} else {
-        		add(createTextBox(xLoc+35, 250, "New Save"));
+        		add(createTextBox(xLoc+35, 230, "New Save"));
         	}
-        	add(createSaveButton(saveloadFrame,xLoc,350,"Save to file",fileName));
+        	add(createSaveButton(xLoc,350,"Save to file",fileName));
 		}
 	}
 	
-	private void LoadPanel(JFrame saveloadFrame) {
+	private void LoadPanel() {
 		for (int i=1; i<noofButtons+1; i++) {
         	int xLoc = getButtonXLoc(noofButtons,i);
         	String fileName = String.format("savestate%d.ser",i);
         	
         	if (checkFile(fileName)) {
-        		add(createTextBox(xLoc+35, 250, "Load save"));
-        		add(createLoadButton(saveloadFrame,xLoc,350,"Load from file",fileName));
+        		//add(createTextBox(xLoc+35, 150, "Load save"));
+        		add(createLoadButton(xLoc,350,"Load from file",fileName));
+        		try {
+					add(createLoadStats(xLoc-80, 150,fileName));
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
         	} else {
-        		add(createTextBox(xLoc+35, 250, "No save file"));
+        		add(createTextBox(xLoc+35, 230, "No save file"));
         	}
 		}
 	}
@@ -98,14 +105,41 @@ public class SaveLoadPanel extends JPanel {
         Text.setHorizontalAlignment(SwingConstants.CENTER);
         Text.setBounds(x, y, 144, 64);
         Text.setEditable(false);
-        Text.setBackground(Color.BLACK);
-        Text.setForeground(Color.RED);
+        //Text.setBackground(Color.BLACK);
+        Text.setForeground(Color.BLACK);
+        Text.setOpaque(false);
         Text.setFont(new Font("Arial", Font.BOLD, 16));
         Text.setBorder(null);
         return Text;
     }
+    
+    private JLabel createLoadStats(int x, int y, String fileName) throws FileNotFoundException, ClassNotFoundException, IOException {
+    	
+    	GamePanel panel = OpenSaveState(fileName);
+    	
+    	String username = panel.username;
+    	int playerTime = panel.playerTime;
+    	int gemScore = panel.gemScore;
+    	int coinScore = panel.coinScore;
+    	int gameScore = panel.gameScore;
+    	int gameRound = panel.gameRound;
+    	
+    	String html = String.format("<html>Player: %s<br><br>Round: %d<br>Time: %d<br><br>Coins: %d<br>Gems: %d<br><br>Score: %d</html>",username,gameRound,playerTime,coinScore,gemScore,gameScore);
+    	
+    	JLabel Text = new JLabel(html);
+    	
+    	Text.setHorizontalAlignment(SwingConstants.CENTER);
+        Text.setBounds(x, y, 300, 200);
+        //Text.setBackground(Color.BLACK);
+        Text.setForeground(Color.BLACK);
+        Text.setFont(new Font("Arial", Font.BOLD, 16));
+        Text.setBorder(null);
+    	
+		return Text;
+    	
+    }
 
-    private JButton createSaveButton(JFrame frame, int buttonX, int buttonY, String text, String fileName) {
+    private JButton createSaveButton(int buttonX, int buttonY, String text, String fileName) {
 
         JButton button = new JButton(text);
         setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
@@ -123,10 +157,7 @@ public class SaveLoadPanel extends JPanel {
                 setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
             }
         });
-        button.addActionListener(e -> {
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
-            currentFrame.dispose(); // Dispose the current EndPanel frame
-            
+        button.addActionListener(e -> {            
             if (text == "Save to file") {
             	try {
 					SaveGame(game,fileName);
@@ -150,12 +181,14 @@ public class SaveLoadPanel extends JPanel {
 				}
             }
             
+            //Main.openMenuWindow();
+            
         });
 
         return button;
     }
     
-    private JButton createLoadButton(JFrame frame, int buttonX, int buttonY, String text, String fileName) {
+    private JButton createLoadButton(int buttonX, int buttonY, String text, String fileName) {
 
         JButton button = new JButton(text);
         setButtonIcon(button, "images/tiles/loadgamebuttondefaultSMALL.png");
@@ -174,8 +207,8 @@ public class SaveLoadPanel extends JPanel {
             }
         });
         button.addActionListener(e -> {
-            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
-            currentFrame.dispose(); // Dispose the current EndPanel frame
+            //JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the current frame
+            //currentFrame.dispose(); // Dispose the current EndPanel frame
             
             if (text == "Save to file") {
             	try {
@@ -198,8 +231,7 @@ public class SaveLoadPanel extends JPanel {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-            }
-            
+            }     
         });
 
         return button;
@@ -210,11 +242,25 @@ public class SaveLoadPanel extends JPanel {
         ObjectOutputStream out = new ObjectOutputStream(fileOut);
         out.writeObject(panel);
         out.close();
+        
+        Main.openMenuWindow();
     }
     
     public void LoadGame(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        GamePanel panel = null;
+        GamePanel panel = OpenSaveState(fileName);
+        
+        panel.loadImages();
+        panel.addButton();
+        panel.startRotation();
+        
+        Main.changePanels(panel);
+        
+        panel.focus();
+    }
+    
+    private GamePanel OpenSaveState(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    	GamePanel panel = null;
 
         FileInputStream fileIn = new FileInputStream(fileName);
         ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -224,19 +270,9 @@ public class SaveLoadPanel extends JPanel {
         in.close();
         fileIn.close();
         
-        panel.loadImages();
-        
-        JFrame gameFrame = new JFrame();
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setResizable(false);
-        gameFrame.setTitle("Shared-Mobility Adventure");
-
-        gameFrame.add(panel);
-
-        gameFrame.pack();
-        gameFrame.setLocationRelativeTo(null);
-        gameFrame.setVisible(true);
+        return panel;
     }
+    
     //Remove the default button border and fills to make images transparent buttons
     private void setButtonIcon(JButton button, String imagePath) {
     	button.setBorderPainted(false);
@@ -274,18 +310,18 @@ public class SaveLoadPanel extends JPanel {
             e.printStackTrace();
         }
     }
-    public static void main(String[] args) {
-    	JFrame testFrame = new JFrame();
-    	testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	testFrame.setResizable(false);
-    	testFrame.setTitle("Save/Load from file"); 
-        
-        SaveLoadPanel test = new SaveLoadPanel(null,testFrame,"save");
-        testFrame.add(test);
-   
-        testFrame.pack();
-        testFrame.setLocationRelativeTo(null);
-        testFrame.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//    	JFrame testFrame = new JFrame();
+//    	testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    	testFrame.setResizable(false);
+//    	testFrame.setTitle("Save/Load from file"); 
+//        
+//        SaveLoadPanel test = new SaveLoadPanel(null,"save");
+//        testFrame.add(test);
+//   
+//        testFrame.pack();
+//        testFrame.setLocationRelativeTo(null);
+//        testFrame.setVisible(true);
+//    }
 
 }
