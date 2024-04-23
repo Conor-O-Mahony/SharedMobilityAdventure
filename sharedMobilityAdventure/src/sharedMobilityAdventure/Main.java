@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 import java.awt.Dimension;
 import java.io.File;
@@ -96,14 +97,4 @@ public class Main {
   public static int getRandomNumber(int min, int max) {
 	    return (int) ((Math.random() * (max - min)) + min);
 	}
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }
