@@ -25,9 +25,9 @@ public class Collectable implements Serializable {
     
     protected boolean visible;
     transient BufferedImage filledImage;
-
-    //protected transient BufferedImage image;
-        
+    
+    private Random random = new Random();
+    
     // Animation frames
     protected transient BufferedImage[] animationFrames;
     // Number of animation frames
@@ -47,23 +47,19 @@ public class Collectable implements Serializable {
     // Cache for storing loaded images
     protected static transient Map<String, BufferedImage> imageCache = new HashMap<>();
     
-    // Thread pool for sound playback
-    //@SuppressWarnings("unused")
-	//private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); 
-    
-    // Map to hold preloaded sound clips
-    //private static transient final Map<String, Clip> soundCache = new HashMap<>();
-
     // Constructor
     public Collectable(String name, Board board) {
         this.name = name;
         this.visible = true;
         this.board = board;
     }
+    // Clear the array to holds objects coordinates
+    public static void clearDroppedCoordinates() {
+    	droppedCoordinates.clear();
+    }
 
     // Method to drop collectable randomly
     public int[] dropRandomly(int playerX, int playerY) {
-        Random random = new Random();
         int panelWidth = Main.DEFAULT_BOARD_SIZE;
         int panelHeight = Main.DEFAULT_BOARD_SIZE;
         int maxAttempts = 10;
@@ -76,32 +72,103 @@ public class Collectable implements Serializable {
             int oddNumberX = randomNumberX * 2 + 1;
             int oddNumberY = randomNumberY * 2 + 1;
 
+            // Generate random coordinates within the panel bounds
             collectabelX = Main.TILE_SIZE / 2 * oddNumberX;
             collectabelY = Main.TILE_SIZE / 2 * oddNumberY;
 
-            if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER ||
+            // Ensure the generated coordinates are aligned with the tile grid
+            if (collectabelX % Main.TILE_SIZE != 0) {
+                collectabelX -= (collectabelX % Main.TILE_SIZE);
+            }
+            if (collectabelY % Main.TILE_SIZE != 0) {
+                collectabelY -= (collectabelY % Main.TILE_SIZE);
+            }
+            // https://stackoverflow.com/questions/6709754/get-the-offset-of-a-string
+            // Apply magical offset to position the gem and carboncoin objects in the middle of the tile
+            collectabelX = collectabelX + Main.TILE_SIZE / 2;
+            collectabelY = collectabelY + Main.TILE_SIZE / 2;
+
+            // Debug statements
+            //System.out.println("Generated collectable coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+            //System.out.println("Player coordinates: X=" + playerX + ", Y=" + playerY);
+
+            // Check if the generated coordinates are too close to the player
+            if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER &&
                     Math.abs(collectabelY - playerY) < MIN_DISTANCE_FROM_PLAYER) {
+                //System.out.println("Collectable too close to player. Skipping...");
                 attempts++;
                 continue;
             }
 
-            int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
-            if (droppedCoordinates.contains(combinedCoordinates)) {
+            // Check if the generated coordinates overlap with existing collectables
+            if (isOverlap(collectabelX, collectabelY)) {
+                //System.out.println("Overlap detected with existing collectables. Retrying...");
                 attempts++;
-                //System.out.println("Coordinates overlap with previous position. Retrying...");
                 continue;
             }
 
-            droppedCoordinates.add(combinedCoordinates);
-            //System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+           
             break;
         }
-
+        
+        if (attempts == maxAttempts) {
+        	boolean fallbackSuccess = false;
+        	// fallback method - go through all rows/columns to find one
+        	for (int i = 0; i < Main.DEFAULT_BOARD_SIZE - 1; i++) {
+        		for (int j = 0; j < Main.DEFAULT_BOARD_SIZE - 1; j++) {
+    				collectabelX = i * Main.TILE_SIZE + Main.TILE_SIZE / 2;
+    				collectabelY = j * Main.TILE_SIZE + Main.TILE_SIZE / 2;
+        			if (!isOverlap(collectabelX, collectabelY)) {
+        				//System.out.println("fallback dropping succeeded");
+        				fallbackSuccess = true;
+        				break;
+        			}	
+        		}
+        		
+        		if (fallbackSuccess == true) {
+    				break;
+    			}
+        	}
+        	System.out.println("Max attempts reached");
+        }
+        
+        System.out.println("attempts" + attempts);
+        
+        // If no overlap, add the coordinates to droppedCoordinates and break out of the loop
+        int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
+        droppedCoordinates.add(combinedCoordinates);
+        //System.out.println("Collectable dropped successfully at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        
         return new int[]{collectabelX, collectabelY};
     }
 
+    public boolean isOverlap(int collectabelX, int collectabelY) {
+        // Round up the coordinates to the nearest Main.TILE_SIZE interval
+        collectabelX -= (collectabelX % Main.TILE_SIZE);
+        collectabelY -= (collectabelY % Main.TILE_SIZE);
+
+        // Calculate combined coordinates
+        int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
+
+        // Check if the combined coordinates are present in droppedCoordinates
+        boolean result = droppedCoordinates.contains(combinedCoordinates);
+
+        // Print debug message
+        if (result) {
+            //System.out.println("Overlap detected at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        } else {
+            //System.out.println("No overlap detected at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        }
+
+        return result;
+    }
+
     // Method to combine coordinates into a single integer
-    private int combineCoordinates(int x, int y) {
+    protected int combineCoordinates(int x, int y) {
+        // Ensure coordinates are aligned with the tile grid
+        x -= (x % Main.TILE_SIZE);
+        y -= (y % Main.TILE_SIZE);
+
         return x * 1000 + y;
     }
 
