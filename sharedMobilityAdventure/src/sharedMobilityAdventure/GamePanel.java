@@ -30,10 +30,10 @@ public class GamePanel extends JPanel implements KeyListener {
   private int numCarbonCoins = 3;
   
   private Gem[] gems; // Array to store Gems
-  private int numGems = 3; // Number of gems to drop
+  private int numGems; // Number of gems to drop
 
   private PopUp[] popups; // Array to store Popups
-  private int numPopups = 3; // Number of popups to drop
+  private int numPopups = 3;
   
 	int playerTime = 1000;
 	int gemScore = 0;
@@ -77,20 +77,33 @@ public class GamePanel extends JPanel implements KeyListener {
         // Get player's initial coordinates
         int playerX = player.getPlayerX();
         int playerY = player.getPlayerY();
-
-        gems = new Gem[numGems]; // Initialize array
-        for (int i = 0; i < numGems; i++) {
-            gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
-        }
-
+ 
+        if (gameRound == 1 || gameRound == 2 || gameRound == 3) {
+        	int numGems = 1;
+        	gems = new Gem[numGems]; // Initialize array
+        	gems[0] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+        	
+        } else {
+        	            
+        	int numGems = 3;
+        	gems = new Gem[numGems]; // Initialize array
+        	
+        	for (int i = 0; i < numGems; i++) {
+        		gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+            }        	
+        
+        }     
+        
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
+        
         startRotation();
                  
         popups = new PopUp[numPopups];
-        for (int i = 0; i < numPopups; i++) {
+    	
+    	for (int i = 0; i < numPopups; i++) {
             popups[i] = new PopUp();
         }
         
@@ -214,8 +227,16 @@ public class GamePanel extends JPanel implements KeyListener {
 			}
         }
         
-        player.draw(g);
 
+        player.draw(g);       
+
+        for (int i = 0; i < popups.length; i++) {
+            PopUp popup = popups[i];
+            if (popup.getVisibility()) {
+                popup.draw(g);
+            }
+        }
+        
         for (int i = 0; i < gems.length; i++) {
             Gem gem = gems[i];
             if (gem.getVisibility()) {
@@ -229,14 +250,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 coin.draw(g);
             }
         }              
-        
-        for (int i = 0; i < popups.length; i++) {
-            PopUp popup = popups[i];
-            if (popup.getVisibility()) {
-            	popup.draw(g);
-            }
-        }
-        
+                
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
         } catch (IOException ex) {
@@ -343,12 +357,16 @@ public class GamePanel extends JPanel implements KeyListener {
     	}
     }
     public void restartGame() {
-    	//CLEAR OLD OBJECTS OUT
-        player = null;
-        for (int i = 0; i < numPopups; i++) {
+    	
+    	calculateGameScore();   	
+    	//CLEAR OLD OBJECTS OUT        
+    	player = null;
+
+    	for (int i = 0; i < numPopups; i++) {
             popups[i] = null;
         }
-        popups = null;
+        
+    	popups = null;
         
         for (int i = 0; i < numGems; i++) {
             gems[i] = null;
@@ -420,15 +438,13 @@ public class GamePanel extends JPanel implements KeyListener {
 	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
 	            gemScore++; // Increase the score
 	            gem.setVisibility(false);
-	            calculateGameScore();
 	            gem.playSound();
 	        }
 	    }
 
-//	    if (allGemsCollected() && allCoinsCollected()) {
-	    if (allGemsCollected()) {
-	        restartGame(); // Restart the game when all gems and coins are collected
-	    }
+//	    if (allGemsCollected()) {
+//	        restartGame(); // Restart the game when all gems and coins are collected
+//	    }
 
 	    return gemScore;
 	}
@@ -437,9 +453,9 @@ public class GamePanel extends JPanel implements KeyListener {
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
-	            coinScore++; // Increase the score
+	            coinScore += 20; // Increase the score
 	            coin.setVisibility(false);
-	            calculateGameScore();
+//	            calculateGameScore();
 	            coin.playSound();
 	        }
 	    }
@@ -452,10 +468,10 @@ public class GamePanel extends JPanel implements KeyListener {
 	}
 
 
-	private boolean allGemsCollected() {
+	public boolean allGemsCollected() {
 	    for (Gem gem : gems) {
 	        if (gem.getVisibility()) {
-	            return false; // If any gem is still visible, return false
+	            return false;
 	        }
 	    }
 	    return true; // All gems are collected
