@@ -7,39 +7,26 @@ interface CarbonFootprintCalculator {
 
 // Enum definition with additional properties and implementing an interface reference: https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html / https://www.baeldung.com/a-guide-to-java-enums
 // TransportType(CC factor, speed, max congestion factor))
-enum TransportTypes implements CarbonFootprintCalculator {
+public enum TransportTypes implements CarbonFootprintCalculator {
     BUS(10.0, 5.0, 1.4) {
-    	public double calculateCarbonFootprint(int distance) {
-        	double carbonFootprint = getCarbonCoinFactor() * distance;
-        	System.out.println("Bus - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
-            return carbonFootprint;
-        }
-    },
-    TRAIN(6.0, 5.0, 1) {
-    	public double calculateCarbonFootprint(int distance) {
-        	double carbonFootprint = getCarbonCoinFactor() * distance;
-        	System.out.println("Train - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
-            return carbonFootprint;
-        }
-    },
-    BICYCLE(2.0, 25.0, 1) {
-    	public double calculateCarbonFootprint(int distance) {
-        	double carbonFootprint = getCarbonCoinFactor() * distance;
-        	System.out.println("Bicycle - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
-            return carbonFootprint;
-        }
-    },
-    CAR(30.0, 5.0, 2) {
-    	public double calculateCarbonFootprint(int distance) {
-        	double carbonFootprint = getCarbonCoinFactor() * distance;
-        	System.out.println("Car - Distance: " + distance + ", Carbon Footprint: " + carbonFootprint);
-            return carbonFootprint;
-        }
-    };
+    	private double calculatedSpeed = -1;  //set as invalid value to indicate value is not calculated - this is as otherwise the speed is calculated as part of the loop and it can flash a variation of 3-4 units due to the calculation method of random congestion
 
-    private final double carbonCoinFactor;
-    private final double speed;
-    private final double maxCongestionFactor;
+        @Override
+        public double getSpeed() {
+            if (calculatedSpeed == -1) {  // Check if the speed has not been calculated yet
+                // Calculate speed 
+            	calculatedSpeed = speed + (Math.random() * (maxCongestionFactor - 1)) + 1;
+		// Reference: https://stackoverflow.com/questions/64714783/java-generate-random-numbers-between-minimum-and-a-maximum-values
+            }
+            return calculatedSpeed;
+        }
+    },
+    TRAIN(6.0, 5.0, 1),
+    BICYCLE(2.0, 25.0, 1);
+
+    protected final double carbonCoinFactor; 
+    protected final double speed;            
+    protected final double maxCongestionFactor; 
 
     TransportTypes(double carbonCoinFactor, double speed, double maxCongestionFactor) {
         this.carbonCoinFactor = carbonCoinFactor;
@@ -47,17 +34,19 @@ enum TransportTypes implements CarbonFootprintCalculator {
         this.maxCongestionFactor = maxCongestionFactor;
     }
 
-    public double getCarbonCoinFactor() {
-        return carbonCoinFactor;
+    public double calculateCarbonFootprint(int distance) {
+        return this.carbonCoinFactor * distance;
     }
 
-	// Speed is randomised to simulate congestion
+    public double getSpeed() {
+        return this.speed;
+    }
 
-	public double getSpeed() {
-		return speed + (Math.random() * (getMaxCongestionFactor() - 1)) + 1; // Reference: https://stackoverflow.com/questions/64714783/java-generate-random-numbers-between-minimum-and-a-maximum-values
-	}
+    public double getCarbonCoinFactor() {
+        return this.carbonCoinFactor;
+    }
 
     public double getMaxCongestionFactor() {
-        return maxCongestionFactor;
+        return this.maxCongestionFactor;
     }
 }
