@@ -22,15 +22,15 @@ public class EndPanel extends JPanel {
     private String username;
     private int endGameRound;
     private int endGemScore;
-    private int endCoinScore;
+    private int endcoinCollected;
     private int endGameScore;
 
-    public EndPanel(String username, int gameRound, int gemScore, int coinScore, int gameScore) {
-    	
+    public EndPanel(String username, int gameRound, int gemScore, int coinCollected, int gameScore) {
+
         this.username = username;
         this.endGameRound = gameRound;
         this.endGemScore = gemScore;
-        this.endCoinScore = coinScore;
+        this.endcoinCollected = coinCollected;
         this.endGameScore = gameScore;
         
         setPreferredSize(new Dimension(totalWidth, totalHeight));
@@ -59,7 +59,7 @@ public class EndPanel extends JPanel {
     
     private JTextField statsTextbox() {
 
-        JTextField endGameText = new JTextField("You made it to round: " + endGameRound + " | Gems collected: " + endGemScore + " | Coins collected: " + endCoinScore);
+        JTextField endGameText = new JTextField("You made it to round: " + endGameRound + " | Gems collected: " + endGemScore + " | Coins collected: " + endcoinCollected);
     	
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
         endGameText.setBounds(100, 150, 824, 64);       
