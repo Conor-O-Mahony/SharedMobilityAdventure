@@ -64,10 +64,13 @@ public class Player implements Serializable {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+                gamePanel.timer(10);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -79,10 +82,13 @@ public class Player implements Serializable {
                 } catch (IOException e2) {
                     e2.printStackTrace();
                 }
+                gamePanel.timer(10);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -94,10 +100,13 @@ public class Player implements Serializable {
                 } catch (IOException e3) {
                     e3.printStackTrace();
                 }
+                gamePanel.timer(10);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -109,30 +118,39 @@ public class Player implements Serializable {
                 } catch (IOException e4) {
                     e4.printStackTrace();
                 }
+                gamePanel.timer(10);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
         if (key == KeyEvent.VK_1) {
         	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
         	if (taken) {
-        		gamePanel.checkGemScore();
-        		gamePanel.checkCoinScore();
+                gamePanel.timer(10);
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-        		gamePanel.timer(10); //CHANGE
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
         if (key == KeyEvent.VK_2) {
         	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
         	if (taken) {
-        		gamePanel.checkGemScore();
-        		gamePanel.checkCoinScore();
+                gamePanel.timer(10);
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-        		gamePanel.timer(10); //CHANGE
+                if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
     }
