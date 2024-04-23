@@ -64,11 +64,13 @@ public class Player implements Serializable {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-		gamePanel.timer(50);
+
+		            gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}
@@ -82,11 +84,13 @@ public class Player implements Serializable {
                 } catch (IOException e2) {
                     e2.printStackTrace();
                 }
+
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}
@@ -100,11 +104,13 @@ public class Player implements Serializable {
                 } catch (IOException e3) {
                     e3.printStackTrace();
                 }
+
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}
@@ -118,11 +124,13 @@ public class Player implements Serializable {
                 } catch (IOException e4) {
                     e4.printStackTrace();
                 }
+
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}
@@ -131,11 +139,13 @@ public class Player implements Serializable {
         if (key == KeyEvent.VK_1) {
         	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
         	if (taken) {
+
         		gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}
@@ -144,11 +154,13 @@ public class Player implements Serializable {
         if (key == KeyEvent.VK_2) {
         	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
         	if (taken) {
+
         		gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
+
                 	gamePanel.restartGame();
                 };
         	}

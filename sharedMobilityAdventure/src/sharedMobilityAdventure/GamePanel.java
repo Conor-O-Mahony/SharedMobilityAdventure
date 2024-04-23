@@ -33,11 +33,13 @@ public class GamePanel extends JPanel implements KeyListener {
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
   
+
   private Gem[] gems; //Array to store Gems
   private int numGems; // Number of gems to drop
 private PopUp[] popups; // Array to store Popups
   private int numPopups = 3; 
 	int playerTime = 7500; // Likely will be changed
+
 	int gemScore = 0;
 	int coinScore = 1000;
 	int gameScore = 0;
@@ -99,6 +101,7 @@ public JButton button;
         int playerX = player.getPlayerX();
         int playerY = player.getPlayerY();
 
+
          if (gameRound == 1 || gameRound == 2 || gameRound == 3) {
         	int numGems = 1;
         	gems = new Gem[numGems]; // Initialize array
@@ -115,15 +118,19 @@ public JButton button;
 
         }     
 
+
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
 
+
 	startRotation();
 
+
         popups = new PopUp[numPopups];
-        for (int i = 0; i < numPopups; i++) {
+    	
+    	for (int i = 0; i < numPopups; i++) {
             popups[i] = new PopUp();
         }
         
@@ -245,15 +252,17 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 			}
         }
         
-        player.draw(g);
 
-	 for (int i = 0; i < popups.length; i++) {
+
+        player.draw(g);       
+
+        for (int i = 0; i < popups.length; i++) {
+
             PopUp popup = popups[i];
             if (popup.getVisibility()) {
                 popup.draw(g);
             }
         }
-
 
         for (int i = 0; i < gems.length; i++) {
             Gem gem = gems[i];
@@ -269,7 +278,6 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
             }
         }              
 
-        
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
         } catch (IOException ex) {
@@ -430,6 +438,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
     	}
     }
     public void restartGame() {
+
 	    //CLEAR OLD OBJECTS OUT
 	calculateGameScore();   
         player = null;
@@ -437,6 +446,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
             popups[i] = null;
         }
         popups = null;
+
 
         for (int i = 0; i < numGems; i++) {
             gems[i] = null;
@@ -582,10 +592,11 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	        }
 	    }
 
-//	    if (allGemsCollected() && allCoinsCollected()) {
-	    // if (allGemsCollected()) {
-	    //     restartGame(); // Restart the game when all gems and coins are collected
-	    // }
+
+//	    if (allGemsCollected()) {
+//	        restartGame(); // Restart the game when all gems are collected
+//	    }
+
 
 	    return gemScore;
 	}
@@ -594,9 +605,11 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
-	            coinScore +=n20; // Increase the score
+
+	            coinScore += 20; // Increase the score
 	            coin.setVisibility(false);
-	            //calculateGameScore();
+//	            calculateGameScore();
+
 	            coin.playSound();
 	        }
 	    }
@@ -612,7 +625,9 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	public boolean allGemsCollected() {
 	    for (Gem gem : gems) {
 	        if (gem.getVisibility()) {
+
 	            return false; 
+
 	        }
 	    }
 	    return true; // All gems are collected
