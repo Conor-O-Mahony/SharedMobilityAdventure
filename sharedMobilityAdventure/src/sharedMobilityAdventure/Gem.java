@@ -1,3 +1,4 @@
+
 package sharedMobilityAdventure;
 
 import java.awt.Graphics;
@@ -17,18 +18,18 @@ public class Gem extends Collectable implements Serializable {
         super(name, board);
         
         // Get initial coordinates using dropRandomly method
-        int[] coordinates = super.dropRandomly(playerX, playerY);
-        System.out.println("Gem coordinates after dropRandomly: (" + coordinates[0] + ", " + coordinates[1] + ")");
+        super.dropRandomly(playerY, playerX);
+        System.out.println("Gem coordinates after dropRandomly: (" + collectabelX + ", " + collectabelY + ")");
 
         // Continue generating new coordinates until the Euclidean distance condition is satisfied
-        while (!checkEuclideanDistance(coordinates[0], coordinates[1], board)) {
-            coordinates = super.dropRandomly(playerX, playerY);
+        while (!euclideanDistanceProximityCalculator(collectabelX, collectabelY, board)) {
+            super.dropRandomly(playerX, playerY);
             System.out.println("Gem coordinates adjusted to satisfy Euclidean distance.");
         }
         
         // Assign the final coordinates that satisfy the Euclidean distance condition
-        this.collectabelX = coordinates[0];
-        this.collectabelY = coordinates[1];
+        this.collectabelX = super.collectabelX;
+        this.collectabelY = super.collectabelY;
         
         loadImage(); // Load gem image
     }

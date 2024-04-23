@@ -11,15 +11,13 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Collectable implements Serializable {
 
     // Constants for width and height of collectables
     protected static final int WIDTH = 32;
     protected static final int HEIGHT = 32;
-
+    
     // Serializable ID
     private static final long serialVersionUID = 2905924766571606302L;
     
@@ -27,10 +25,10 @@ public class Collectable implements Serializable {
     protected int collectabelX;
     protected int collectabelY;
     
+    private Random random = new Random();
+    
     protected boolean visible;
     transient BufferedImage filledImage;
-
-    //protected transient BufferedImage image;
         
     // Animation frames
     protected transient BufferedImage[] animationFrames;
@@ -46,15 +44,11 @@ public class Collectable implements Serializable {
     private static final Set<Integer> droppedCoordinates = new HashSet<>();
 
     // Minimum distance from player when dropping collectable
-    private static final int MIN_DISTANCE_FROM_PLAYER = 3;
+    private static final int MIN_DISTANCE_FROM_PLAYER = 5;
 
     // Cache for storing loaded images
     private static Map<String, BufferedImage> imageCache = new HashMap<>();
-    
-    // Thread pool for sound playback
-    @SuppressWarnings("unused")
-	private static final ExecutorService soundThreadPool = Executors.newFixedThreadPool(5); 
-    
+        
     // Map to hold preloaded sound clips
     private static transient final Map<String, Clip> soundCache = new HashMap<>();
 
@@ -64,10 +58,12 @@ public class Collectable implements Serializable {
         this.visible = true;
         this.board = board;
     }
-
-    // Method to drop collectable randomly
+    // Clear the array that holds object coordinates
+    public static void clearDroppedCoordinates() {
+    	droppedCoordinates.clear();
+    }
+ // Method to drop collectable randomly
     public int[] dropRandomly(int playerX, int playerY) {
-        Random random = new Random();
         int panelWidth = Main.DEFAULT_BOARD_SIZE;
         int panelHeight = Main.DEFAULT_BOARD_SIZE;
         int maxAttempts = 10;
@@ -80,32 +76,104 @@ public class Collectable implements Serializable {
             int oddNumberX = randomNumberX * 2 + 1;
             int oddNumberY = randomNumberY * 2 + 1;
 
+            // Generate random coordinates within the panel bounds
             collectabelX = Main.TILE_SIZE / 2 * oddNumberX;
             collectabelY = Main.TILE_SIZE / 2 * oddNumberY;
 
-            if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER ||
+            // Ensure the generated coordinates are aligned with the tile grid
+            if (collectabelX % Main.TILE_SIZE != 0) {
+                collectabelX -= (collectabelX % Main.TILE_SIZE);
+            }
+            if (collectabelY % Main.TILE_SIZE != 0) {
+                collectabelY -= (collectabelY % Main.TILE_SIZE);
+            }
+            // https://stackoverflow.com/questions/6709754/get-the-offset-of-a-string
+            // Apply magical offset to position the gem and carboncoin objects in the middle of the tile
+            collectabelX = collectabelX + Main.TILE_SIZE / 2;
+            collectabelY = collectabelY + Main.TILE_SIZE / 2;
+
+            // Debug statements
+            //System.out.println("Generated collectable coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+            //System.out.println("Player coordinates: X=" + playerX + ", Y=" + playerY);
+
+            // Check if the generated coordinates are too close to the player
+            if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER &&
                     Math.abs(collectabelY - playerY) < MIN_DISTANCE_FROM_PLAYER) {
+                //System.out.println("Collectable too close to player. Skipping...");
                 attempts++;
                 continue;
             }
 
-            int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
-            if (droppedCoordinates.contains(combinedCoordinates)) {
+            // Check if the generated coordinates overlap with existing collectables
+            if (isOverlap(collectabelX, collectabelY)) {
+                //System.out.println("Overlap detected with existing collectables. Retrying...");
                 attempts++;
-                //System.out.println("Coordinates overlap with previous position. Retrying...");
                 continue;
             }
 
-            droppedCoordinates.add(combinedCoordinates);
-            //System.out.println("Dropped collectable at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+           
             break;
         }
-
+        
+        if (attempts == maxAttempts) {
+        	boolean fallbackSuccess = false;
+        	// fallback method - go through all rows/columns to find one
+        	for (int i = 0; i < Main.DEFAULT_BOARD_SIZE - 1; i++) {
+        		for (int j = 0; j < Main.DEFAULT_BOARD_SIZE - 1; j++) {
+    				collectabelX = i * Main.TILE_SIZE + Main.TILE_SIZE / 2;
+    				collectabelY = j * Main.TILE_SIZE + Main.TILE_SIZE / 2;
+        			if (!isOverlap(collectabelX, collectabelY)) {
+        				//System.out.println("fallback dropping succeeded");
+        				fallbackSuccess = true;
+        				break;
+        			}	
+        		}
+        		
+        		if (fallbackSuccess == true) {
+    				break;
+    			}
+        	}
+        	System.out.println("Max attempts reached");
+        }
+        
+        System.out.println("attempts" + attempts);
+        
+        // If no overlap, add the coordinates to droppedCoordinates and break out of the loop
+        int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
+        droppedCoordinates.add(combinedCoordinates);
+        //System.out.println("Collectable dropped successfully at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        
         return new int[]{collectabelX, collectabelY};
     }
 
+
+    public boolean isOverlap(int collectabelX, int collectabelY) {
+        // Round up the coordinates to the nearest Main.TILE_SIZE interval
+        collectabelX -= (collectabelX % Main.TILE_SIZE);
+        collectabelY -= (collectabelY % Main.TILE_SIZE);
+
+        // Calculate combined coordinates
+        int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
+
+        // Check if the combined coordinates are present in droppedCoordinates
+        boolean result = droppedCoordinates.contains(combinedCoordinates);
+
+        // Print debug message
+        if (result) {
+            System.out.println("Overlap detected at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        } else {
+            System.out.println("No overlap detected at coordinates: X=" + collectabelX + ", Y=" + collectabelY);
+        }
+
+        return result;
+    }
+
     // Method to combine coordinates into a single integer
-    private int combineCoordinates(int x, int y) {
+    protected int combineCoordinates(int x, int y) {
+        // Ensure coordinates are aligned with the tile grid
+        x -= (x % Main.TILE_SIZE);
+        y -= (y % Main.TILE_SIZE);
+
         return x * 1000 + y;
     }
 
@@ -115,19 +183,12 @@ public class Collectable implements Serializable {
     }
     // https://stackoverflow.com/questions/49469921/euclidean-distance-between-two-variables
     // Find eucledian distance to calcualte the distance from the transport objects
-    public static boolean checkEuclideanDistance(int collectabelX, int collectabelY, Board board) {
+    public static boolean euclideanDistanceProximityCalculator(int collectabelX, int collectabelY, Board board) {
         final int MIN_DISTANCE_FROM_TRANSPORT = 10; // Define the minimum distance constant locally
         
 		// Access the tiles array directly from the Main class
         Tile[][] tiles = board.getTiles();
         
-        // Flag to track if the collectable is too close to transportation
-        // boolean tooCloseToTransport = false;
-        
-        // Calculate the distance to the nearest transportation type
-        // double nearestTransportDistance = Double.MAX_VALUE;
-        //double nearestTransportCarbonFootprint = Double.MAX_VALUE;
-
         for (int row = 0; row < tiles.length; row++) {
             for (int col = 0; col < tiles[row].length; col++) {
                 Tile tile = tiles[row][col];
@@ -147,6 +208,49 @@ public class Collectable implements Serializable {
         }
         return true; // Distance is acceptable, return true
     }
+
+    /**
+    public void setValueBasedOnTransportType(int collectableX, int collectableY, Board board) {
+        //final int MIN_DISTANCE_FROM_TRANSPORT = 10; // Define the minimum distance constant locally
+
+        // Debug statement to indicate the start of the proximity calculation
+        System.out.println("Calculating proximity to transportation types...");
+
+        // Access the tiles array directly from the Board class
+        Tile[][] tiles = board.getTiles();
+
+        // Iterate over all tiles on the board
+        for (int row = 0; row < tiles.length; row++) {
+            for (int col = 0; col < tiles[row].length; col++) {
+                Tile tile = tiles[row][col];
+                if (tile != null) { // Check if tile is not null
+                    // Check if the tile has any routes
+                    TransportTypes[] routeTypes = tile.getRouteTypes();
+                    if (routeTypes != null) { // Check if routeTypes is not null
+                        for (TransportTypes type : routeTypes) {
+                            if (type != null) {
+                                // Check proximity using the provided method
+                                if (euclideanDistanceProximityCalculator(collectableX, collectableY, board)) {
+                                    // Accessing carbon coin factor directly from enum and adjust based on distance
+                                    double carbonCoinFactor = type.getCarbonCoinFactor() / 2.0;
+                                    this.value += carbonCoinFactor;
+                                    // Debug statement to show how the value is attained
+                                    System.out.println("Carbon coin factor for " + type + ": " + carbonCoinFactor);
+                                    System.out.println("Current value after adding " + carbonCoinFactor + ": " + this.value);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("Null tile encountered at position (" + row + ", " + col + ")");
+                }
+            }
+        }
+
+        // Debug statement to indicate the end of the proximity calculation
+        System.out.println("Proximity calculation complete.");
+    }
+**/
 
     // Method to play sound of the collectable
     public void playSound() {
@@ -185,9 +289,6 @@ public class Collectable implements Serializable {
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);
         int adjustedY = collectabelY - (HEIGHT / 2);
-
-        // Create a copy of the original image
-        //BufferedImage filledImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         // Get the graphics object of the filled image
         Graphics gFilled = filledImage.getGraphics();
