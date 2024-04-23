@@ -41,6 +41,7 @@ private PopUp[] popups; // Array to store Popups
 	int playerTime = 7500; // Likely will be changed
 
 	int gemScore = 0;
+	int collectedCoins = 0;
 	int coinScore = 1000;
 	int gameScore = 0;
 	int gameRound = 0;
@@ -607,10 +608,13 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
 
 	            coinScore += 20; // Increase the score
+	            collectedCoins ++;
 	            coin.setVisibility(false);
 //	            calculateGameScore();
 
 	            coin.playSound();
+	            System.out.println("Collected Coin: " + collectedCoins);
+	            
 	        }
 	    }
 
@@ -663,7 +667,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
     	if ((playerTime - movement) <= 0) {  //Prevent negative playertime
     		playerTime = 0;
 		CarbonCoin.stopRotation();
-    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, collectedCoins, gameScore);
     	}
     	else {
     		playerTime -= movement;
@@ -673,7 +677,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
     public void coinCount(int movement) {  	
     	if ((coinScore - movement) <= 0) { 
     		coinScore = 0;
-    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, collectedCoins, gameScore);
     	}
     	else {
     		coinScore -= movement;
