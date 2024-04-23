@@ -100,8 +100,8 @@ public JButton button;
         // Get player's initial coordinates
         int playerX = player.getPlayerX();
         int playerY = player.getPlayerY();
-
-
+        
+        Collectable.clearDroppedCoordinates();
          if (gameRound == 1 || gameRound == 2 || gameRound == 3) {
         	int numGems = 1;
         	gems = new Gem[numGems]; // Initialize array
