@@ -18,12 +18,13 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Player player;
 	private Board board;
 	// Cache for storing loaded images
-	private transient Map<String, BufferedImage> imageCache;
+	public static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
+    private Map<String, Color> colorMap = new HashMap<String, Color>();
+    private Map<String, String> pinMap = new HashMap<String, String>();
+
 
   String username; // Store the username
         
-	private transient BufferedImage[] roadtileArray;
-	private transient BufferedImage[] haloArray;
 	private transient BufferedImage sidebarImage;
     
   private CarbonCoin[] carbonCoins;
@@ -46,12 +47,16 @@ public class GamePanel extends JPanel implements KeyListener {
   
   public JButton button;
   
+  String[] haloNames = {"haloB","haloY","haloG"};
+  String[] roadTileNames = {"intersection"};
+  static String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
+  
   
     public GamePanel(String username){
         this.username = username; // Store the username
-		
-        // Initalize the image cache
-        imageCache = new HashMap<>();
+	
+        addColors();
+        addHaloNames();
         
         initGame();
         loadImages();
@@ -63,6 +68,32 @@ public class GamePanel extends JPanel implements KeyListener {
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
         addButton();
+    }
+    
+    private void addColors()
+    {
+        colorMap.put("bikepinB", Color.BLUE);
+        colorMap.put("buspinB", Color.BLUE);
+        colorMap.put("trainpinB", Color.BLUE);
+        colorMap.put("bikepinY", Color.YELLOW);
+        colorMap.put("buspinY", Color.YELLOW);
+        colorMap.put("trainpinY", Color.YELLOW);
+        colorMap.put("bikepinG", Color.GREEN);
+        colorMap.put("buspinG", Color.GREEN);
+        colorMap.put("trainpinG", Color.GREEN);
+    }
+    
+    private void addHaloNames()
+    {
+    	pinMap.put("bikepinB", "haloB");
+    	pinMap.put("buspinB", "haloB");
+    	pinMap.put("trainpinB", "haloB");
+    	pinMap.put("bikepinY", "haloY");
+    	pinMap.put("buspinY", "haloY");
+    	pinMap.put("trainpinY", "haloY");
+    	pinMap.put("bikepinG", "haloG");
+    	pinMap.put("buspinG", "haloG");
+    	pinMap.put("trainpinG", "haloG");
     }
     
     public void focus() {
@@ -108,16 +139,13 @@ public class GamePanel extends JPanel implements KeyListener {
     }
     
     void loadImages() {
-    	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
-		roadtileArray = new BufferedImage[roadTileNames.length];
-		loadTiles(roadTileNames,roadtileArray);
-		
-		String[] haloNames = {"haloB","haloY","haloG"};
-		haloArray = new BufferedImage[haloNames.length];
-		loadTiles(haloNames,haloArray);
 
-		player.loadImage();
-		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
+		loadTiles(roadTileNames);
+		loadTiles(haloNames);
+		loadTiles(pinNames);
+
+		player.loadImages();
+		player.setImage("down");
 		
 		// load images for gem
 		for (int i = 0; i < gems.length; i++) {
@@ -131,28 +159,28 @@ public class GamePanel extends JPanel implements KeyListener {
 		for (int i=0; i<popups.length; i++) {
 			popups[i].loadImage();
 		  }
+		
+		try {        	
+        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }  
     }
     
-    private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
+    private void loadTiles(String[] imageNames) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
             BufferedImage image = null;
-            try {
-            	 image = getImageFromCache(imageName);
-            } catch (NullPointerException e) {
-            	e.printStackTrace();
-            }
+            image = getImageFromCache(imageName);
             if (image == null) {
                 String source = String.format("images/tiles/%s.png", imageName);
                 try {
                     image = ImageIO.read(new File(source));
-                    // Cache the loaded image
                     cacheImage(imageName, image);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            imageArray[i] = image;
         }
     }
 
@@ -194,19 +222,21 @@ public class GamePanel extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
+        System.gc();
+        
         for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
 			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
 								
 				Route[] routes = board.tiles[row][col].getRoutes();
 				
-				g.drawImage(roadtileArray[0], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+				g.drawImage(getImageFromCache("intersection"), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
 				
 				int extra = (int) Math.round(0.3*Main.TILE_SIZE);
 				if (routes[0]!=null) {
-					g.drawImage(routes[0].getPinImage(), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(getImageFromCache(routes[0].getPinName()), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				if (routes[1]!=null) {
-					g.drawImage(routes[1].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(getImageFromCache(routes[1].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				//if (routes[2]!=null) {
 				//	g.drawImage(routes[2].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
@@ -236,12 +266,6 @@ public class GamePanel extends JPanel implements KeyListener {
             	popup.draw(g);
             }
         }
-        
-        try {        	
-        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }  
                
         //g.drawImage(sidebarImage, Main.GAME_WIDTH, 0, Main.SIDEBAR_WIDTH, Main.GAME_WIDTH, null);
         g.drawImage(sidebarImage,Main.GAME_WIDTH,0,sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
@@ -284,19 +308,15 @@ public class GamePanel extends JPanel implements KeyListener {
     	Route[] tileRoutes = currentTile.getRoutes();
     	for (int i=0; i<tileRoutes.length; i++) {
     		if (tileRoutes[i]!=null) {
-    			Color pinColor = tileRoutes[i].getPinColor();
-    			int haloArrayIndex = 0;
-    			if (pinColor.getRGB() == Color.YELLOW.getRGB()) {
-    				haloArrayIndex = 1;
-    			} else if (pinColor.getRGB() == Color.GREEN.getRGB()) {
-    				haloArrayIndex = 2;
-    			}
+    			String nameOfPin = tileRoutes[i].getPinName();
+    			String haloName = pinMap.get(nameOfPin);
+    			
     			Tile[] tilesInRoute = tileRoutes[i].getTiles();
     			for (int j=0; j<tilesInRoute.length; j++) {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(haloArray[haloArrayIndex], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+    				g.drawImage(getImageFromCache(haloName), tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
     			TransportTypes type = tileRoutes[i].getTransportType();
     			String typeString = type.toString();
@@ -319,8 +339,8 @@ public class GamePanel extends JPanel implements KeyListener {
     				
     			g.setColor(Color.BLACK); // Set color to black
     	        g.drawString(text1, Main.GAME_WIDTH+25, 285 + i*25);
-    	        
-    	        g.setColor(pinColor); // Set color to black
+
+    	        g.setColor(colorMap.get(nameOfPin)); // Set color to black
     	        g.drawString(text2, Main.GAME_WIDTH+25+string1Width, 285 + i*25);
     		}
     	}
@@ -335,12 +355,7 @@ public class GamePanel extends JPanel implements KeyListener {
     	}
     }
     private void cacheImage(String imageName, BufferedImage image) {
-    	try {
-    		imageCache.put(imageName, image);
-    	} catch (NullPointerException e) {
-    		imageCache = new HashMap<>();
-    		imageCache.put(imageName, image);
-    	}
+    	imageCache.put(imageName, image);
     }
     public void restartGame() {
     	//CLEAR OLD OBJECTS OUT

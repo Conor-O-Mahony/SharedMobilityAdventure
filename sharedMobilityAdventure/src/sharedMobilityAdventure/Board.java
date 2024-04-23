@@ -1,12 +1,6 @@
 package sharedMobilityAdventure;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.imageio.ImageIO;
 
 public class Board implements Serializable { //Holds the Tile's
 
@@ -17,10 +11,14 @@ public class Board implements Serializable { //Holds the Tile's
 	private int max_bus = 3;
 	private int max_train = 3;
 	private int max_bike = 3;
-	private transient BufferedImage[] pinArray;
-	private Color[] pinColors = {Color.BLUE,Color.GREEN,Color.YELLOW};
+	private String[] pinNames = GamePanel.pinNames;
+	int[] no_stations;
+	int[] max_stations = {max_bus,max_train,max_bike};
+	TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};
 	
 	public Board(int rows, int cols) { // Creates a blank Board
+		no_stations = new int[]{0,0,0};
+		
 		tiles = new Tile[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			tiles[row] = new Tile[cols];
@@ -28,8 +26,6 @@ public class Board implements Serializable { //Holds the Tile's
 				tiles[row][col] = new Tile(col, row);
 			}
 		}
-
-		loadImages();
 		assignRoutesv2(rows, cols); // Assign Routes to the blank Board
 	}
 	
@@ -41,25 +37,7 @@ public class Board implements Serializable { //Holds the Tile's
 		this.tiles = tiles;
 	}
 	
-	public void loadImages() {
-		String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
-		pinArray = new BufferedImage[pinNames.length];
-		
-        for (int i = 0; i < pinNames.length; i++) {
-            String imageName = pinNames[i];
-            String source = String.format("images/tiles/%s.png", imageName);
-                try {
-                	pinArray[i] = ImageIO.read(new File(source));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-    }
-	
 	private void assignRoutesv2(int rows, int cols) {
-		int[] no_stations = {0,0,0};
-		int[] max_stations = {max_bus,max_train,max_bike};
-		TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};
 		for (int i=0; i<no_stations.length; i++) {
 			int j=0;
 			while (no_stations[i]<max_stations[i]) {
@@ -73,8 +51,7 @@ public class Board implements Serializable { //Holds the Tile's
 						int finalRow = new_route.getFinalRow();
 						int finalCol = new_route.getFinalCol();
 						tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
-						new_route.setPinImage(pinArray[i*max_stations[i]+j]);  //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
-						new_route.setPinColor(pinColors[j]);
+						new_route.setPinName(pinNames[pinIndex(j,transport_types[i])]);  //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
 						j++;
 						no_stations[i]+=1;
 					}
@@ -82,26 +59,8 @@ public class Board implements Serializable { //Holds the Tile's
 			}
 		}
 	}
-	
-	public void reloadPins(int rows, int cols) {
-		loadImages();
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				int numroutes = tiles[row][col].getNumberOfRoutes();
-				if (numroutes>0) {
-					Route[] routes = tiles[row][col].getRoutes();
-					for (int i=0; i<numroutes; i++) {
-						Color pincolor = routes[i].getPinColor();
-						TransportTypes transporttype = routes[i].getTransportType();
-						int imageIndex = pinIndex(pincolor,transporttype);
-						routes[i].setPinImage(pinArray[imageIndex]);
-					}
-				}
-			}
-		}
-	}
-	
-	private int pinIndex(Color p, TransportTypes t) {
+		
+	private int pinIndex(int j, TransportTypes t) {
 		int i =0;
 		if (t==TransportTypes.TRAIN) {
 			i=1;
@@ -109,17 +68,7 @@ public class Board implements Serializable { //Holds the Tile's
 			i=2;
 		}
 		
-		if (p.getRGB() == Color.BLUE.getRGB()) {
-			return i*3 + 0;
-		}
-		if (p.getRGB()==Color.GREEN.getRGB()) {
-			return i*3 + 1;
-		}
-		if (p.getRGB()==Color.YELLOW.getRGB()) {
-			return i*3 + 2;
-		}
-		
-		return -1;
+		return i*3 + j;
 	}
 
 	public static void main(String[] args) {
@@ -139,7 +88,7 @@ public class Board implements Serializable { //Holds the Tile's
 				for (int i=0; i<no_of_routes; i++) {
 					TransportTypes type = routes[i].getTransportType();
 					System.out.println("Stops exist at above coordinate for: "+type);
-					if (routes[i].getPinImage() instanceof BufferedImage) {
+					if (routes[i].getPinName() instanceof String) {
 						System.out.println("Pin added successfully");
 					}
 					no_of_stops+=1;
