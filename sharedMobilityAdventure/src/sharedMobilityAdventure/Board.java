@@ -125,21 +125,23 @@ public class Board implements Serializable { //Holds the Tile's
 
 	
 	public void reloadPins(int rows, int cols) {
-		loadImages();
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				int numroutes = tiles[row][col].getNumberOfRoutes();
-				if (numroutes>0) {
-					Route[] routes = tiles[row][col].getRoutes();
-					for (int i=0; i<numroutes; i++) {
-						Color pincolor = routes[i].getPinColor();
-						TransportTypes transporttype = routes[i].getTransportType();
-						int imageIndex = pinIndex(pincolor,transporttype);
-						routes[i].setPinImage(pinArray[imageIndex]);
-					}
-				}
-			}
-		}
+	    loadImages();
+	    for (int row = 0; row < rows; row++) {
+	        for (int col = 0; col < cols; col++) {
+	            int numroutes = tiles[row][col].getNumberOfRoutes();
+	            if (numroutes > 0) {
+	                Route[] routes = tiles[row][col].getRoutes();
+	                for (int i = 0; i < numroutes; i++) {
+	                    if (routes[i] != null) { // Null check added here
+	                        Color pincolor = routes[i].getPinColor();
+	                        TransportTypes transporttype = routes[i].getTransportType();
+	                        int imageIndex = pinIndex(pincolor, transporttype);
+	                        routes[i].setPinImage(pinArray[imageIndex]);
+	                    }
+	                }
+	            }
+	        }
+	    }
 	}
 	
 	private int pinIndex(Color p, TransportTypes t) {
