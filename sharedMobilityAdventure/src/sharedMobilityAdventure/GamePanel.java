@@ -34,9 +34,9 @@ public class GamePanel extends JPanel implements KeyListener {
   private int numCarbonCoins = 3;
   
   private Gem[] gems; //Array to store Gems
-  private int numGems = 3; // Number of gems to drop
+  private int numGems; // Number of gems to drop
 private PopUp[] popups; // Array to store Popups
-  private int numPopups = 3; // Number of popups to drop
+  private int numPopups = 3; 
 	int playerTime = 7500; // Likely will be changed
 	int gemScore = 0;
 	int coinScore = 1000;
@@ -99,10 +99,21 @@ public JButton button;
         int playerX = player.getPlayerX();
         int playerY = player.getPlayerY();
 
-        gems = new Gem[numGems]; // Initialize array
-        for (int i = 0; i < numGems; i++) {
-            gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
-        }
+         if (gameRound == 1 || gameRound == 2 || gameRound == 3) {
+        	int numGems = 1;
+        	gems = new Gem[numGems]; // Initialize array
+        	gems[0] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+
+        } else {
+
+        	int numGems = 3;
+        	gems = new Gem[numGems]; // Initialize array
+
+        	for (int i = 0; i < numGems; i++) {
+        		gems[i] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
+            }        	
+
+        }     
 
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
@@ -236,6 +247,14 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         
         player.draw(g);
 
+	 for (int i = 0; i < popups.length; i++) {
+            PopUp popup = popups[i];
+            if (popup.getVisibility()) {
+                popup.draw(g);
+            }
+        }
+
+
         for (int i = 0; i < gems.length; i++) {
             Gem gem = gems[i];
             if (gem.getVisibility()) {
@@ -249,12 +268,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
                 coin.draw(g);
             }
         }              
-        for (int i = 0; i < popups.length; i++) {
-            PopUp popup = popups[i];
-            if (popup.getVisibility()) {
-            	popup.draw(g);
-            }
-        }
+
         
         try {        	
         	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
@@ -417,6 +431,7 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
     }
     public void restartGame() {
 	    //CLEAR OLD OBJECTS OUT
+	calculateGameScore();   
         player = null;
         for (int i = 0; i < numPopups; i++) {
             popups[i] = null;
@@ -563,15 +578,14 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	        if (player.getPlayerX() == gem.collectabelX && player.getPlayerY() == gem.collectabelY && gem.getVisibility()) {
 	            gemScore++; // Increase the score
 	            gem.setVisibility(false);
-	            calculateGameScore();
 	            gem.playSound();
 	        }
 	    }
 
 //	    if (allGemsCollected() && allCoinsCollected()) {
-	    if (allGemsCollected()) {
-	        restartGame(); // Restart the game when all gems and coins are collected
-	    }
+	    // if (allGemsCollected()) {
+	    //     restartGame(); // Restart the game when all gems and coins are collected
+	    // }
 
 	    return gemScore;
 	}
@@ -580,9 +594,9 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	    for (int i = 0; i < carbonCoins.length; i++) {
 	        CarbonCoin coin = carbonCoins[i];
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
-	            coinScore++; // Increase the score
+	            coinScore +=n20; // Increase the score
 	            coin.setVisibility(false);
-	            calculateGameScore();
+	            //calculateGameScore();
 	            coin.playSound();
 	        }
 	    }
@@ -595,10 +609,10 @@ private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
 	}
 
 
-	private boolean allGemsCollected() {
+	public boolean allGemsCollected() {
 	    for (Gem gem : gems) {
 	        if (gem.getVisibility()) {
-	            return false; // If any gem is still visible, return false
+	            return false; 
 	        }
 	    }
 	    return true; // All gems are collected
