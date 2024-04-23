@@ -86,8 +86,8 @@ public class Main {
       changePanels(gamePanel);
   }
 
-  public static void openEndWindow(String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
-      EndPanel endPanel = new EndPanel(username, gameRound, gemScore, coinScore, gameScore);
+  public static void openEndWindow(String username, int gameRound, int gemScore, int collectedCoins, int gameScore) {      
+      EndPanel endPanel = new EndPanel(username, gameRound, gemScore, collectedCoins, gameScore);
       endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
       
       changePanels(endPanel);
