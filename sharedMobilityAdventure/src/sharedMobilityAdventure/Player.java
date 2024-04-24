@@ -29,9 +29,8 @@ public class Player implements Serializable {
 
     // Image cache for storing loaded images
     //@SuppressWarnings("unused")
-	private transient Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
+	private transient static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
     private String[] imageNames = {"down","up","left","right"};
-
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
@@ -42,7 +41,7 @@ public class Player implements Serializable {
         this.height = 16;
         this.speed = Main.TILE_SIZE;
         this.tile = Main.TILE_SIZE;
-        this.coins = 100;
+        this.coins = 1000;
         loadImages();
         
         image = getImageFromCache("down");
@@ -89,10 +88,13 @@ public class Player implements Serializable {
                 
         		image = getImageFromCache("up");
         		
+		        gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+               if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -102,10 +104,13 @@ public class Player implements Serializable {
                 
         		image = getImageFromCache("right");
         		
+                gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+               if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -115,10 +120,14 @@ public class Player implements Serializable {
         		
         		image = getImageFromCache("down");
                
+                gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+               if(gamePanel.allGemsCollected() == true) {
+
+                	gamePanel.restartGame();
+                };
         	}
         }
         
@@ -128,30 +137,39 @@ public class Player implements Serializable {
         		
         		image = getImageFromCache("left");
         		
+                gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-                gamePanel.timer(10);
+               if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
         if (key == KeyEvent.VK_1) {
         	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
         	if (taken) {
-        		gamePanel.checkGemScore();
-        		gamePanel.checkCoinScore();
+        		gamePanel.timer(50);
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-        		gamePanel.timer(10); //CHANGE
+               if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
         
         if (key == KeyEvent.VK_2) {
         	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
         	if (taken) {
-        		gamePanel.checkGemScore();
-        		gamePanel.checkCoinScore();
+        		gamePanel.timer(50);
+                gamePanel.checkGemScore();
+                gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
-        		gamePanel.timer(10); //CHANGE
+               if(gamePanel.allGemsCollected() == true) {
+                	gamePanel.restartGame();
+                };
         	}
         }
     }
@@ -172,7 +190,6 @@ public class Player implements Serializable {
         
     public int getPlayerX() {
     	return playerX;
-
     }
        
     public int getPlayerY() {
@@ -201,40 +218,8 @@ public class Player implements Serializable {
 
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
     }
-    
+
     public void setImage(String name) {
     	image = getImageFromCache(name);
     }
-  
-//    public int getTimer() {  	
-//    	return playerTime;
-//    }
-//    
-//    public void setTimer(int time) {
-//    	playerTime = time;
-//    	System.out.println("Time updated to: " + playerTime);
-//    }
-//    
-//    public void adjustTimer(double adjustment) {
-//        this.playerTime += adjustment;
-//        System.out.println("Time updated to: " + playerTime);
-//    }
-    
-    public void updateTravel(Route route) {
-        TransportTypes type = route.getTransportType();
-        int distance = route.getTiles().length; // Calculate the number of tiles in the route
-
-        // Carbon Cost
-        double carbonCost = type.calculateCarbonFootprint(distance);
-        adjustCoins(-carbonCost); // Adjust carbon coins based on the cost
-
-        // Time Cost
-        double timePerTile = type.getSpeed(); // Get adjusted speed considering congestion
-        int totalTravelTime = (int) (timePerTile * distance); // Total time taken on route
-        //adjustTimer(-totalTravelTime); // Subtract this time from the game timer   ->>>> FIXXXX
-
-        System.out.println("Travel Costs - Distance: " + distance + ", Carbon Cost: " + carbonCost + ", Time Cost: " + totalTravelTime + " seconds");
-    }
-
-
 }

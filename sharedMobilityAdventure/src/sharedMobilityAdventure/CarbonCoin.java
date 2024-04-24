@@ -1,4 +1,5 @@
 
+
 package sharedMobilityAdventure;
 
 import java.awt.Graphics;
@@ -27,7 +28,7 @@ public class CarbonCoin extends Collectable {
         int[] coordinates = super.dropRandomly(playerX, playerY);
         
         // Continue generating new coordinates until the Euclidean distance condition is satisfied
-        while (!checkEuclideanDistance(coordinates[0], coordinates[1], board)) {
+        while (!eucledianDistanceCalculator(coordinates[0], coordinates[1], board)) {
             coordinates = super.dropRandomly(playerX, playerY);
         }
         // Assign the final coordinates that satisfy the Euclidean distance condition

@@ -1,4 +1,5 @@
 
+
 package sharedMobilityAdventure;
 
 import java.awt.Point;
@@ -37,21 +38,26 @@ public class Tile implements Serializable {
 		}
 	}
 	
-	public boolean RouteAddable() {
-		int counter = 0;
-		for (int i = 0; i < tileRoutes.length; i ++) {
-		    if (tileRoutes[i] != null) {
-		        counter ++;
-		    }
-		}
+	public boolean RouteAddable(TransportTypes type, int row, int col) {
+	    int counter = 0;
+	    boolean typeExists = false;
 
-		if (counter < max_stops_per_tile) {
-			return true;
-		} else {
-			return false;
-		}
+	    for (int i = 0; i < tileRoutes.length; i++) {
+	        if (tileRoutes[i] != null) {
+	            counter++;
+	            if (tileRoutes[i].getTransportType() == type) {
+	                typeExists = true;
+	            }
+	            //if (tileRoutes[i].getPinColor().equals(pinColor)) {
+	            //    colorExists = true;
+	            //}
+	        }
+	    }
+
+//	    System.out.println("Checking route addable: Row=" + row + ", Col=" + col + ", Type=" + type + ", Color=" + pinColor + ", TypeExists=" + typeExists + ", ColorExists=" + colorExists + ", Counter=" + counter);
+	    return counter < max_stops_per_tile && !typeExists && row>0 && col > 0; //Ensure a route can be added
 	}
-	
+
 	public void asignRouteToTile(Route stop) { //Assume the logic is correct so that no more than max_stops_per_tile can be added. Can add test for this
 		int counter = getNumberOfRoutes();
 		
@@ -63,7 +69,7 @@ public class Tile implements Serializable {
 			System.out.println("Error: too many stops on this tile.");
 		}
 	}
-	
+
 	public int getNumberOfRoutes() {
 		int counter = 0;
 		for (int i = 0; i < tileRoutes.length; i ++) {
@@ -78,6 +84,16 @@ public class Tile implements Serializable {
 		return tileRoutes;
 	}
 	
+	public void removeRoute(Route route) { // Removes Invalid Routes (Markers)
+	    for (int i = 0; i < tileRoutes.length; i++) { //Loop through tileRoutes Array
+	        if (tileRoutes[i] == route) {
+	            tileRoutes[i] = null; // Remove the route
+	            routeTypes[i] = null; // Remove from type array
+	            break; // Exit after removing the route
+	        }
+	    }
+	}
+	
 	public TransportTypes[] getRouteTypes() {
 		return routeTypes;
 	}
@@ -85,5 +101,4 @@ public class Tile implements Serializable {
 	public static void main(String[] args) {
 
 	}
-
 }
