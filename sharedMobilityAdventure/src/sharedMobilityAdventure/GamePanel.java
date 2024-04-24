@@ -451,7 +451,7 @@ public class GamePanel extends JPanel implements KeyListener {
                         timer(timeCost - 50); // It automatically takes out the standard walk movement of the character - this fixes it
                         coinCount(carbonCost);
                         System.out.println("Coins: -" + carbonCost + "Time: -" + timeCost);
-                    player.keyPressed(e); // Passes key press through which allows the transport to occur - which causes the walk time cost
+                    takeTransportRoute(showOption, player.getPlayerXTile(), player.getPlayerYTile());
                     showOption = 0;
                     showTransportOption = true;
                     waitingForInput = false;
