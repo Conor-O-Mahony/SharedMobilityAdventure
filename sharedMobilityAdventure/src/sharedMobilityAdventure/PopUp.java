@@ -1,15 +1,10 @@
 
 package sharedMobilityAdventure;
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class PopUp implements Serializable{
@@ -17,15 +12,13 @@ public class PopUp implements Serializable{
 	private static final long serialVersionUID = 2L;
 	protected int popupX;
     protected int popupY;
-    private transient BufferedImage image;
+    static transient BufferedImage image;
     int panelWidth = Main.DEFAULT_BOARD_SIZE;
     int panelHeight = Main.DEFAULT_BOARD_SIZE;
     protected static final int WIDTH = 32;
     protected static final int HEIGHT = 32;
     protected boolean visible;
     
-    private static transient Map<String, BufferedImage> popupCache = new HashMap<>();
-	
     private static String[] informationOptions = {
     "Carbon emissions primarily consist of carbon dioxide (CO2)\n and other greenhouse gases released into the atmosphere.",
     "The burning of fossil fuels like coal, oil, and natural gas\n is the largest source of carbon emissions.",
@@ -50,9 +43,6 @@ public class PopUp implements Serializable{
     };
  
     public PopUp() {
-    	
-//    	System.out.println("Hello, world");
-    	
     	this.visible = true;
     	Random random = new Random();
 
@@ -65,42 +55,26 @@ public class PopUp implements Serializable{
         popupX = Main.TILE_SIZE / 2 * oddNumberX;
         popupY = Main.TILE_SIZE / 2 * oddNumberY; 
         
-        loadImage();
-            
+        image = Main.popupImage;   
   }
   
     public boolean getVisibility() {
         return this.visible;
     }
-    
-    public void loadImage() {
-    	if (popupCache.containsKey("info_popup")) {
-    		image = popupCache.get("info_popup");
-    	} else {
-    		try {
-				image = ImageIO.read(new File("images/info/info_popup.png"));
-				popupCache.put("info_popup", image);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }
-    }
 
-  public void draw(Graphics g) {
-      int adjustedX = popupX - (WIDTH / 2);
-      int adjustedY = popupY - (HEIGHT / 2);
-      g.drawImage(image, adjustedX, adjustedY, WIDTH, HEIGHT, null);
-  }
+    public void draw(Graphics g) {
+    	int adjustedX = popupX - (WIDTH / 2);
+	    int adjustedY = popupY - (HEIGHT / 2);
+	    g.drawImage(image, adjustedX, adjustedY, WIDTH, HEIGHT, null);
+	}
 
-public void setVisibility(boolean visibleUpdated) {
-    this.visible = visibleUpdated;
-	
-}
+	public void setVisibility(boolean visibleUpdated) {
+	    this.visible = visibleUpdated;
+	}
 
-public void displayPopup() {
-	
-    Random randomObj = new Random();
-    int randomNumber = randomObj.nextInt(20);
-	JOptionPane.showMessageDialog(null, "Did you know: " + informationOptions[randomNumber]);	
-} 
+	public void displayPopup() {
+	    Random randomObj = new Random();
+	    int randomNumber = randomObj.nextInt(20);
+		JOptionPane.showMessageDialog(null, "Did you know: " + informationOptions[randomNumber]);	
+	} 
 }

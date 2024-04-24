@@ -10,7 +10,7 @@ public class Board implements Serializable { //Holds the Tile's
 	private int max_bus = 3;
 	private int max_train = 3;
 	private int max_bike = 3;
-	private String[] pinNames = GamePanel.pinNames;
+	private String[] pinNames = Main.pinNames;
 	int[] no_stations;
 	int[] max_stations = {max_bus,max_train,max_bike};
 	TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};

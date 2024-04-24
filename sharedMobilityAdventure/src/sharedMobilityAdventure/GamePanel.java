@@ -3,10 +3,6 @@ package sharedMobilityAdventure;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,15 +18,11 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Player player;
 	private Board board;
 	// Cache for storing loaded images
-	public static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
     public static Map<String, Color> colorMap = new HashMap<String, Color>();
     private Map<String, String> pinMap = new HashMap<String, String>();
 
-
   String username; // Store the username
-        
-  private transient BufferedImage sidebarImage;
-    
+          
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
   
@@ -71,11 +63,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	        return false;
 	    }
 	}
-  
-  String[] haloNames = {"haloB","haloY","haloG"};
-  String[] roadTileNames = {"intersection"};
-  static String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
-  
+
     public GamePanel(String username){
 		
         this.username = username; // Store the username
@@ -84,7 +72,6 @@ public class GamePanel extends JPanel implements KeyListener {
         addHaloNames();
         
         initGame();
-        loadImages();
 
         this.setFocusable(true);
         focus();
@@ -141,7 +128,6 @@ public class GamePanel extends JPanel implements KeyListener {
         	gems[0] = new Gem("Diamond", board, this, playerX, playerY); // Pass player's coordinates to the Gem constructor
 
         } else {
-
         	int numGems = 3;
         	gems = new Gem[numGems]; // Initialize array
 
@@ -150,15 +136,13 @@ public class GamePanel extends JPanel implements KeyListener {
             }        	
 
         }     
-
+         
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
 
-
 	    startRotation();
-
 
         popups = new PopUp[numPopups];
     	
@@ -179,50 +163,6 @@ public class GamePanel extends JPanel implements KeyListener {
     	add(createButton(Main.Frame, Main.GAME_WIDTH+15, Main.GAME_HEIGHT-165, "Save Game"));
     }
     
-    void loadImages() {
-		loadTiles(roadTileNames);
-		loadTiles(haloNames);
-		loadTiles(pinNames);
-
-		player.loadImages();
-		player.setImage("down");
-		
-		// load images for gem
-		for (int i = 0; i < gems.length; i++) {
-			gems[i].loadImage();
-		}
-		
-		for (int i=0; i<carbonCoins.length; i++) {
-			carbonCoins[i].loadImage();
-		} 
-   
-    	for (int i=0; i<popups.length; i++) {
-			popups[i].loadImage();
-		  }
-		
-		try {        	
-        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }  
-    }
-    
-    private void loadTiles(String[] imageNames) {
-        for (int i = 0; i < imageNames.length; i++) {
-            String imageName = imageNames[i];
-            BufferedImage image = null;
-            image = getImageFromCache(imageName);
-            if (image == null) {
-                String source = String.format("images/tiles/%s.png", imageName);
-                try {
-                    image = ImageIO.read(new File(source));
-                    cacheImage(imageName, image);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
         button = new JButton(text);
         setButtonIcon(button, "images/tiles/savegamebuttondefault.png");
@@ -261,24 +201,24 @@ public class GamePanel extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        System.gc();
+        //System.gc();
         
         for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
 			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
 								
 				Route[] routes = board.tiles[row][col].getRoutes();
 				
-				g.drawImage(getImageFromCache("intersection"), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+				g.drawImage(Main.tileImage, col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
 				
 				int extra = (int) Math.round(0.3*Main.TILE_SIZE);
 				if (routes[0]!=null) {
-					g.drawImage(getImageFromCache(routes[0].getPinName()), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(Main.getImageFromCache(routes[0].getPinName()), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				if (routes[1]!=null) {
-					g.drawImage(getImageFromCache(routes[1].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(Main.getImageFromCache(routes[1].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				//if (routes[2]!=null) {
-				//	g.drawImage(getImageFromCache(routes[2].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+				//	g.drawImage(Main.getImageFromCache(routes[2].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				//}
 			}
         }
@@ -307,7 +247,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         }
         //g.drawImage(sidebarImage, Main.GAME_WIDTH, 0, Main.SIDEBAR_WIDTH, Main.GAME_WIDTH, null);
-        g.drawImage(sidebarImage,Main.GAME_WIDTH,0,sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
+        g.drawImage(Main.sidebarImage,Main.GAME_WIDTH,0,Main.sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
         
         paintHalos(g);
         
@@ -350,7 +290,6 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     
     public void paintHalos(Graphics g) {
-    	System.out.println("Painting halos");
     	int player_x = player.getPlayerXTile();
     	int player_y = player.getPlayerYTile();
     	Tile currentTile = board.tiles[player_y][player_x];
@@ -379,13 +318,11 @@ public class GamePanel extends JPanel implements KeyListener {
     			String haloName = pinMap.get(nameOfPin);
 
     			Tile[] tilesInRoute = tileRoutes[i].getTiles();
-    			System.out.println("pass");
     			for (int j=0; j<tilesInRoute.length; j++) {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
-    				System.out.println(tile_x+","+tile_y);
     				
-    				g.drawImage(getImageFromCache(haloName), tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+    				g.drawImage(Main.getImageFromCache(haloName), tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
     			
     			String typeString = type.toString();
@@ -434,19 +371,6 @@ public class GamePanel extends JPanel implements KeyListener {
                 }
             }
         }          
-    }
-
-    private  BufferedImage getImageFromCache(String imageName) {
-    	try {
-    		BufferedImage cachedImage = imageCache.get(imageName);
-    		return cachedImage;
-    	} catch (NullPointerException e) {
-    		return null;
-    	}
-    }
-
-    private void cacheImage(String imageName, BufferedImage image) {
-    	imageCache.put(imageName, image);
     }
 
     public void restartGame() {

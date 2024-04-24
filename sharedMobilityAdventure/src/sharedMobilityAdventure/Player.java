@@ -3,13 +3,7 @@ package sharedMobilityAdventure;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 public class Player implements Serializable {
 
@@ -22,13 +16,8 @@ public class Player implements Serializable {
     private int speed;
     private int tile;
     private int coins;
-    private transient BufferedImage image;
-    private GamePanel gamePanel; // Added member variable for GamePanel
-    
-    // Image cache for storing loaded images
-    //@SuppressWarnings("unused")
-	private transient static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
-    private String[] imageNames = {"down","up","left","right"};
+    static transient BufferedImage image;
+    private GamePanel gamePanel; // Added member variable for GamePanel    
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
@@ -40,43 +29,11 @@ public class Player implements Serializable {
         this.speed = Main.TILE_SIZE;
         this.tile = Main.TILE_SIZE;
         this.coins = 1000;
-        loadImages();
         
-        image = getImageFromCache("down");
+        image = Main.getImageFromCache("down");
         //LOAD IN DOWN AS FIRST IMAGE
     }
     
-    private void cacheImage(String imageName, BufferedImage image) {
-    	imageCache.put(imageName, image);
-    }
-    
-    private BufferedImage getImageFromCache(String imageName) {
-    	try {
-    		BufferedImage cachedImage = imageCache.get(imageName);
-    		return cachedImage;
-    	} catch (NullPointerException e) {
-    		return null;
-    	}
-    }
-    
-    public void loadImages() {
-    	if (imageCache == null) {
-    		imageCache = new HashMap<String, BufferedImage>();
-    	}
-    	
-    	for (int i=0; i<imageNames.length; i++) {
-    		if (getImageFromCache(imageNames[i]) == null) {
-    			String source = String.format("images/characters/%s.png", imageNames[i]);
-    			try {
-    				BufferedImage currentimage = ImageIO.read(new File(source));
-    				cacheImage(imageNames[i],currentimage);
-    			} catch (IOException e) {
-                    e.printStackTrace();
-                }
-    		}
-    	}
-    }
-
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         
@@ -84,7 +41,7 @@ public class Player implements Serializable {
         	if (playerY-speed > offset-1) {
         		playerY -= speed;
                 
-        		image = getImageFromCache("up");
+        		image = Main.getImageFromCache("up");
         		
 		        gamePanel.timer(50);
                 gamePanel.checkGemScore();
@@ -100,7 +57,7 @@ public class Player implements Serializable {
         	if (playerX+speed < Main.GAME_WIDTH) {
         		playerX += speed;
                 
-        		image = getImageFromCache("right");
+        		image = Main.getImageFromCache("right");
         		
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
@@ -116,7 +73,7 @@ public class Player implements Serializable {
         	if (playerY+speed < Main.GAME_HEIGHT) {
         		playerY += speed;
         		
-        		image = getImageFromCache("down");
+        		image = Main.getImageFromCache("down");
                
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
@@ -133,7 +90,7 @@ public class Player implements Serializable {
         	if (playerX-speed > offset-1) {
         		playerX -= speed;
         		
-        		image = getImageFromCache("left");
+        		image = Main.getImageFromCache("left");
         		
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
@@ -215,9 +172,5 @@ public class Player implements Serializable {
         int adjustedY = playerY - (height / 2);
 
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
-    }
-
-    public void setImage(String name) {
-    	image = getImageFromCache(name);
     }
 }

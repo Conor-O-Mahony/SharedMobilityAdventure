@@ -1,8 +1,12 @@
 
 package sharedMobilityAdventure;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -22,8 +26,35 @@ public class Main {
     public static final int MAX_ROUTE_SIZE = 10;
     public static JFrame Frame;
     public static Clip clip;
+    public static HashMap<String, BufferedImage> imageCache;
+    
+    private static final String[] haloNames = {"haloB","haloY","haloG"};
+    static final String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
+    private static final String[] playerImages = {"down","up","left","right"};
+    
+    public static BufferedImage sidebarImage;
+    public static BufferedImage tileImage;
+    public static BufferedImage gemImage;
+    public static BufferedImage popupImage;
+    
+    public static BufferedImage[] coinRotationImages = new BufferedImage[CarbonCoin.NUM_FRAMES];; // Array to store rotation images
     
     public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+		loadImages(haloNames,"images/tiles/");
+		loadImages(pinNames,"images/tiles/");
+		loadImages(playerImages,"images/characters/");
+		
+		loadCoinRotationImages();
+		
+		try {        	
+        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
+        	tileImage = ImageIO.read(new File("images/tiles/intersection.png"));
+        	gemImage = ImageIO.read(new File("images/gems/gem.png"));
+        	popupImage = ImageIO.read(new File("images/info/info_popup.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+		
     	Game(); 
     }
     
@@ -97,4 +128,48 @@ public class Main {
   public static int getRandomNumber(int min, int max) {
 	    return (int) ((Math.random() * (max - min)) + min);
 	}
+  
+  private static void cacheImage(String imageName, BufferedImage image) {
+	  imageCache.put(imageName, image);
+  }
+  
+  static BufferedImage getImageFromCache(String imageName) {
+  	try {
+  		BufferedImage cachedImage = imageCache.get(imageName);
+  		return cachedImage;
+  	} catch (NullPointerException e) {
+  		return null;
+  	}
+  }
+  
+  private static void loadImages(String[] imageNames, String directory) {  //directory = images/characters/
+  	if (imageCache == null) {
+  		imageCache = new HashMap<String, BufferedImage>();
+  	}
+  	
+  	for (int i=0; i<imageNames.length; i++) {
+  		if (getImageFromCache(imageNames[i]) == null) {
+  			String source = String.format("%s%s.png", directory, imageNames[i]);
+  			try {
+  				BufferedImage currentimage = ImageIO.read(new File(source));
+  				cacheImage(imageNames[i],currentimage);
+  			} catch (IOException e) {
+                  e.printStackTrace();
+              }
+  		}
+  	}
+  }
+  
+  private static void loadCoinRotationImages() {
+	  for (int i = 0; i < CarbonCoin.NUM_FRAMES; i++) {
+		  String fileName = String.format("coin_%02d", i + 1);
+		  try {
+			  coinRotationImages[i] = ImageIO.read(new File("images/coins/" + fileName + ".png"));
+		  } catch (IOException e) {
+	          e.printStackTrace();
+	      }
+      } 
+  }
+  
+  
 }

@@ -24,7 +24,7 @@ public class Collectable implements Serializable {
     protected int collectabelY;
     
     protected boolean visible;
-    transient BufferedImage filledImage;
+    static transient BufferedImage filledImage;
     
     private Random random = new Random();
     
