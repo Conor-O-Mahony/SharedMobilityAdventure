@@ -1,13 +1,5 @@
 package sharedMobilityAdventure;
-
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.Math;
-
-import javax.imageio.ImageIO;
 
 public class Board implements Serializable { //Holds the Tile's
 
@@ -18,10 +10,14 @@ public class Board implements Serializable { //Holds the Tile's
 	private int max_bus = 3;
 	private int max_train = 3;
 	private int max_bike = 3;
-	private transient BufferedImage[] pinArray;
-	private Color[] pinColors = {Color.BLUE,Color.GREEN,Color.YELLOW};
+	private String[] pinNames = Main.pinNames;
+	int[] no_stations;
+	int[] max_stations = {max_bus,max_train,max_bike};
+	TransportTypes[] transport_types = {TransportTypes.BUS,TransportTypes.TRAIN,TransportTypes.BICYCLE};
 	
 	public Board(int rows, int cols) { // Creates a blank Board
+		no_stations = new int[]{0,0,0};
+		
 		tiles = new Tile[rows][cols];
 		for (int row = 0; row < rows; row++) {
 			tiles[row] = new Tile[cols];
@@ -29,8 +25,6 @@ public class Board implements Serializable { //Holds the Tile's
 				tiles[row][col] = new Tile(col, row);
 			}
 		}
-
-		loadImages();
 		assignRoutesv2(rows, cols); // Assign Routes to the blank Board
 		validateRoutes();
 	}
@@ -43,64 +37,34 @@ public class Board implements Serializable { //Holds the Tile's
 		this.tiles = tiles;
 	}
 	
-	public static int getRandomNumber(int min, int max) {
-	    return (int) ((Math.random() * (max - min)) + min);
-	}
-	
-	public void loadImages() {
-		String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
-		pinArray = new BufferedImage[pinNames.length];
-		
-        for (int i = 0; i < pinNames.length; i++) {
-            String imageName = pinNames[i];
-            String source = String.format("images/tiles/%s.png", imageName);
-                try {
-                	pinArray[i] = ImageIO.read(new File(source));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-    }
-	
 	private void assignRoutesv2(int rows, int cols) {
-	    int[] no_stations = {0, 0, 0};
-	    int[] max_stations = {max_bus, max_train, max_bike};
-	    TransportTypes[] transport_types = {TransportTypes.BUS, TransportTypes.TRAIN, TransportTypes.BICYCLE};
 	    for (int i = 0; i < no_stations.length; i++) {
 	        int j = 0;
-
 	        while (no_stations[i] < max_stations[i]) {
-
-	            Color pinColor = pinColors[j % pinColors.length]; // Define a pin color for the pin
+	        	String pinName = pinNames[pinIndex(j,transport_types[i])];
 	            int random_col = Main.getRandomNumber(1, cols); // Start from (1,1)
 	            int random_row = Main.getRandomNumber(1, rows);
-	            if (random_col > 0 && random_row > 0) { // Ensure it starts from (1,1)
-	            if (tiles[random_row][random_col].RouteAddable(transport_types[i], pinColor, random_row, random_col)) { // Check Route can be added to the starting tile
+	            if (tiles[random_row][random_col].RouteAddable(transport_types[i], pinName, random_row, random_col)) { // Check Route can be added to the starting tile
 	                int route_size = Main.getRandomNumber(Main.MIN_ROUTE_SIZE,Main.MAX_ROUTE_SIZE);
-	                Route new_route = new Route(transport_types[i], tiles, pinColor, random_row, random_col, route_size);
+	                Route new_route = new Route(transport_types[i], pinName, tiles,random_row, random_col, route_size);
 	                if (new_route.getTiles() != null) {
 	                    tiles[random_row][random_col].asignRouteToTile(new_route); //Assign Route to starting Tile
 	                    int finalRow = new_route.getFinalRow();
 	                    int finalCol = new_route.getFinalCol();
 	                    if (finalRow > 0 && finalCol > 0) {
-	                    if (tiles[finalRow][finalCol].RouteAddable(transport_types[i], pinColor, finalRow, finalCol)) { // Check Route can be added to the starting tile
-	                        tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
-	                        System.out.println("Route " + i + " " + pinColor + transport_types[i] + ": Added from(" + random_row + ", " + random_col + ") to (" + finalRow + ", " + finalCol + ")");
-	                        new_route.setPinImage(pinArray[i * max_stations[i] + j]); //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
-	                        new_route.setPinColor(pinColors[j % pinColors.length]);
-	                        j++;
-	                        no_stations[i]++;
-	                    } 
-	                    
-	                    }}
-	                
-	            }
-	            
-	        }}
-	        
+							if (tiles[finalRow][finalCol].RouteAddable(transport_types[i], pinName, finalRow, finalCol)) { // Check Route can be added to the starting tile
+								tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
+								System.out.println("Route " + i + " " + transport_types[i] + ": Added from(" + random_row + ", " + random_col + ") to (" + finalRow + ", " + finalCol + ")");
+								j++;
+								no_stations[i]++;
+							} 
+							
+	                    }
+					}  
+	            }  
+	        }  
 	    }
 	}
-
 
 	public void validateRoutes() {
         for (int row = 0; row < tiles.length; row++) {
@@ -121,30 +85,8 @@ public class Board implements Serializable { //Holds the Tile's
             }
         }
     }
-	
 
-	
-	public void reloadPins(int rows, int cols) {
-	    loadImages();
-	    for (int row = 0; row < rows; row++) {
-	        for (int col = 0; col < cols; col++) {
-	            int numroutes = tiles[row][col].getNumberOfRoutes();
-	            if (numroutes > 0) {
-	                Route[] routes = tiles[row][col].getRoutes();
-	                for (int i = 0; i < numroutes; i++) {
-	                    if (routes[i] != null) { // Null check added here
-	                        Color pincolor = routes[i].getPinColor();
-	                        TransportTypes transporttype = routes[i].getTransportType();
-	                        int imageIndex = pinIndex(pincolor, transporttype);
-	                        routes[i].setPinImage(pinArray[imageIndex]);
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}
-	
-	private int pinIndex(Color p, TransportTypes t) {
+	private int pinIndex(int j, TransportTypes t) {
 		int i =0;
 		if (t==TransportTypes.TRAIN) {
 			i=1;
@@ -152,24 +94,14 @@ public class Board implements Serializable { //Holds the Tile's
 			i=2;
 		}
 		
-		if (p.getRGB() == Color.BLUE.getRGB()) {
-			return i*3 + 0;
-		}
-		if (p.getRGB()==Color.GREEN.getRGB()) {
-			return i*3 + 1;
-		}
-		if (p.getRGB()==Color.YELLOW.getRGB()) {
-			return i*3 + 2;
-		}
-		
-		return -1;
+		return i*3 + j;
 	}
 	
 
 	public static void main(String[] args) {
 	    // Test board creation
 	    int test_rows = 10;
-	    int test_cols = 20;
+	    int test_cols = 10;
 	    Board test_board = new Board(test_rows, test_cols);
 	    int no_of_stops = 0;
 	    int no_bikes = 0;
@@ -188,7 +120,7 @@ public class Board implements Serializable { //Holds the Tile's
 	                TransportTypes type = routes[i].getTransportType();
 
 	             
-	                if (routes[i].getPinImage() instanceof BufferedImage) {     
+	                if (routes[i].getPinName() instanceof String) {     
 		                no_of_stops += 1;
 	                } else {
 	                   

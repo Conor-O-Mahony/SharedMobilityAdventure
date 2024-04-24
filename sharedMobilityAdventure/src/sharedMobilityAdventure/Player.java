@@ -3,14 +3,7 @@ package sharedMobilityAdventure;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 
 public class Player implements Serializable {
 
@@ -23,14 +16,8 @@ public class Player implements Serializable {
     private int speed;
     private int tile;
     private int coins;
-    private transient BufferedImage image;
-    private GamePanel gamePanel; // Added member variable for GamePanel
-    
-
-    // Image cache for storing loaded images
-    @SuppressWarnings("unused")
-	private transient static Map<String, BufferedImage> imageCache = new HashMap<>();
-
+    static transient BufferedImage image;
+    private GamePanel gamePanel; // Added member variable for GamePanel    
 
     public Player(GamePanel gamePanel) {
         this.gamePanel = gamePanel; // Store the GamePanel instance
@@ -42,35 +29,25 @@ public class Player implements Serializable {
         this.speed = Main.TILE_SIZE;
         this.tile = Main.TILE_SIZE;
         this.coins = 1000;
-        loadImage();
+        
+        image = Main.getImageFromCache("down");
+        //LOAD IN DOWN AS FIRST IMAGE
     }
     
-    public void loadImage() {
-    	try {
-            image = ImageIO.read(new File("images/characters/down.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         
         if (key == KeyEvent.VK_UP) { 
         	if (playerY-speed > offset-1) {
         		playerY -= speed;
-                try {
-                    image = ImageIO.read(new File("images/characters/up.png"));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-		            gamePanel.timer(50);
+                
+        		image = Main.getImageFromCache("up");
+        		
+		        gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
-
                 	gamePanel.restartGame();
                 };
         	}
@@ -79,18 +56,14 @@ public class Player implements Serializable {
         if (key == KeyEvent.VK_RIGHT) {
         	if (playerX+speed < Main.GAME_WIDTH) {
         		playerX += speed;
-                try {
-                    image = ImageIO.read(new File("images/characters/right.png"));
-                } catch (IOException e2) {
-                    e2.printStackTrace();
-                }
-
+                
+        		image = Main.getImageFromCache("right");
+        		
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
-
                 	gamePanel.restartGame();
                 };
         	}
@@ -99,12 +72,9 @@ public class Player implements Serializable {
         if (key == KeyEvent.VK_DOWN) {
         	if (playerY+speed < Main.GAME_HEIGHT) {
         		playerY += speed;
-                try {
-                    image = ImageIO.read(new File("images/characters/down.png"));
-                } catch (IOException e3) {
-                    e3.printStackTrace();
-                }
-
+        		
+        		image = Main.getImageFromCache("down");
+               
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
@@ -119,52 +89,46 @@ public class Player implements Serializable {
         if (key == KeyEvent.VK_LEFT) {
         	if (playerX-speed > offset-1) {
         		playerX -= speed;
-        		try {
-                    image = ImageIO.read(new File("images/characters/left.png"));
-                } catch (IOException e4) {
-                    e4.printStackTrace();
-                }
-
+        		
+        		image = Main.getImageFromCache("left");
+        		
                 gamePanel.timer(50);
                 gamePanel.checkGemScore();
                 gamePanel.checkCoinScore();
                 gamePanel.popupIntersection();
                if(gamePanel.allGemsCollected() == true) {
-
                 	gamePanel.restartGame();
                 };
         	}
         }
+
+	// This was moved to GamePanel, it could probably be kept here either and have it as 1 method - boolean taken = gamePanel.takeTransportRoute(GamePanel.showOption,playerX/speed, playerY/speed);
+	
+        // if (key == KeyEvent.VK_1) {
+        // 	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
+        // 	if (taken) {
+        // 		gamePanel.timer(50);
+        //         gamePanel.checkGemScore();
+        //         gamePanel.checkCoinScore();
+        //         gamePanel.popupIntersection();
+        //        if(gamePanel.allGemsCollected() == true) {
+        //         	gamePanel.restartGame();
+        //         };
+        // 	}
+        // }
         
-        if (key == KeyEvent.VK_1) {
-        	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
-        	if (taken) {
-
-        		gamePanel.timer(50);
-                gamePanel.checkGemScore();
-                gamePanel.checkCoinScore();
-                gamePanel.popupIntersection();
-               if(gamePanel.allGemsCollected() == true) {
-
-                	gamePanel.restartGame();
-                };
-        	}
-        }
-        
-        if (key == KeyEvent.VK_2) {
-        	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
-        	if (taken) {
-
-        		gamePanel.timer(50);
-                gamePanel.checkGemScore();
-                gamePanel.checkCoinScore();
-                gamePanel.popupIntersection();
-               if(gamePanel.allGemsCollected() == true) {
-
-                	gamePanel.restartGame();
-                };
-        	}
-        }
+        // if (key == KeyEvent.VK_2) {
+        // 	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
+        // 	if (taken) {
+        // 		gamePanel.timer(50);
+        //         gamePanel.checkGemScore();
+        //         gamePanel.checkCoinScore();
+        //         gamePanel.popupIntersection();
+        //        if(gamePanel.allGemsCollected() == true) {
+        //         	gamePanel.restartGame();
+        //         };
+        // 	}
+        // }
     }
     
     public int getCoins() {
@@ -183,7 +147,6 @@ public class Player implements Serializable {
         
     public int getPlayerX() {
     	return playerX;
-
     }
        
     public int getPlayerY() {
@@ -212,6 +175,4 @@ public class Player implements Serializable {
 
         g.drawImage(image, adjustedX, adjustedY, width, height, null);
     }
-  
-
 }

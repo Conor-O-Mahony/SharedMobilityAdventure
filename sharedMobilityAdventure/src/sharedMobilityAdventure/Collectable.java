@@ -24,7 +24,7 @@ public class Collectable implements Serializable {
     protected int collectabelY;
     
     protected boolean visible;
-    transient BufferedImage filledImage;
+    static transient BufferedImage filledImage;
     
     private Random random = new Random();
     
@@ -129,10 +129,10 @@ public class Collectable implements Serializable {
     				break;
     			}
         	}
-        	System.out.println("Max attempts reached");
+        	//System.out.println("Max attempts reached");
         }
         
-        System.out.println("attempts" + attempts);
+        //noSystem.out.println("attempts" + attempts);
         
         // If no overlap, add the coordinates to droppedCoordinates and break out of the loop
         int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
@@ -178,7 +178,7 @@ public class Collectable implements Serializable {
     }
     // https://stackoverflow.com/questions/49469921/euclidean-distance-between-two-variables
     // Find eucledian distance to calcualte the distance from the transport objects
-    public static boolean checkEuclideanDistance(int collectabelX, int collectabelY, Board board) {
+    public static boolean eucledianDistanceCalculator(int collectabelX, int collectabelY, Board board) {
         final int MIN_DISTANCE_FROM_TRANSPORT = 10; // Define the minimum distance constant locally
         
 		// Access the tiles array directly from the Main class

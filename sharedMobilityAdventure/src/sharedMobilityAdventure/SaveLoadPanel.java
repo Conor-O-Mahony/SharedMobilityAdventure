@@ -45,8 +45,6 @@ public class SaveLoadPanel extends JPanel {
         } else {
         	LoadPanel();
         }
-        
-        	//add(createButton(saveloadFrame,getButtonXLoc(noofButtons,i),400,"Load from file",String.format("savestate%d.ser",i)));
     }
 
 	private void SavePanel() {
@@ -251,7 +249,6 @@ public class SaveLoadPanel extends JPanel {
 
         GamePanel panel = OpenSaveState(fileName);
         
-        panel.loadImages();
         panel.addButton();
         panel.startRotation();
         
