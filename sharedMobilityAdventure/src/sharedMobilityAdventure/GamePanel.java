@@ -305,6 +305,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 coin.draw(g);
             }
 
+        }
         //g.drawImage(sidebarImage, Main.GAME_WIDTH, 0, Main.SIDEBAR_WIDTH, Main.GAME_WIDTH, null);
         g.drawImage(sidebarImage,Main.GAME_WIDTH,0,sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
         
@@ -347,9 +348,9 @@ public class GamePanel extends JPanel implements KeyListener {
         	//Do nothing
         	}
         }
-    }
     
     public void paintHalos(Graphics g) {
+    	System.out.println("Painting halos");
     	int player_x = player.getPlayerXTile();
     	int player_y = player.getPlayerYTile();
     	Tile currentTile = board.tiles[player_y][player_x];
@@ -378,9 +379,11 @@ public class GamePanel extends JPanel implements KeyListener {
     			String haloName = pinMap.get(nameOfPin);
 
     			Tile[] tilesInRoute = tileRoutes[i].getTiles();
+    			System.out.println("pass");
     			for (int j=0; j<tilesInRoute.length; j++) {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
+    				System.out.println(tile_x+","+tile_y);
     				
     				g.drawImage(getImageFromCache(haloName), tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
