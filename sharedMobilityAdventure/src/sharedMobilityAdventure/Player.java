@@ -101,32 +101,34 @@ public class Player implements Serializable {
                 };
         	}
         }
+
+	// This was moved to GamePanel, it could probably be kept here either and have it as 1 method - boolean taken = gamePanel.takeTransportRoute(GamePanel.showOption,playerX/speed, playerY/speed);
+	
+        // if (key == KeyEvent.VK_1) {
+        // 	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
+        // 	if (taken) {
+        // 		gamePanel.timer(50);
+        //         gamePanel.checkGemScore();
+        //         gamePanel.checkCoinScore();
+        //         gamePanel.popupIntersection();
+        //        if(gamePanel.allGemsCollected() == true) {
+        //         	gamePanel.restartGame();
+        //         };
+        // 	}
+        // }
         
-        if (key == KeyEvent.VK_1) {
-        	boolean taken = gamePanel.takeTransportRoute(1,playerX/speed, playerY/speed);
-        	if (taken) {
-        		gamePanel.timer(50);
-                gamePanel.checkGemScore();
-                gamePanel.checkCoinScore();
-                gamePanel.popupIntersection();
-               if(gamePanel.allGemsCollected() == true) {
-                	gamePanel.restartGame();
-                };
-        	}
-        }
-        
-        if (key == KeyEvent.VK_2) {
-        	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
-        	if (taken) {
-        		gamePanel.timer(50);
-                gamePanel.checkGemScore();
-                gamePanel.checkCoinScore();
-                gamePanel.popupIntersection();
-               if(gamePanel.allGemsCollected() == true) {
-                	gamePanel.restartGame();
-                };
-        	}
-        }
+        // if (key == KeyEvent.VK_2) {
+        // 	boolean taken = gamePanel.takeTransportRoute(2,playerX/speed, playerY/speed);
+        // 	if (taken) {
+        // 		gamePanel.timer(50);
+        //         gamePanel.checkGemScore();
+        //         gamePanel.checkCoinScore();
+        //         gamePanel.popupIntersection();
+        //        if(gamePanel.allGemsCollected() == true) {
+        //         	gamePanel.restartGame();
+        //         };
+        // 	}
+        // }
     }
     
     public int getCoins() {
