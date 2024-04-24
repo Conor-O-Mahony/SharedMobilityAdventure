@@ -16,7 +16,7 @@ public class Route implements Serializable {
     private String pinName;
     private boolean isValid = true; // Checks if route is valid i.e. has cost components and valid start / end points
     
-    public Route(TransportTypes T, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
+    public Route(TransportTypes T, String p, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
     	boolean isValidRoute = startingRow != 0 || startingCol != 0; // Do not want routes starting at (0,0) - Spawn point
     	
     	if (!isValidRoute) { // Double Check if coordinates are zero
@@ -25,6 +25,7 @@ public class Route implements Serializable {
     	}
             
         this.type = T;
+        this.pinName = p;
 
         routeTiles = new Tile[routeSize];
         routeTiles[0] = boardTiles[startingRow][startingCol]; // Add starting Tile to Route
@@ -77,7 +78,7 @@ public class Route implements Serializable {
 		//PROBLEM: THIS METHOD CAN RESULT IN MORE THAN MAX NUMBER OF STOPS AT THE LAST TILE.
 		//TEMPORARY SOLUTION: RETURN NULL => DISCARD THE ROUTE AND CONTINUE.
 		
-		if (!boardTiles[y][x].RouteAddable(this.type, y, x) || tries==10) {
+		if (!boardTiles[y][x].RouteAddable(this.type, pinName, y, x) || tries==10) {
 			// Discard the route if the last tile is not valid or reached max tries
 			routeTiles = null;
 		} else {
@@ -141,11 +142,8 @@ public class Route implements Serializable {
     public TransportTypes getTransportType() {
         return type;
     }
-
-    public void setPinName(String pin) {
-		pinName = pin;
-	}
 		
 	public String getPinName() {
 		return pinName;
+	}
 }

@@ -2,6 +2,7 @@
 
 package sharedMobilityAdventure;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.Serializable;
 
@@ -38,9 +39,12 @@ public class Tile implements Serializable {
 		}
 	}
 	
-	public boolean RouteAddable(TransportTypes type, int row, int col) {
+	public boolean RouteAddable(TransportTypes type, String pinName, int row, int col) {
 	    int counter = 0;
 	    boolean typeExists = false;
+	    boolean colorExists = false;
+	    
+	    Color newPinColor = GamePanel.colorMap.get(pinName);
 
 	    for (int i = 0; i < tileRoutes.length; i++) {
 	        if (tileRoutes[i] != null) {
@@ -48,14 +52,14 @@ public class Tile implements Serializable {
 	            if (tileRoutes[i].getTransportType() == type) {
 	                typeExists = true;
 	            }
-	            //if (tileRoutes[i].getPinColor().equals(pinColor)) {
-	            //    colorExists = true;
-	            //}
+	            if (GamePanel.colorMap.get(tileRoutes[i].getPinName()).equals(newPinColor)) {
+	                colorExists = true;
+	            }
 	        }
 	    }
 
 //	    System.out.println("Checking route addable: Row=" + row + ", Col=" + col + ", Type=" + type + ", Color=" + pinColor + ", TypeExists=" + typeExists + ", ColorExists=" + colorExists + ", Counter=" + counter);
-	    return counter < max_stops_per_tile && !typeExists && row>0 && col > 0; //Ensure a route can be added
+	    return counter < max_stops_per_tile && !typeExists && !colorExists && row>0 && col > 0; //Ensure a route can be added
 	}
 
 	public void asignRouteToTile(Route stop) { //Assume the logic is correct so that no more than max_stops_per_tile can be added. Can add test for this

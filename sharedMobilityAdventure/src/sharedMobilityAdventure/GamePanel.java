@@ -23,7 +23,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Board board;
 	// Cache for storing loaded images
 	public static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
-    private Map<String, Color> colorMap = new HashMap<String, Color>();
+    public static Map<String, Color> colorMap = new HashMap<String, Color>();
     private Map<String, String> pinMap = new HashMap<String, String>();
 
 
@@ -95,7 +95,7 @@ public class GamePanel extends JPanel implements KeyListener {
         addButton();
     }
     
-    private void addColors()
+    static void addColors()
     {
         colorMap.put("bikepinB", Color.BLUE);
         colorMap.put("buspinB", Color.BLUE);
@@ -261,7 +261,7 @@ public class GamePanel extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        //System.gc();
+        System.gc();
         
         for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
 			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
@@ -343,7 +343,11 @@ public class GamePanel extends JPanel implements KeyListener {
 	        g.setFont(new Font("Tahoma", Font.BOLD, 14));
 	        g.drawString(exitMessage, Main.GAME_WIDTH + 30, 280);
        
-        }}
+        } else {
+        	//Do nothing
+        	}
+        }
+    }
     
     public void paintHalos(Graphics g) {
     	int player_x = player.getPlayerXTile();
@@ -391,15 +395,7 @@ public class GamePanel extends JPanel implements KeyListener {
                     FontMetrics fontMetrics = g.getFontMetrics(font);
                     g.setFont(font);
                     
-                    //Graphics2D g2d = (Graphics2D) g;
-                    
                     int string1Width = fontMetrics.stringWidth(text1);
-                    //GradientPaint gradient = new GradientPaint(
-                    //	    Main.GAME_WIDTH + 35, 485 + i * 25, Color.BLACK, 
-                    //	    Main.GAME_WIDTH + 35 + stringWidth, 485 + i * 25, pinColor); // Adjust the coordinates and width as needed
-
-                        // Apply the gradient paint to the graphics context
-                    //g2d.setPaint(gradient);
                         
                     g.setColor(Color.BLACK); // Set color to black
                     g.drawString(text1, Main.GAME_WIDTH+25, 285 + i*25);
@@ -518,9 +514,9 @@ public class GamePanel extends JPanel implements KeyListener {
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_2) {
                 	if (uniqueStrings != null && uniqueStringsList.size() > 1) { // Ensure theres a second transport option
-                    showTransportOption = false;
-                    showOption = 2; // Show the Carbon / Time info for option 2
-                    waitingForInput = true;
+	                    showTransportOption = false;
+	                    showOption = 2; // Show the Carbon / Time info for option 2
+	                    waitingForInput = true;
                 }}
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_1) {                	
@@ -546,6 +542,11 @@ public class GamePanel extends JPanel implements KeyListener {
             carbonCost = 0;
             timeCost = 0;
         }
+    }
+    
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Not needed
     }
 
 
@@ -591,13 +592,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	            gem.playSound();
 	        }
 	    }
-
-
-	    //if (allGemsCollected()) {
-	    //    restartGame(); // Restart the game when all gems are collected
-	    //}
-
-
 	    return gemScore;
 	}
 
@@ -608,16 +602,10 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	            coinScore += 20; // Increase the score
 	            coin.setVisibility(false);
-	            //calculateGameScore();
 
 	            coin.playSound();
 	        }
 	    }
-
-	    // if (allGemsCollected() && allCoinsCollected()) {
-	    //     restartGame(); // Restart the game when all gems and coins are collected
-	    // }
-
 	    return coinScore;
 	}
 
@@ -625,22 +613,11 @@ public class GamePanel extends JPanel implements KeyListener {
 	public boolean allGemsCollected() {
 	    for (Gem gem : gems) {
 	        if (gem.getVisibility()) {
-
 	            return false; 
-
 	        }
 	    }
 	    return true; // All gems are collected
 	}
-
-	// private boolean allCoinsCollected() {
-	//     for (CarbonCoin coin : carbonCoins) {
-	//         if (coin.getVisibility()) {
-	//             return false; // If any coin is still visible, return false
-	//         }
-	//     }
-	//     return true; // All coins are collected
-	// }
 
     public void popupIntersection() {
 	    for (int i = 0; i < popups.length; i++) {
@@ -653,12 +630,6 @@ public class GamePanel extends JPanel implements KeyListener {
     public void calculateGameScore() {        
     	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
     }
-       
-    // public void checkPopUp() {
-    //     if (player.getPlayerX() == popup.popUpX && player.getPlayerY() == popup.popUpY) {
-    //         System.out.println("Pop Up");   	
-    // 	}
-    // } 
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {  //Prevent negative playertime

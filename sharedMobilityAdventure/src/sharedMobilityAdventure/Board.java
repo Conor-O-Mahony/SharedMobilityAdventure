@@ -41,20 +41,20 @@ public class Board implements Serializable { //Holds the Tile's
 	    for (int i = 0; i < no_stations.length; i++) {
 	        int j = 0;
 	        while (no_stations[i] < max_stations[i]) {
-	            int random_col = Main.getRandomNumber(0, cols); // Start from (1,1)
+	        	String pinName = pinNames[pinIndex(j,transport_types[i])];
+	            int random_col = Main.getRandomNumber(1, cols); // Start from (1,1)
 	            int random_row = Main.getRandomNumber(1, rows);
-	            if (tiles[random_row][random_col].RouteAddable(transport_types[i], random_row, random_col)) { // Check Route can be added to the starting tile
+	            if (tiles[random_row][random_col].RouteAddable(transport_types[i], pinName, random_row, random_col)) { // Check Route can be added to the starting tile
 	                int route_size = Main.getRandomNumber(Main.MIN_ROUTE_SIZE,Main.MAX_ROUTE_SIZE);
-	                Route new_route = new Route(transport_types[i], tiles,random_row, random_col, route_size);
+	                Route new_route = new Route(transport_types[i], pinName, tiles,random_row, random_col, route_size);
 	                if (new_route.getTiles() != null) {
 	                    tiles[random_row][random_col].asignRouteToTile(new_route); //Assign Route to starting Tile
 	                    int finalRow = new_route.getFinalRow();
 	                    int finalCol = new_route.getFinalCol();
-	                    if (finalCol > 0) {
-							if (tiles[finalRow][finalCol].RouteAddable(transport_types[i], finalRow, finalCol)) { // Check Route can be added to the starting tile
+	                    if (finalRow > 0 && finalCol > 0) {
+							if (tiles[finalRow][finalCol].RouteAddable(transport_types[i], pinName, finalRow, finalCol)) { // Check Route can be added to the starting tile
 								tiles[finalRow][finalCol].asignRouteToTile(new_route); //Assign Route to final Tile
 								System.out.println("Route " + i + " " + transport_types[i] + ": Added from(" + random_row + ", " + random_col + ") to (" + finalRow + ", " + finalCol + ")");
-								new_route.setPinName(pinNames[pinIndex(j,transport_types[i])]);  //THIS WILL FAIL IF YOU CHANGE NO. OF PINS
 								j++;
 								no_stations[i]++;
 							} 
@@ -65,7 +65,6 @@ public class Board implements Serializable { //Holds the Tile's
 	        }  
 	    }
 	}
-
 
 	public void validateRoutes() {
         for (int row = 0; row < tiles.length; row++) {
@@ -102,7 +101,7 @@ public class Board implements Serializable { //Holds the Tile's
 	public static void main(String[] args) {
 	    // Test board creation
 	    int test_rows = 10;
-	    int test_cols = 20;
+	    int test_cols = 10;
 	    Board test_board = new Board(test_rows, test_cols);
 	    int no_of_stops = 0;
 	    int no_bikes = 0;
