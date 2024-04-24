@@ -175,7 +175,7 @@ public JButton button;
 			popups[i].loadImage();
 		  }
     }
-private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
+    private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
             BufferedImage image = null;
