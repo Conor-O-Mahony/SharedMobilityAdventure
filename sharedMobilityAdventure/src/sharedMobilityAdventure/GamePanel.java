@@ -32,10 +32,11 @@ public class GamePanel extends JPanel implements KeyListener {
   private PopUp[] popups; // Array to store Popups
   private int numPopups = 3; 
 
-	int playerTime = 7500; // Likely will be changed
+	int playerTime = 7200; // No. of mins in 5 days (60*24*5)
 
 	int gemScore = 0;
-	int coinScore = 1000;
+	int coinScore = 200;
+	int coinsCollected = 0;
 	int gameScore = 0;
 	int gameRound = 0;
 	int showOption = 0; // Needed for dynamic Dialogue Display of Route Costs
@@ -66,8 +67,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public GamePanel(String username){
 		
-        this.username = username; // Store the username
-	
+		this.username = username; // Store the username
+        
         addColors();
         addHaloNames();
         
@@ -150,7 +151,12 @@ public class GamePanel extends JPanel implements KeyListener {
             popups[i] = new PopUp();
         }
         
-        JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
+    	if (gameRound == 1) {
+    		JOptionPane.showMessageDialog(null, "Day: " + gameRound + ". Use the arrows keys to get " + username + " to the gem. (Walking takes 50 mins)");
+    	} else {
+    		JOptionPane.showMessageDialog(null, "Day: " + gameRound + ". Click OK!");
+    	}
+        
     }
 
     void startRotation() {
@@ -259,7 +265,7 @@ public class GamePanel extends JPanel implements KeyListener {
         // Time
         g.setColor(Color.BLACK);
         g.setFont(new Font("Tahoma", Font.BOLD, 16));
-        g.drawString("" + playerTime, Main.GAME_WIDTH+45, 75);
+        g.drawString("" + playerTime + " mins", Main.GAME_WIDTH+25, 75);
         
         // Gems
         g.setColor(Color.BLACK);
@@ -359,8 +365,8 @@ public class GamePanel extends JPanel implements KeyListener {
                 	g.setColor(Color.BLACK);
                 	g.setFont(new Font("Tahoma", Font.BOLD, 14));
                 	g.drawString("You Have Chosen " + detailsArray[0], Main.GAME_WIDTH + 30, 280);// type
-                	g.drawString("Carbon Cost: " + detailsArray[1], Main.GAME_WIDTH + 30, 295); // Carbon Cost
-                	g.drawString("Time Cost: " + detailsArray[2], Main.GAME_WIDTH + 30, 310); // Time Cost
+                	g.drawString("Carbon Coin Cost: " + detailsArray[1], Main.GAME_WIDTH + 30, 295); // Carbon Cost
+                	g.drawString("Time Cost: " + detailsArray[2] + " mins", Main.GAME_WIDTH + 30, 310); // Time Cost
                 	if (coinScore - carbonCost < 0) { // Pre check of the calculation
                 	    g.drawString("Not Enough Carbon Coins!", Main.GAME_WIDTH + 30, 330);
                      	g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, 345);
@@ -528,6 +534,7 @@ public class GamePanel extends JPanel implements KeyListener {
 	        if (player.getPlayerX() == coin.collectabelX && player.getPlayerY() == coin.collectabelY && coin.getVisibility()) {
 
 	            coinScore += 20; // Increase the score
+	            coinsCollected++;
 	            coin.setVisibility(false);
 
 	            coin.playSound();
@@ -555,14 +562,14 @@ public class GamePanel extends JPanel implements KeyListener {
 		}}}
 
     public void calculateGameScore() {        
-    	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
+    	gameScore += (int) ((100 * playerTime)/7200 + (100 * checkCoinScore())/200)*(1+0.2*gameRound);
     }
        
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {  //Prevent negative playertime
     		playerTime = 0;
 		    CarbonCoin.stopRotation();
-    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, coinsCollected, gameScore);
     	}
     	else {
     		playerTime -= movement;
@@ -572,7 +579,7 @@ public class GamePanel extends JPanel implements KeyListener {
     public void coinCount(int movement) {  	
     	if ((coinScore - movement) <= 0) { 
     		coinScore = 0;
-    		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
+    		Main.openEndWindow(username, gameRound, gemScore, coinsCollected, gameScore);
     	}
     	else {
     		coinScore -= movement;

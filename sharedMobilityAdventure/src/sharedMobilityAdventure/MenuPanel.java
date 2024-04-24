@@ -42,6 +42,9 @@ public class MenuPanel extends JPanel {
         startButton.addActionListener(e -> {
             // Retrieve the username from the text field
             String username = usernameField.getText();
+            if (username.isEmpty()) {
+            	username = "Player";
+            }
             Main.openGameWindow(username); // Window will be opened with username
         });
         add(startButton);
