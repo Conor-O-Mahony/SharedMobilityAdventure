@@ -1,7 +1,5 @@
 package sharedMobilityAdventure;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -15,21 +13,18 @@ public class Route implements Serializable {
     private int finalRow;
     private int finalCol;
     private TransportTypes type;
-    private transient BufferedImage pinImage;
-    private Color pinColor;
+    private String pinName;
     private boolean isValid = true; // Checks if route is valid i.e. has cost components and valid start / end points
-
     
-    public Route(TransportTypes T, Tile[][] boardTiles, Color pinColor, int startingRow, int startingCol, int routeSize) {
+    public Route(TransportTypes T, Tile[][] boardTiles, int startingRow, int startingCol, int routeSize) {
     	boolean isValidRoute = startingRow != 0 || startingCol != 0; // Do not want routes starting at (0,0) - Spawn point
     	
-    	if (!isValidRoute || (startingRow == 0 && startingCol == 0)) { // Double Check if coordinates are zero
+    	if (!isValidRoute) { // Double Check if coordinates are zero
     	    System.out.println("Invalid route: Coordinates are zero.");
     	    return;
     	}
             
         this.type = T;
-        this.pinColor = pinColor; 
 
         routeTiles = new Tile[routeSize];
         routeTiles[0] = boardTiles[startingRow][startingCol]; // Add starting Tile to Route
@@ -82,7 +77,7 @@ public class Route implements Serializable {
 		//PROBLEM: THIS METHOD CAN RESULT IN MORE THAN MAX NUMBER OF STOPS AT THE LAST TILE.
 		//TEMPORARY SOLUTION: RETURN NULL => DISCARD THE ROUTE AND CONTINUE.
 		
-		if (!boardTiles[y][x].RouteAddable(this.type, this.pinColor, y, x) || tries==10) {
+		if (!boardTiles[y][x].RouteAddable(this.type, y, x) || tries==10) {
 			// Discard the route if the last tile is not valid or reached max tries
 			routeTiles = null;
 		} else {
@@ -118,8 +113,6 @@ public class Route implements Serializable {
     public int getTravelTime() {
         return travelTime;
     }
-    
-    
 
     public Tile[] getTiles() {
         if (routeTiles != null) {
@@ -128,7 +121,6 @@ public class Route implements Serializable {
             return new Tile[0]; // Return an empty array instead of null to prevent potential NullPointerExceptions
         }
     }
-
 
     public int getFinalRow() {
         return finalRow;
@@ -150,19 +142,10 @@ public class Route implements Serializable {
         return type;
     }
 
-    public void setPinImage(BufferedImage pin) {
-        pinImage = pin;
-    }
-
-    public void setPinColor(Color pin) {
-        pinColor = pin;
-    }
-
-    public BufferedImage getPinImage() {
-        return pinImage;
-    }
-
-    public Color getPinColor() {
-        return pinColor;
-    }
+    public void setPinName(String pin) {
+		pinName = pin;
+	}
+		
+	public String getPinName() {
+		return pinName;
 }

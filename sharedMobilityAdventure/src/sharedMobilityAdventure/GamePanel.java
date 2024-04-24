@@ -22,22 +22,24 @@ public class GamePanel extends JPanel implements KeyListener {
 	private Player player;
 	private Board board;
 	// Cache for storing loaded images
-	private transient Map<String, BufferedImage> imageCache;
+	public static Map<String, BufferedImage> imageCache = new HashMap<String, BufferedImage>();
+    private Map<String, Color> colorMap = new HashMap<String, Color>();
+    private Map<String, String> pinMap = new HashMap<String, String>();
+
 
   String username; // Store the username
         
-	private transient BufferedImage[] roadtileArray;
-	private transient BufferedImage[] haloArray;
-	private transient BufferedImage sidebarImage;
+  private transient BufferedImage sidebarImage;
     
   private CarbonCoin[] carbonCoins;
   private int numCarbonCoins = 3;
   
-
   private Gem[] gems; //Array to store Gems
   private int numGems; // Number of gems to drop
-private PopUp[] popups; // Array to store Popups
+
+  private PopUp[] popups; // Array to store Popups
   private int numPopups = 3; 
+
 	int playerTime = 7500; // Likely will be changed
 
 	int gemScore = 0;
@@ -57,7 +59,7 @@ private PopUp[] popups; // Array to store Popups
   public boolean update = true;
   private Set<String> uniqueStrings = new LinkedHashSet<>(); // Game is in a Loop - Linked Hash Set prevents duplicates
   public List<String> uniqueStringsList = new ArrayList<>(); // List is much easier for indexing 
-public JButton button;
+  public JButton button;
   
   private boolean isDirectionButton(KeyEvent e) { // Defining Direction Buttons so if the player moves away, the dialogue display is reset
 	    if (	e.getKeyCode() == KeyEvent.VK_UP ||
@@ -69,25 +71,56 @@ public JButton button;
 	        return false;
 	    }
 	}
-
+  
+  String[] haloNames = {"haloB","haloY","haloG"};
+  String[] roadTileNames = {"intersection"};
+  static String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
   
     public GamePanel(String username){
 		
         this.username = username; // Store the username
-		
-        // Initalize the image cache
-        imageCache = new HashMap<>();
+	
+        addColors();
+        addHaloNames();
         
         initGame();
-	loadImages();
+        loadImages();
+
         this.setFocusable(true);
         focus();
+
         addKeyListener(this);   
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
-          addButton();
+        addButton();
     }
-
+    
+    private void addColors()
+    {
+        colorMap.put("bikepinB", Color.BLUE);
+        colorMap.put("buspinB", Color.BLUE);
+        colorMap.put("trainpinB", Color.BLUE);
+        colorMap.put("bikepinY", Color.YELLOW);
+        colorMap.put("buspinY", Color.YELLOW);
+        colorMap.put("trainpinY", Color.YELLOW);
+        colorMap.put("bikepinG", Color.GREEN);
+        colorMap.put("buspinG", Color.GREEN);
+        colorMap.put("trainpinG", Color.GREEN);
+    }
+    
+    private void addHaloNames()
+    {
+    	pinMap.put("bikepinB", "haloB");
+    	pinMap.put("buspinB", "haloB");
+    	pinMap.put("trainpinB", "haloB");
+    	pinMap.put("bikepinY", "haloY");
+    	pinMap.put("buspinY", "haloY");
+    	pinMap.put("trainpinY", "haloY");
+    	pinMap.put("bikepinG", "haloG");
+    	pinMap.put("buspinG", "haloG");
+    	pinMap.put("trainpinG", "haloG");
+    }
+    
     public void focus() {
     	requestFocus();
      }
@@ -118,14 +151,13 @@ public JButton button;
 
         }     
 
-
         carbonCoins = new CarbonCoin[numCarbonCoins];
         for (int i = 0; i < numCarbonCoins; i++) {
             carbonCoins[i] = new CarbonCoin("Carbon Credit", board, this, playerX, playerY); // Pass the GamePanel instance to the CarbonCoin constructor
         }
 
 
-	startRotation();
+	    startRotation();
 
 
         popups = new PopUp[numPopups];
@@ -134,7 +166,6 @@ public JButton button;
             popups[i] = new PopUp();
         }
         
-        loadImages();
         JOptionPane.showMessageDialog(null, "Round: " + gameRound + ". Click OK!");
     }
 
@@ -149,16 +180,12 @@ public JButton button;
     }
     
     void loadImages() {
-    	String[] roadTileNames = {"intersection"}; //,"roadBus","roadTrain","roadBike","roadBusTrain","roadBusBike","roadTrainBike"
-		roadtileArray = new BufferedImage[roadTileNames.length];
-		loadTiles(roadTileNames,roadtileArray);
-		
-		String[] haloNames = {"haloB","haloY","haloG"};
-		haloArray = new BufferedImage[haloNames.length];
-		loadTiles(haloNames,haloArray);
-		
-		player.loadImage();
-		board.reloadPins(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
+		loadTiles(roadTileNames);
+		loadTiles(haloNames);
+		loadTiles(pinNames);
+
+		player.loadImages();
+		player.setImage("down");
 		
 		// load images for gem
 		for (int i = 0; i < gems.length; i++) {
@@ -167,34 +194,33 @@ public JButton button;
 		
 		for (int i=0; i<carbonCoins.length; i++) {
 			carbonCoins[i].loadImage();
-			carbonCoins[i].startRotation();
-		  } 
+		} 
    
-
     	for (int i=0; i<popups.length; i++) {
 			popups[i].loadImage();
 		  }
+		
+		try {        	
+        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }  
     }
-    private void loadTiles(String[] imageNames, BufferedImage[] imageArray) {
+    
+    private void loadTiles(String[] imageNames) {
         for (int i = 0; i < imageNames.length; i++) {
             String imageName = imageNames[i];
             BufferedImage image = null;
-            try {
-            	 image = getImageFromCache(imageName);
-            } catch (NullPointerException e) {
-            	e.printStackTrace();
-            }
+            image = getImageFromCache(imageName);
             if (image == null) {
                 String source = String.format("images/tiles/%s.png", imageName);
                 try {
                     image = ImageIO.read(new File(source));
-                    // Cache the loaded image
                     cacheImage(imageName, image);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            imageArray[i] = image;
         }
     }
     private JButton createButton(JFrame frame, int buttonX, int buttonY, String text) {
@@ -206,15 +232,18 @@ public JButton button;
         Rectangle bounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         button.setBounds(bounds);
 
-	addActionListener();
+	    addActionListener();
+
         return button;    
     }
+
 	void addActionListener() {
     	button.addActionListener(e -> {     
     		CarbonCoin.stopRotation();
             Main.openSaveLoadWindow(this,"save");
         }); 
     }
+
     private void setButtonIcon(JButton button, String imagePath) {
         button.setBorderPainted(false); // Remove button border
         button.setFocusPainted(false); // Remove focus border
@@ -232,32 +261,31 @@ public JButton button;
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
+        //System.gc();
+        
         for (int row = 0; row < Main.DEFAULT_BOARD_SIZE; row++) {
 			for (int col = 0; col < Main.DEFAULT_BOARD_SIZE; col++) {		
 								
 				Route[] routes = board.tiles[row][col].getRoutes();
 				
-				g.drawImage(roadtileArray[0], col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+				g.drawImage(getImageFromCache("intersection"), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
 				
 				int extra = (int) Math.round(0.3*Main.TILE_SIZE);
 				if (routes[0]!=null) {
-					g.drawImage(routes[0].getPinImage(), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(getImageFromCache(routes[0].getPinName()), col*Main.TILE_SIZE, row*Main.TILE_SIZE, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				if (routes[1]!=null) {
-					g.drawImage(routes[1].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+					g.drawImage(getImageFromCache(routes[1].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				}
 				//if (routes[2]!=null) {
-				//	g.drawImage(routes[2].getPinImage(), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
+				//	g.drawImage(getImageFromCache(routes[2].getPinName()), col*Main.TILE_SIZE + extra, row*Main.TILE_SIZE - extra, Main.TILE_SIZE*2/3, Main.TILE_SIZE*2/3, null);
 				//}
 			}
         }
         
-
-
         player.draw(g);       
 
         for (int i = 0; i < popups.length; i++) {
-
             PopUp popup = popups[i];
             if (popup.getVisibility()) {
                 popup.draw(g);
@@ -276,14 +304,7 @@ public JButton button;
             if (coin.getVisibility()) {
                 coin.draw(g);
             }
-        }              
 
-        try {        	
-        	sidebarImage = ImageIO.read(new File("images/tiles/sidebar.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }  
-               
         //g.drawImage(sidebarImage, Main.GAME_WIDTH, 0, Main.SIDEBAR_WIDTH, Main.GAME_WIDTH, null);
         g.drawImage(sidebarImage,Main.GAME_WIDTH,0,sidebarImage.getWidth(),Main.WINDOW_HEIGHT, null);
         
@@ -322,7 +343,7 @@ public JButton button;
 	        g.setFont(new Font("Tahoma", Font.BOLD, 14));
 	        g.drawString(exitMessage, Main.GAME_WIDTH + 30, 280);
        
-    }}
+        }}
     
     public void paintHalos(Graphics g) {
     	int player_x = player.getPlayerXTile();
@@ -330,9 +351,10 @@ public JButton button;
     	Tile currentTile = board.tiles[player_y][player_x];
     	Route[] tileRoutes = currentTile.getRoutes();
     	if (update) { //Prevents a calculaion loop occuring when not needed
-    	uniqueStrings.clear();
-    	carbonCost = 0;
-    	timeCost = 0;}
+            uniqueStrings.clear();
+            carbonCost = 0;
+            timeCost = 0;
+        }
     	update = false;
     	for (int i = 0; i < tileRoutes.length; i++) {
             if (tileRoutes[i] != null) {
@@ -341,86 +363,80 @@ public JButton button;
 
                 TransportTypes type = route.getTransportType();
                 double carbonCost = route.getCarbonCost();
-                //System.out.println("carbonCost" + carbonCost);
-                
                 int travelTime = route.getTravelTime();
 
                 // Easiest way to store the values temporarily was as a string in the set
                 String travelDetails = String.format("%s|%d|%d", type, (int) carbonCost, travelTime);
 
-
                 uniqueStrings.add(travelDetails);
-    			Color pinColor = tileRoutes[i].getPinColor();
-    			int haloArrayIndex = 0;
-    			if (pinColor.getRGB() == Color.YELLOW.getRGB()) {
-    				haloArrayIndex = 1;
-    			} else if (pinColor.getRGB() == Color.GREEN.getRGB()) {
-    				haloArrayIndex = 2;
-    			}
+
+    			String nameOfPin = tileRoutes[i].getPinName();
+    			String haloName = pinMap.get(nameOfPin);
+
     			Tile[] tilesInRoute = tileRoutes[i].getTiles();
     			for (int j=0; j<tilesInRoute.length; j++) {
     				int tile_x = tilesInRoute[j].getX();
     				int tile_y = tilesInRoute[j].getY();
     				
-    				g.drawImage(haloArray[haloArrayIndex], tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
+    				g.drawImage(getImageFromCache(haloName), tile_x*Main.TILE_SIZE, tile_y*Main.TILE_SIZE, Main.TILE_SIZE, Main.TILE_SIZE, null);
     			}
     			
     			String typeString = type.toString();
     			if (showTransportOption) { 
                 	haloDisplay = true;
     			
-    			String text1 = "Press "+(i+1)+" to take ";
-    			String text2 = typeString;
-    			Font font = new Font("Tahoma", Font.BOLD, 16);
-    			FontMetrics fontMetrics = g.getFontMetrics(font);
-    			g.setFont(font);
-    			
-    			//Graphics2D g2d = (Graphics2D) g;
-    			
-    			int string1Width = fontMetrics.stringWidth(text1);
-    			//GradientPaint gradient = new GradientPaint(
-    			//	    Main.GAME_WIDTH + 35, 485 + i * 25, Color.BLACK, 
-    			//	    Main.GAME_WIDTH + 35 + stringWidth, 485 + i * 25, pinColor); // Adjust the coordinates and width as needed
+                    String text1 = "Press "+(i+1)+" to take ";
+                    String text2 = typeString;
+                    Font font = new Font("Tahoma", Font.BOLD, 16);
+                    FontMetrics fontMetrics = g.getFontMetrics(font);
+                    g.setFont(font);
+                    
+                    //Graphics2D g2d = (Graphics2D) g;
+                    
+                    int string1Width = fontMetrics.stringWidth(text1);
+                    //GradientPaint gradient = new GradientPaint(
+                    //	    Main.GAME_WIDTH + 35, 485 + i * 25, Color.BLACK, 
+                    //	    Main.GAME_WIDTH + 35 + stringWidth, 485 + i * 25, pinColor); // Adjust the coordinates and width as needed
 
-    				// Apply the gradient paint to the graphics context
-    			//g2d.setPaint(gradient);
-    				
-    			g.setColor(Color.BLACK); // Set color to black
-    	        g.drawString(text1, Main.GAME_WIDTH+25, 285 + i*25);
-    	        
-    	        g.setColor(pinColor); // Set color to black
-    	        g.drawString(text2, Main.GAME_WIDTH+25+string1Width, 285 + i*25);
-    	        
-    	        
-    		}}}
-    			
-    			uniqueStringsList = new ArrayList<>(uniqueStrings); // Need to convert the Linked Set to a list for easy indexing
-                 if (showOption != 0) { // showOption is 0 when the first screen is displayed i.e. Press X to take Y
-                	    if (showOption <= uniqueStringsList.size()) {  // Check if the selected option is valid - Option 1 must have  1 string in the set / list...
-                	    	String[] detailsArray = uniqueStringsList.get(showOption - 1).split("\\|"); // Make an array from the 3 pieces of travelDetails - type, carbonCost, timeCost 
-                	    	carbonCost = Integer.parseInt(detailsArray[1]); // As its a string, the int needs to be converted back to an int
-            	            timeCost = Integer.parseInt(detailsArray[2]);
-                	        if (detailsArray.length >= 3) {  // Ensure there are enough parts in the split result
-                	        	System.out.println("list:" + uniqueStringsList.get(showOption - 1));
-                	            g.setColor(Color.BLACK);
-                	            g.setFont(new Font("Tahoma", Font.BOLD, 14));
-                	            g.drawString("You Have Chosen " + detailsArray[0], Main.GAME_WIDTH + 30, 280);// type
-                	            g.drawString("Carbon Cost: " + detailsArray[1], Main.GAME_WIDTH + 30, 295); // Carbon Cost
-                	            g.drawString("Time Cost: " + detailsArray[2], Main.GAME_WIDTH + 30, 310); // Time Cost
-                	            if (coinScore - carbonCost < 0) { // Pre check of the calculation
-                	            	g.drawString("Not Enough Carbon Coins!", Main.GAME_WIDTH + 30, 330);
-                     	            g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, 345);
-                	            }
-                	            else { // If there is enough coin balance
-                	            g.drawString("Press 1 to Continue", Main.GAME_WIDTH + 30, 330);
-                	            g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, 345);}
-                	            
-                	        }
-                	    }}
-                 
-                	}
+                        // Apply the gradient paint to the graphics context
+                    //g2d.setPaint(gradient);
+                        
+                    g.setColor(Color.BLACK); // Set color to black
+                    g.drawString(text1, Main.GAME_WIDTH+25, 285 + i*25);
 
-    
+                    g.setColor(colorMap.get(nameOfPin)); // Set color to black
+                    g.drawString(text2, Main.GAME_WIDTH+25+string1Width, 285 + i*25);
+    	        
+    	        
+    		    }
+            }
+        }
+    			
+    	uniqueStringsList = new ArrayList<>(uniqueStrings); // Need to convert the Linked Set to a list for easy indexing
+        if (showOption != 0) { // showOption is 0 when the first screen is displayed i.e. Press X to take Y
+            if (showOption <= uniqueStringsList.size()) {  // Check if the selected option is valid - Option 1 must have  1 string in the set / list...
+                String[] detailsArray = uniqueStringsList.get(showOption - 1).split("\\|"); // Make an array from the 3 pieces of travelDetails - type, carbonCost, timeCost 
+                carbonCost = Integer.parseInt(detailsArray[1]); // As its a string, the int needs to be converted back to an int
+            	timeCost = Integer.parseInt(detailsArray[2]);
+                if (detailsArray.length >= 3) {  // Ensure there are enough parts in the split result
+                    System.out.println("list:" + uniqueStringsList.get(showOption - 1));
+                	g.setColor(Color.BLACK);
+                	g.setFont(new Font("Tahoma", Font.BOLD, 14));
+                	g.drawString("You Have Chosen " + detailsArray[0], Main.GAME_WIDTH + 30, 280);// type
+                	g.drawString("Carbon Cost: " + detailsArray[1], Main.GAME_WIDTH + 30, 295); // Carbon Cost
+                	g.drawString("Time Cost: " + detailsArray[2], Main.GAME_WIDTH + 30, 310); // Time Cost
+                	if (coinScore - carbonCost < 0) { // Pre check of the calculation
+                	    g.drawString("Not Enough Carbon Coins!", Main.GAME_WIDTH + 30, 330);
+                     	g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, 345);
+                	} else { // If there is enough coin balance
+                	    g.drawString("Press 1 to Continue", Main.GAME_WIDTH + 30, 330);
+                	    g.drawString("Press 0 to Return", Main.GAME_WIDTH + 30, 345);
+                    }    
+                }
+            }
+        }          
+    }
+
     private  BufferedImage getImageFromCache(String imageName) {
     	try {
     		BufferedImage cachedImage = imageCache.get(imageName);
@@ -429,24 +445,20 @@ public JButton button;
     		return null;
     	}
     }
-    private void cacheImage(String imageName, BufferedImage image) {
-    	try {
-    		imageCache.put(imageName, image);
-    	} catch (NullPointerException e) {
-    		imageCache = new HashMap<>();
-    		imageCache.put(imageName, image);
-    	}
-    }
-    public void restartGame() {
 
+    private void cacheImage(String imageName, BufferedImage image) {
+    	imageCache.put(imageName, image);
+    }
+
+    public void restartGame() {
 	    //CLEAR OLD OBJECTS OUT
-	calculateGameScore();   
+	    calculateGameScore();   
+
         player = null;
         for (int i = 0; i < numPopups; i++) {
             popups[i] = null;
         }
         popups = null;
-
 
         for (int i = 0; i < numGems; i++) {
             gems[i] = null;
@@ -495,16 +507,15 @@ public JButton button;
 
         // Key press logic when haloDisplay is true i.e when a route is mapped out / when player is stood at transport option
         if (haloDisplay) {
-        	
-        	 
-//            System.out.println("Halo Display");
+          //System.out.println("Halo Display");
             if (!waitingForInput) { //waitingForInput is true when it is one one of the option screens
                 if (e.getKeyCode() == KeyEvent.VK_1) {
                 	if (uniqueStrings != null && uniqueStringsList.size() > 0) { // Ensure theres a first transport option
-                    showTransportOption = false;
-                    showOption = 1; // Show the Carbon / Time info for option 1
-                    waitingForInput = true;
-                }}
+                        showTransportOption = false;
+                        showOption = 1; // Show the Carbon / Time info for option 1
+                        waitingForInput = true;
+                    }
+                }
                 else if (e.getKeyCode() == KeyEvent.VK_2) {
                 	if (uniqueStrings != null && uniqueStringsList.size() > 1) { // Ensure theres a second transport option
                     showTransportOption = false;
@@ -512,8 +523,7 @@ public JButton button;
                     waitingForInput = true;
                 }}
             } else {
-                if (e.getKeyCode() == KeyEvent.VK_1) {
-                	
+                if (e.getKeyCode() == KeyEvent.VK_1) {                	
                 	if (coinScore - carbonCost >= 0) {
                         timer(timeCost - 50); // It automatically takes out the standard walk movement of the character - this fixes it
                         coinCount(carbonCost);
@@ -522,9 +532,7 @@ public JButton button;
                     showOption = 0;
                     showTransportOption = true;
                     waitingForInput = false;
-                	}
-                    
-                    
+                	} 
                 }
             }
         }
@@ -540,14 +548,6 @@ public JButton button;
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Not needed
-    }
-    
-//    public static void endGame(JFrame gameFrame, String username, int gameRound, int gemScore, int coinScore, int gameScore) {
-//        Main.openEndWindow(gameFrame, username, gameRound, gemScore, coinScore, gameScore);
-//    }
 
     public boolean takeTransportRoute(int mode, int player_x, int player_y) {
         // Retrieve the number of routes available at the current player's tile
@@ -593,9 +593,9 @@ public JButton button;
 	    }
 
 
-//	    if (allGemsCollected()) {
-//	        restartGame(); // Restart the game when all gems are collected
-//	    }
+	    //if (allGemsCollected()) {
+	    //    restartGame(); // Restart the game when all gems are collected
+	    //}
 
 
 	    return gemScore;
@@ -608,7 +608,7 @@ public JButton button;
 
 	            coinScore += 20; // Increase the score
 	            coin.setVisibility(false);
-//	            calculateGameScore();
+	            //calculateGameScore();
 
 	            coin.playSound();
 	        }
@@ -649,6 +649,7 @@ public JButton button;
 	        	popup.setVisibility(false);
 	        	popup.displayPopup();
 		}}}
+
     public void calculateGameScore() {        
     	gameScore += (int) ((0.50 * playerTime) + (0.50 * checkCoinScore()));
     }
@@ -662,7 +663,7 @@ public JButton button;
     public void timer(int movement) {  	
     	if ((playerTime - movement) <= 0) {  //Prevent negative playertime
     		playerTime = 0;
-		CarbonCoin.stopRotation();
+		    CarbonCoin.stopRotation();
     		Main.openEndWindow(username, gameRound, gemScore, coinScore, gameScore);
     	}
     	else {
