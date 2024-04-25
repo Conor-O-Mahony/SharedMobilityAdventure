@@ -31,22 +31,50 @@ public class EndPanel extends JPanel {
     private int endGemScore;
     private int endCoinScore;
     private int endGameScore;
+    private String[] authorsNames; 
 
     public EndPanel(String username, int gameRound, int gemScore, int coinsCollected, int gameScore) {
-
         this.username = username;
         this.endGameRound = gameRound;
         this.endGemScore = gemScore;
         this.endCoinScore = coinsCollected;
         this.endGameScore = gameScore;
-
+        this.authorsNames = new String[]{"Ryan Davey", "Adam Herdman", "Conor O'Mahony", "Riin Kaljurand", "Calvin van der Riet"}; 
+        
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null);
         add(usernameLabel());
         add(statsLabel());
         add(scoreLabel());
-        add(createButton()); // Add the button to return to the main panel
+        add(authorsLabel());
+        add(createButton()); 
     }
+
+    private JLabel authorsLabel() {
+        StringBuilder builder = new StringBuilder();
+        for (String author : authorsNames) {
+            builder.append(author).append(", ");
+        }
+        // Remove the trailing comma and space
+        String authors = builder.substring(0, builder.length() - 2);
+
+        JLabel authorsLabel = new JLabel("Authors: " + authors);
+        authorsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        authorsLabel.setForeground(Color.WHITE);
+        authorsLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        
+        int x = 0;
+        int y = 680; // Adjust the y-coordinate as needed
+        
+        // Calculate width to cover the total width
+        int width = (int) (totalWidth - 48);
+        
+        authorsLabel.setBounds(x, y, width, 24); // Covers total width from left to right
+        
+        return authorsLabel;
+    }
+
+
     private JLabel usernameLabel() {
         JLabel endGameText = new JLabel("Game Over. Well done, " + username + "!");
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
