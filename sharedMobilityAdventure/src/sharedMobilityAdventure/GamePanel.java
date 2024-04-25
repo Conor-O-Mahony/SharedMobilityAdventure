@@ -3,6 +3,11 @@ package sharedMobilityAdventure;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +22,6 @@ public class GamePanel extends JPanel implements KeyListener {
 	private static final long serialVersionUID = 1L;
 	private Player player;
 	private Board board;
-	// Cache for storing loaded images
     public static Map<String, Color> colorMap = new HashMap<String, Color>();
     private Map<String, String> pinMap = new HashMap<String, String>();
 
@@ -114,6 +118,26 @@ public class GamePanel extends JPanel implements KeyListener {
      }
 	
     public void initGame() {
+    	try {
+    	    // Load sound clips only if they haven't been loaded yet
+    	    if (Main.defaultGameAudioClip == null) {
+    	        Main.loadSoundClips();
+    	    }
+    	} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+    	    e.printStackTrace();
+    	}
+
+    	// Check if the default game audio clip is loaded and not already playing
+    	if (Main.defaultGameAudioClip != null && !Main.defaultGameAudioClip.isRunning()) {
+    	    // Set loop count to LOOP_CONTINUOUSLY
+    	    Main.defaultGameAudioClip.loop(Clip.LOOP_CONTINUOUSLY);
+    	    // Start the default game audio clip
+    	    Main.defaultGameAudioClip.start();
+    	} else {
+    	    // Handle the case where the default game audio clip is already playing
+    	    // System.out.println("Default game audio clip is already playing or not loaded.");
+    	}
+
     	gameRound += 1;
     	board = new Board(Main.DEFAULT_BOARD_SIZE, Main.DEFAULT_BOARD_SIZE);
         player = new Player(this);
