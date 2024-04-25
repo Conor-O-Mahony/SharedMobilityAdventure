@@ -132,7 +132,7 @@ public class Collectable implements Serializable {
         	//System.out.println("Max attempts reached");
         }
         
-        //noSystem.out.println("attempts" + attempts);
+        //System.out.println("attempts" + attempts);
         
         // If no overlap, add the coordinates to droppedCoordinates and break out of the loop
         int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
@@ -183,13 +183,6 @@ public class Collectable implements Serializable {
         
 		// Access the tiles array directly from the Main class
         Tile[][] tiles = board.getTiles();
-        
-        // Flag to track if the collectable is too close to transportation
-        // boolean tooCloseToTransport = false;
-        
-        // Calculate the distance to the nearest transportation type
-        // double nearestTransportDistance = Double.MAX_VALUE;
-        //double nearestTransportCarbonFootprint = Double.MAX_VALUE;
 
         for (int row = 0; row < tiles.length; row++) {
             for (int col = 0; col < tiles[row].length; col++) {
