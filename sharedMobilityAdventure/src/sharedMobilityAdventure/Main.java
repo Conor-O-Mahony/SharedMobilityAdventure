@@ -30,6 +30,7 @@ public class Main {
     public static Clip carbonCoinClip;
     public static Clip defaultGameAudioClip;
     public static HashMap<String, BufferedImage> imageCache;
+    // reminder to create HashMap for audio
     
     private static final String[] haloNames = {"haloB","haloY","haloG"};
     static final String[] pinNames = {"buspinB","buspinG","buspinY","trainpinB","trainpinG","trainpinY","bikepinB","bikepinG","bikepinY"};
