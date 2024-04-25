@@ -62,8 +62,12 @@ public class PopUp implements Serializable{
         popupX = Main.TILE_SIZE / 2 * oddNumberX;
         popupY = Main.TILE_SIZE / 2 * oddNumberY; 
         
-        image = Main.popupImage;   
+        loadImage();
   }
+    
+    void loadImage() {
+    	image = Main.popupImage; 
+    }
   
     public boolean getVisibility() {
         return this.visible;

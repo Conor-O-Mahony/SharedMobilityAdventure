@@ -45,7 +45,7 @@ public class Collectable implements Serializable {
     private static final int MIN_DISTANCE_FROM_PLAYER = 3;
 
     // Cache for storing loaded images
-    protected static transient Map<String, BufferedImage> imageCache = new HashMap<>();
+    static Map<String, BufferedImage> imageCache = new HashMap<>();
     
     // Constructor
     public Collectable(String name, Board board) {
@@ -304,5 +304,9 @@ public class Collectable implements Serializable {
     		// Retrieve the image from the cache
     		filledImage = imageCache.get(name);
     	}
+    }
+    
+    public void cacheImage(String name, BufferedImage filledImage) {
+    	imageCache.put(name, filledImage);
     }
 }

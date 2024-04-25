@@ -249,6 +249,8 @@ public class SaveLoadPanel extends JPanel {
 
         GamePanel panel = OpenSaveState(fileName);
         
+        panel.playAudio();
+        panel.reloadImages();
         panel.addButton();
         panel.startRotation();
         

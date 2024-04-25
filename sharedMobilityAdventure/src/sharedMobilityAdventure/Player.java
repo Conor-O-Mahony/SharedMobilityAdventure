@@ -30,8 +30,12 @@ public class Player implements Serializable {
         this.tile = Main.TILE_SIZE;
         this.coins = 1000;
         
-        image = Main.getImageFromCache("down");
+        loadImage();
         //LOAD IN DOWN AS FIRST IMAGE
+    }
+    
+    void loadImage() {
+     image = Main.getImageFromCache("down");
     }
     
     public void keyPressed(KeyEvent e) {
