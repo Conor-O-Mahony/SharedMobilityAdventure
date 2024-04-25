@@ -12,77 +12,76 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-
 
 public class EndPanel extends JPanel {
 
     private static final long serialVersionUID = -8788565932041161917L;
-    int tile = 16;
-    int columns = 64;
-    int rows = 36;
-    int totalWidth = columns * tile;
-    int totalHeight = rows * tile;
+    private int tile = 16;
+    private int columns = 64;
+    private int rows = 36;
+    private int totalWidth = columns * tile;
+    private int totalHeight = rows * tile;
 
     private String username;
     private int endGameRound;
     private int endGemScore;
     private int endCoinScore;
     private int endGameScore;
+    private String[] authorsNames; 
 
-    public EndPanel(String username, int gameRound, int gemScore, int coinsCollected, int gameScore) {
-
+    public EndPanel(String username, int gameRound, int gemScore, int coinsCollected, int gameScore, String[] authorsNames) {
         this.username = username;
         this.endGameRound = gameRound;
         this.endGemScore = gemScore;
         this.endCoinScore = coinsCollected;
         this.endGameScore = gameScore;
-
+        this.authorsNames = new String[]{"Ryan Davey", "Adam Herdman", "Conor O'Mahony", "Riin Kaljurand", "Calvin van der Riet"}; 
+        
         setPreferredSize(new Dimension(totalWidth, totalHeight));
         setLayout(null);
-        add(usernameTextbox());
-        add(statsTextbox());
-        add(scoreTextbox());
-        //add(endGameTextArea());
-
-        add(createButton()); // Add the button to return to the main panel
+        add(usernameLabel());
+        add(statsLabel());
+        add(scoreLabel());
+        add(authorsLabel());
+        add(createButton()); 
     }
-    /**
-    
-    private JTextArea endGameTextArea() {
-        JTextArea endGameText = new JTextArea();
-        endGameText.setEditable(false);
-        endGameText.setBackground(Color.WHITE);
-        endGameText.setForeground(new Color(101, 67, 33));
-        endGameText.setFont(new Font("Arial", Font.BOLD, 20));
-        endGameText.setBorder(null);
-        
-        // Construct the end game message
-        StringBuilder message = new StringBuilder();
-        message.append("Game Over. Well done, ").append(username).append("!\n\n");
-        message.append("You made it to round: ").append(endGameRound).append("\n");
-        message.append("Gems collected: ").append(endGemScore).append("\n");
-        message.append("Coins collected: ").append(endCoinScore).append("\n\n");
-        message.append("Final score: ").append(endGameScore);
-        
-        endGameText.setText(message.toString());
-        
-        // Calculate x-coordinate to center horizontally
-        int x = (totalWidth - 400) / 2; 
 
-        // Calculate y-coordinate to place higher on the panel
-        int y = 50; // Adjusted y-coordinate to position higher
+    private JLabel authorsLabel() {
+        StringBuilder builder = new StringBuilder();
+        for (String author : authorsNames) {
+            builder.append(author).append(", ");
+        }
+        // Remove the trailing comma and space
+        String authors = builder.substring(0, builder.length() - 2);
+
+        JLabel authorsLabel = new JLabel("Authors: " + authors);
+        authorsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        authorsLabel.setForeground(Color.WHITE);
+        authorsLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         
-        endGameText.setBounds(x, y, 400, 250); // Centered horizontally and placed higher
-        return endGameText;
+        int x = 0;
+        int y = 680; // Adjust the y-coordinate as needed
+        
+        // Calculate width to cover the total width
+        int width = (int) (totalWidth - 48);
+        
+        authorsLabel.setBounds(x, y, width, 24); // Covers total width from left to right
+        
+        return authorsLabel;
     }
-    **/
-    private JTextField usernameTextbox() {
-        JTextField endGameText = new JTextField("Game Over. Well done, " + username + "!");
+
+
+    private JLabel usernameLabel() {
+        JLabel endGameText = new JLabel("Game Over. Well done, " + username + "!");
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Set background color
+        endGameText.setOpaque(true); // Set opaque to true to make the background color visible
+        endGameText.setBackground(new Color(245, 245, 220)); // Beige background color
         
         // Calculate x-coordinate to start from the left edge
         int x = 0;
@@ -91,11 +90,9 @@ public class EndPanel extends JPanel {
         int y = 50;
             
         // Calculate width to cover the total width
-        int width = totalWidth;
+        int width = (int) (totalWidth - 48);
 
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
-        endGameText.setEditable(false);
-        endGameText.setBackground(new Color(245, 245, 220)); // Beige background color
         endGameText.setForeground(Color.BLACK); // Dark text color
         endGameText.setFont(new Font("Arial", Font.BOLD, 16));
         
@@ -107,9 +104,13 @@ public class EndPanel extends JPanel {
         return endGameText;
     }
 
-    private JTextField statsTextbox() {
-        JTextField endGameText = new JTextField("You made it to day: " + endGameRound + " | Gems collected: " + endGemScore + " | Coins collected: " + endCoinScore);
+    private JLabel statsLabel() {
+        JLabel endGameText = new JLabel("You made it to day: " + endGameRound + " | Gems collected: " + endGemScore + " | Coins collected: " + endCoinScore);
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Set background color
+        endGameText.setOpaque(true); // Set opaque to true to make the background color visible
+        endGameText.setBackground(new Color(240, 240, 240)); // Light gray background color
         
         // Calculate x-coordinate to start from the left edge
         int x = 0;
@@ -118,11 +119,9 @@ public class EndPanel extends JPanel {
         int y = 130;
         
         // Calculate width to cover the total width
-        int width = totalWidth;
+        int width = (int) (totalWidth - 48);
 
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
-        endGameText.setEditable(false);
-        endGameText.setBackground(new Color(240, 240, 240)); // Light gray background color
         endGameText.setForeground(Color.BLACK); // Dark text color
         endGameText.setFont(new Font("Arial", Font.BOLD, 16));
         
@@ -134,10 +133,14 @@ public class EndPanel extends JPanel {
         return endGameText;
     }
 
-    private JTextField scoreTextbox() {
-        JTextField endGameText = new JTextField("Final score: " + endGameScore);
+    private JLabel scoreLabel() {
+        JLabel endGameText = new JLabel("Final score: " + endGameScore);
         
         endGameText.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Set background color
+        endGameText.setOpaque(true); // Set opaque to true to make the background color visible
+        endGameText.setBackground(new Color(220, 220, 255)); // Pale blue background color
         
         // Calculate x-coordinate to start from the left edge
         int x = 0;
@@ -146,11 +149,9 @@ public class EndPanel extends JPanel {
         int y = 210;
         
         // Calculate width to cover the total width
-        int width = totalWidth;
-
+        int width = (int) (totalWidth - 48);
+        
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
-        endGameText.setEditable(false);
-        endGameText.setBackground(new Color(220, 220, 255)); // Pale blue background color
         endGameText.setForeground(Color.BLACK); // Dark text color
         endGameText.setFont(new Font("Arial", Font.BOLD, 20));
         
@@ -167,7 +168,7 @@ public class EndPanel extends JPanel {
         // Load the default and hover images
         ImageIcon defaultIcon = new ImageIcon("images/tiles/menubuttondefault.png");
         ImageIcon hoverIcon = new ImageIcon("images/tiles/menubuttonhovered.png");
-        
+
         // Create the button with the default image
         JButton button = new JButton(defaultIcon);
 

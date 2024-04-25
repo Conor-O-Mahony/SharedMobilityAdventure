@@ -88,10 +88,6 @@ public class Collectable implements Serializable {
             collectabelX = collectabelX + Main.TILE_SIZE / 2;
             collectabelY = collectabelY + Main.TILE_SIZE / 2;
 
-            // Debug statements
-            //System.out.println("Generated collectable coordinates: X=" + collectabelX + ", Y=" + collectabelY);
-            //System.out.println("Player coordinates: X=" + playerX + ", Y=" + playerY);
-
             // Check if the generated coordinates are too close to the player
             if (Math.abs(collectabelX - playerX) < MIN_DISTANCE_FROM_PLAYER &&
                     Math.abs(collectabelY - playerY) < MIN_DISTANCE_FROM_PLAYER) {
@@ -206,25 +202,28 @@ public class Collectable implements Serializable {
 
     // Method to play sound of the collectable
     public void playSound() {
-            // Check if the collectable is a Gem
-            if (this instanceof Gem) {
-                // Specify the sound file path for gems
-                // Start playback of the clip
-            	
-            	if (Main.clip.getFramePosition() != 0) {
-            		Main.clip.stop();
-            		Main.clip.setFramePosition(0);
-            	}
-                Main.clip.start();
+        if (this instanceof Gem) {
+            if (Main.gemClip != null) { // Check if the gem sound clip is loaded
+                if (Main.gemClip.getFramePosition() != 0) {
+                    Main.gemClip.stop();
+                    Main.gemClip.setFramePosition(0);
+                }
+                Main.gemClip.start();
             }
+        } else if (this instanceof CarbonCoin) {
+            if (Main.carbonCoinClip != null) { // Check if the carbon coin sound clip is loaded
+                if (Main.carbonCoinClip.getFramePosition() != 0) {
+                    Main.carbonCoinClip.stop();
+                    Main.carbonCoinClip.setFramePosition(0);
+                }
+                Main.carbonCoinClip.start();
+            }
+        }
     }
     // Method to draw the collectable
     public void draw(Graphics g) {
         int adjustedX = collectabelX - (WIDTH / 2);
         int adjustedY = collectabelY - (HEIGHT / 2);
-
-        // Create a copy of the original image
-        //BufferedImage filledImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         // Get the graphics object of the filled image
         Graphics gFilled = filledImage.getGraphics();
