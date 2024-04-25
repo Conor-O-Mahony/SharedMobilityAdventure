@@ -41,7 +41,7 @@ public class PopUp implements Serializable{
     "Carbon offsets can take various forms, including reforestation projects,\n renewable energy initiatives, and investments in energy efficiency.",
     "The aviation industry is responsible for around 2% of global carbon emissions,\n and efforts are underway to develop sustainable aviation fuels and improve fuel efficiency.",  
     "Cars emit CO2, which contributes to air pollution.",
-    "Cars can use fuel-efficient or electric vehicles.",
+    "Cars can be fuel-efficient or electric vehicles.",
     "Carpools reduce individual car usage.",
     "Buses are more efficient than cars per passenger.",
     "Trains are energy-efficient for long-distance travel.",
