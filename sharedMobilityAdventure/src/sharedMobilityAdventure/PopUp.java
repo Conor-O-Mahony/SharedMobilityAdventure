@@ -39,7 +39,14 @@ public class PopUp implements Serializable{
     "Ireland's Climate Action Plan includes measures to reduce carbon emissions from transportation,\n such as increasing the availability of electric vehicle charging stations and investing in public transit infrastructure.",
     "The transportation of goods, including shipping and freight transport,\n contributes to carbon emissions through the burning of diesel fuel.",
     "Carbon offsets can take various forms, including reforestation projects,\n renewable energy initiatives, and investments in energy efficiency.",
-    "The aviation industry is responsible for around 2% of global carbon emissions,\n and efforts are underway to develop sustainable aviation fuels and improve fuel efficiency."
+    "The aviation industry is responsible for around 2% of global carbon emissions,\n and efforts are underway to develop sustainable aviation fuels and improve fuel efficiency.",  
+    "Cars emit CO2, which contributes to air pollution.",
+    "Cars can use fuel-efficient or electric vehicles.",
+    "Carpools reduce individual car usage.",
+    "Buses are more efficient than cars per passenger.",
+    "Trains are energy-efficient for long-distance travel.",
+    "Rather than running on traditional fossil fuels like diesel, trains can also be electric.",
+    "Bicycle use produces zero emissions and reduces traffic congestion."
     };
  
     public PopUp() {
