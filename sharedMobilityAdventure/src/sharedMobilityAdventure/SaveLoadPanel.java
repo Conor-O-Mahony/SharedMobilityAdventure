@@ -246,6 +246,11 @@ public class SaveLoadPanel extends JPanel {
     }
     
     public void LoadGame(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+    	//TEMP FIX FOR LOADING IMMEDIETLY
+    	@SuppressWarnings("unused")
+		GamePanel temppanel = new GamePanel("temp");
+    	temppanel = null;
+    	//System.gc();
 
         GamePanel panel = OpenSaveState(fileName);
         
@@ -254,7 +259,7 @@ public class SaveLoadPanel extends JPanel {
         
         Main.changePanels(panel);
         
-        panel.focus();
+        panel.initialise();
     }
     
     private GamePanel OpenSaveState(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {

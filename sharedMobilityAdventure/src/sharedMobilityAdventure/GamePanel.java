@@ -79,9 +79,9 @@ public class GamePanel extends JPanel implements KeyListener {
         initGame();
 
         this.setFocusable(true);
-        focus();
-
-        addKeyListener(this);   
+        
+        initialise();   
+        
         setLayout(null);  //ELSE THE BUTTON WON'T PLACE CORRECTLY
         
         addButton();
@@ -113,8 +113,9 @@ public class GamePanel extends JPanel implements KeyListener {
     	pinMap.put("trainpinG", "haloG");
     }
     
-    public void focus() {
+    public void initialise() {
     	requestFocus();
+    	addKeyListener(this);
      }
 	
     public void initGame() {
@@ -176,7 +177,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
         
     	if (gameRound == 1) {
-    		JOptionPane.showMessageDialog(null, "Day: " + gameRound + ". Use the arrows keys to get " + username + " to the gem. (Walking takes 50 mins)");
+    		JOptionPane.showMessageDialog(null, "Use the arrows keys to get to the gem while minimising carbon footprint. (Walking takes 50 mins)");
     	} else {
     		JOptionPane.showMessageDialog(null, "Day: " + gameRound + ". Click OK!");
     	}
@@ -513,26 +514,30 @@ public class GamePanel extends JPanel implements KeyListener {
         if (numberOfRoutes >= mode) {
             Route routeToTake = board.tiles[player_y][player_x].getRoutes()[mode - 1];
             
-            // Check if the player is at the end or start of the route and move them accordingly
-            int new_player_x, new_player_y;
-            if (routeToTake.getFinalRow() == player_y && routeToTake.getFinalCol() == player_x) {
-                // Player is at the end of the route, move them to the start
-                new_player_x = routeToTake.getStartCol();
-                new_player_y = routeToTake.getStartRow();
+            if (routeToTake!=null) {
+	            // Check if the player is at the end or start of the route and move them accordingly
+	            int new_player_x, new_player_y;
+	            if (routeToTake.getFinalRow() == player_y && routeToTake.getFinalCol() == player_x) {
+	                // Player is at the end of the route, move them to the start
+	                new_player_x = routeToTake.getStartCol();
+	                new_player_y = routeToTake.getStartRow();
+	            } else {
+	                // Move player to the end of the route
+	                new_player_x = routeToTake.getFinalCol();
+	                new_player_y = routeToTake.getFinalRow();
+	            }
+	            
+	            // Update player's position
+	            player.setPlayerX(new_player_x);
+	            player.setPlayerY(new_player_y);
+	            
+	            // Calculate travel costs
+	            routeToTake.updateTravel();
+	
+	            return true;
             } else {
-                // Move player to the end of the route
-                new_player_x = routeToTake.getFinalCol();
-                new_player_y = routeToTake.getFinalRow();
+            	return false;
             }
-            
-            // Update player's position
-            player.setPlayerX(new_player_x);
-            player.setPlayerY(new_player_y);
-            
-            // Calculate travel costs
-            routeToTake.updateTravel();
-
-            return true;
         } else {
             // No route available for the given mode
             return false;
