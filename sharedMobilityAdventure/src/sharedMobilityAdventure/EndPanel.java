@@ -20,11 +20,11 @@ import javax.swing.border.Border;
 public class EndPanel extends JPanel {
 
     private static final long serialVersionUID = -8788565932041161917L;
-    int tile = 16;
-    int columns = 64;
-    int rows = 36;
-    int totalWidth = columns * tile;
-    int totalHeight = rows * tile;
+    private int tile = 16;
+    private int columns = 64;
+    private int rows = 36;
+    private int totalWidth = columns * tile;
+    private int totalHeight = rows * tile;
 
     private String username;
     private int endGameRound;

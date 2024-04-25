@@ -68,15 +68,11 @@ public class Main {
 
         // Load gem sound clip
         try (AudioInputStream gemAudioInputStream = AudioSystem.getAudioInputStream(new File(gemSoundFilePath))) {
-        	System.out.println("why");
             gemClip = AudioSystem.getClip();
-            System.out.println("why not");
             gemClip.open(gemAudioInputStream);
 
-            // Get the FloatControl for the volume
             FloatControl gemGainControl = (FloatControl) gemClip.getControl(FloatControl.Type.MASTER_GAIN);
 
-            // Set the volume level for the gem clip
             float gemVolume = -14.0f; 
             gemGainControl.setValue(gemVolume);
         }
@@ -99,7 +95,7 @@ public class Main {
 
             FloatControl defaultGameAudioGainControl = (FloatControl) defaultGameAudioClip.getControl(FloatControl.Type.MASTER_GAIN);
 
-            float defaultGameAudioVolume = -10.0f; 
+            float defaultGameAudioVolume = -12.0f; 
             defaultGameAudioGainControl.setValue(defaultGameAudioVolume);
         }
     }

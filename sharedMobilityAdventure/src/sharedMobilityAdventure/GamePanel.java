@@ -135,7 +135,7 @@ public class GamePanel extends JPanel implements KeyListener {
     	    Main.defaultGameAudioClip.start();
     	} else {
     	    // Handle the case where the default game audio clip is already playing
-    	    System.out.println("Default game audio clip is already playing or not loaded.");
+    	    // System.out.println("Default game audio clip is already playing or not loaded.");
     	}
 
     	gameRound += 1;
