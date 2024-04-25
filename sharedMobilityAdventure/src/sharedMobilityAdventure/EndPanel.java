@@ -62,7 +62,7 @@ public class EndPanel extends JPanel {
         int y = 50;
             
         // Calculate width to cover the total width
-        int width = totalWidth;
+        int width = (int) (totalWidth - 48);
 
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
         endGameText.setForeground(Color.BLACK); // Dark text color
@@ -91,7 +91,7 @@ public class EndPanel extends JPanel {
         int y = 130;
         
         // Calculate width to cover the total width
-        int width = totalWidth;
+        int width = (int) (totalWidth - 48);
 
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
         endGameText.setForeground(Color.BLACK); // Dark text color
@@ -121,8 +121,8 @@ public class EndPanel extends JPanel {
         int y = 210;
         
         // Calculate width to cover the total width
-        int width = totalWidth;
-
+        int width = (int) (totalWidth - 48);
+        
         endGameText.setBounds(x, y, width, 64); // Covers total width from left to right
         endGameText.setForeground(Color.BLACK); // Dark text color
         endGameText.setFont(new Font("Arial", Font.BOLD, 20));
