@@ -1,11 +1,12 @@
 
 package sharedMobilityAdventure;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -68,6 +69,21 @@ public class Main {
 		  clip.open(audioInputStream);
 	}
   }
+  
+  private static void addJFrameListener(JFrame frame) {
+	  frame.addWindowStateListener(new WindowStateListener() {
+		   public void windowStateChanged(WindowEvent e) {
+			// minimized
+			   if ((e.getNewState() & java.awt.Frame.ICONIFIED) == java.awt.Frame.ICONIFIED){
+				   System.gc();
+			   }
+			   // maximized
+			   else if ((e.getNewState() & java.awt.Frame.ICONIFIED) != java.awt.Frame.ICONIFIED){
+				   System.gc();
+			   }
+		   }
+		});
+  }
     
   public static void changePanels(JPanel newPanel) {
 	  //Discard old panel
@@ -83,7 +99,8 @@ public class Main {
 	  Frame = new JFrame();
 	  Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	  Frame.setResizable(false);
-	  Frame.setTitle("Shared-Mobility Adventure"); 
+	  Frame.setTitle("Shared-Mobility Adventure");
+	  addJFrameListener(Frame);
       
 	  MenuPanel menuPanel = new MenuPanel();
       menuPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT));
