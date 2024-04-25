@@ -33,7 +33,7 @@ public class EndPanel extends JPanel {
     private int endGameScore;
     private String[] authorsNames; 
 
-    public EndPanel(String username, int gameRound, int gemScore, int coinsCollected, int gameScore) {
+    public EndPanel(String username, int gameRound, int gemScore, int coinsCollected, int gameScore, String[] authorsNames) {
         this.username = username;
         this.endGameRound = gameRound;
         this.endGemScore = gemScore;

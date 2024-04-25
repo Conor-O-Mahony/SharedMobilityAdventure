@@ -119,11 +119,12 @@ public class Main {
   }
 
   public static void openEndWindow(String username, int gameRound, int gemScore, int coinScore, int gameScore) {      
-      EndPanel endPanel = new EndPanel(username, gameRound, gemScore, coinScore, gameScore);
-      endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
-      
-      changePanels(endPanel);
-  }
+	    String[] authorsNames = {"Ryan Davey", "Adam Herdman", "Conor O'Mahony", "Riin Kaljurand", "Calvin van der Riet"};
+	    EndPanel endPanel = new EndPanel(username, gameRound, gemScore, coinScore, gameScore, authorsNames);
+	    endPanel.setPreferredSize(new Dimension(Main.WINDOW_WIDTH,Main.WINDOW_HEIGHT)); //Dimension(totalWidth,totalHeight)
+	    
+	    changePanels(endPanel);
+	}
   
   public static int getRandomNumber(int min, int max) {
 	    return (int) ((Math.random() * (max - min)) + min);
