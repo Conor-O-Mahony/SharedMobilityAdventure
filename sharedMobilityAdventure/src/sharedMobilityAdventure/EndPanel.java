@@ -61,7 +61,7 @@ public class EndPanel extends JPanel {
         JLabel authorsLabel = new JLabel("Authors: " + authors);
         authorsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         authorsLabel.setForeground(Color.WHITE);
-        authorsLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        authorsLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         
         int x = 0;
         int y = 680; // Adjust the y-coordinate as needed
