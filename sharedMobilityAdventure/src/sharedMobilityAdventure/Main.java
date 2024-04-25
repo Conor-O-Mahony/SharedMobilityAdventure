@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
@@ -25,7 +26,9 @@ public class Main {
     public static final int MIN_ROUTE_SIZE = 5;
     public static final int MAX_ROUTE_SIZE = 10;
     public static JFrame Frame;
-    public static Clip clip;
+    public static Clip gemClip;
+    public static Clip carbonCoinClip;
+    public static Clip defaultGameAudioClip;
     public static HashMap<String, BufferedImage> imageCache;
     
     private static final String[] haloNames = {"haloB","haloY","haloG"};
@@ -58,17 +61,50 @@ public class Main {
     	Game(); 
     }
     
-  public static void loadSoundClips() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-	  String soundFilePath = "sounds/gem.wav";
+    public static void loadSoundClips() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        String gemSoundFilePath = "sounds/Jingle 026.wav";
+        String carbonCoinSoundFilePath = "sounds/coin_1.wav";
+        String defaultGameAudioFilePath = "sounds/ccs3-pixabay.wav"; 
 
-	    try (// If the clip is not in the cache, load it and put it in the cache
-	AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(soundFilePath).getAbsoluteFile())) {
-		clip = AudioSystem.getClip();
-		  // Open audio input stream and clip for playback
-		  clip.open(audioInputStream);
-	}
-  }
-    
+        // Load gem sound clip
+        try (AudioInputStream gemAudioInputStream = AudioSystem.getAudioInputStream(new File(gemSoundFilePath))) {
+        	System.out.println("why");
+            gemClip = AudioSystem.getClip();
+            System.out.println("why not");
+            gemClip.open(gemAudioInputStream);
+
+            // Get the FloatControl for the volume
+            FloatControl gemGainControl = (FloatControl) gemClip.getControl(FloatControl.Type.MASTER_GAIN);
+
+            // Set the volume level for the gem clip
+            float gemVolume = -14.0f; 
+            gemGainControl.setValue(gemVolume);
+        }
+
+        // Load carbon coin sound clip
+        try (AudioInputStream carbonCoinAudioInputStream = AudioSystem.getAudioInputStream(new File(carbonCoinSoundFilePath))) {
+            carbonCoinClip = AudioSystem.getClip();
+            carbonCoinClip.open(carbonCoinAudioInputStream);
+
+            FloatControl coinGainControl = (FloatControl) carbonCoinClip.getControl(FloatControl.Type.MASTER_GAIN);
+
+            float coinVolume = -4.0f; 
+            coinGainControl.setValue(coinVolume);
+        }
+
+        // Load the default game audio clip
+        try (AudioInputStream defaultGameAudioInputStream = AudioSystem.getAudioInputStream(new File(defaultGameAudioFilePath))) {
+            defaultGameAudioClip = AudioSystem.getClip();
+            defaultGameAudioClip.open(defaultGameAudioInputStream);
+
+            FloatControl defaultGameAudioGainControl = (FloatControl) defaultGameAudioClip.getControl(FloatControl.Type.MASTER_GAIN);
+
+            float defaultGameAudioVolume = -10.0f; 
+            defaultGameAudioGainControl.setValue(defaultGameAudioVolume);
+        }
+    }
+
+
   public static void changePanels(JPanel newPanel) {
 	  //Discard old panel
 	  Frame.getContentPane().removeAll();
