@@ -127,7 +127,9 @@ public class Collectable implements Serializable {
         	}
         	//System.out.println("Max attempts reached");
         }
-                
+        
+        //System.out.println("attempts" + attempts);
+        
         // If no overlap, add the coordinates to droppedCoordinates and break out of the loop
         int combinedCoordinates = combineCoordinates(collectabelX, collectabelY);
         droppedCoordinates.add(combinedCoordinates);
